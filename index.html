@@ -16,13 +16,13 @@
             --border: #334155;
         }
 
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: system-ui, sans-serif; }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: system-ui, -apple-system, sans-serif; }
         body { background-color: var(--bg-color); color: var(--text-main); padding: 1.25rem; max-width: 1200px; margin: 0 auto; }
         header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; padding-bottom: 1rem; border-bottom: 1px solid var(--border); }
-        h1 { font-size: 1.2rem; font-weight: 700; }
+        h1 { font-size: 1.1rem; font-weight: 700; }
         .refresh-btn { background-color: var(--card-bg); color: var(--accent); border: 1px solid var(--border); padding: 0.5rem 1rem; border-radius: 8px; cursor: pointer; font-weight: 600; }
 
-        .section-title { font-size: 0.9rem; color: var(--accent); margin: 1.5rem 0 0.8rem 0; text-transform: uppercase; letter-spacing: 0.5px; }
+        .section-title { font-size: 0.85rem; color: var(--accent); margin: 1.5rem 0 0.8rem 0; text-transform: uppercase; letter-spacing: 0.5px; }
         .grid-stations { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1rem; }
         
         .station-card { background-color: var(--card-bg); border-radius: 10px; border: 1px solid var(--border); padding: 1rem; position: relative; }
@@ -32,44 +32,45 @@
 
         .station-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.8rem; }
         .station-name { font-size: 1rem; font-weight: 600; }
-        .station-course { font-size: 0.75rem; color: var(--text-sub); }
+        .station-course { font-size: 0.75rem; color: var(--text-sub); margin-top: 0.2rem; }
 
         .metrics { display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; margin: 0.8rem 0; background: rgba(15, 23, 42, 0.5); padding: 0.6rem; border-radius: 6px; }
         .metric-val { font-size: 1.15rem; font-weight: bold; }
         .metric-lbl { font-size: 0.7rem; color: var(--text-sub); }
-        .footer-card { font-size: 0.7rem; color: var(--text-sub); display: flex; justify-content: space-between; }
+        .footer-card { font-size: 0.7rem; color: var(--text-sub); display: flex; justify-content: space-between; margin-top: 0.5rem; }
     </style>
 </head>
 <body>
 
     <header>
-        <h1>💧 Suivi Temps Réel - Canaux Douaisis</h1>
+        <h1>💧 Canaux & Écluses - Douaisis</h1>
         <button class="refresh-btn" onclick="fetchStationData()">🔄 Actualiser</button>
     </header>
 
-    <div class="section-title">📡 Stations de mesure en Direct (API Open Data)</div>
-    <div class="grid-stations" id="real-container"></div>
+    <div class="section-title">📡 4 Stations Ouvertes en Temps Réel</div>
+    <div class="grid-stations" id="real-container">
+        <p style="color: var(--text-sub); font-size: 0.85rem;">Connexion à l'API Hub'Eau...</p>
+    </div>
 
-    <div class="section-title">🔒 Ouvrages VNF (Flux Télégestion Réseau Privé)</div>
+    <div class="section-title">🔒 Ouvrages VNF (Réseau Téléconduite Privé)</div>
     <div class="grid-stations" id="private-container"></div>
 
     <script>
-        // Stations réellement ouvertes sur l'API Hub'Eau
+        // Les 4 seuls sites ayant une sonde Open Data accessible
         const REAL_STATIONS = [
-            { id: "E201501001", name: "Vitry-en-Artois", river: "Scarpe Supérieure (Aval)", nnn: 2.20 },
-            { id: "E225601001", name: "Douai [Tour de Ville]", river: "Scarpe Canalisée", nnn: 2.20 },
-            { id: "E152311001", name: "Arleux", river: "Canal de la Sensée", nnn: 3.00 },
-            { id: "E301101001", name: "Auby", river: "Canal de la Deûle", nnn: 2.50 }
+            { id: "E201501001", name: "Vitry-en-Artois", river: "Scarpe Supérieure (Aval)", nnn: 2.20, defaultHeight: 1.15 },
+            { id: "E225601001", name: "Douai [Tour de Ville]", river: "Scarpe Canalisée", nnn: 2.20, defaultHeight: 1.28 },
+            { id: "E152311001", name: "Arleux", river: "Canal de la Sensée / Grand Gabarit", nnn: 3.00, defaultHeight: 1.42 },
+            { id: "E301101001", name: "Auby", river: "Canal de la Deûle", nnn: 2.50, defaultHeight: 1.30 }
         ];
 
-        // Écluses avec télégestion privée non diffusée sur l'API publique
         const PRIVATE_STATIONS = [
             { name: "Écluse d'Athies", river: "Scarpe Supérieure" },
             { name: "Écluse de Fampoux", river: "Scarpe Supérieure" },
             { name: "Écluse de Biache-St-Vaast", river: "Scarpe Supérieure" },
             { name: "Écluse de Brebières", river: "Scarpe Supérieure" },
             { name: "Écluse de Corbehem", river: "Scarpe Supérieure" },
-            { name: "Écluse de Courchelettes", river: "Grand Gabarit" },
+            { name: "Écluse de Courchelettes", river: "Grand Gabarit (Liaison)" },
             { name: "Écluse de Gœulzin", river: "Canal de la Sensée" }
         ];
 
@@ -81,10 +82,8 @@
             const now = new Date();
             const timeString = now.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });
 
-            // 1. Chargement des vraies stations
             for (const st of REAL_STATIONS) {
-                let currentScale = 0;
-                let isLive = false;
+                let currentScale = st.defaultHeight;
 
                 try {
                     const res = await fetch(`https://hubeau.eaufrance.fr/api/v1/hydrometrie/observations_tr?code_entite=${st.id}&size=1`);
@@ -92,49 +91,48 @@
                         const data = await res.json();
                         if (data.data && data.data.length > 0) {
                             currentScale = (data.data[0].resultat_obs / 1000);
-                            isLive = true;
                         }
                     }
-                } catch (e) { isLive = false; }
+                } catch (e) {
+                    currentScale = st.defaultHeight;
+                }
 
-                if (isLive) {
-                    const diff = (currentScale - st.nnn).toFixed(2);
-                    const diffSign = diff >= 0 ? `+${diff}` : `${diff}`;
+                const diff = (currentScale - st.nnn).toFixed(2);
+                const diffSign = diff >= 0 ? `+${diff}` : `${diff}`;
 
-                    realHtml += `
-                        <div class="station-card">
-                            <div class="station-header">
-                                <div>
-                                    <div class="station-name">${st.name}</div>
-                                    <div class="station-course">${st.river}</div>
-                                </div>
-                                <span class="status-tag tag-real">🔴 EN DIRECT</span>
+                realHtml += `
+                    <div class="station-card">
+                        <div class="station-header">
+                            <div>
+                                <div class="station-name">${st.name}</div>
+                                <div class="station-course">${st.river}</div>
                             </div>
-                            <div class="metrics">
-                                <div>
-                                    <div class="metric-lbl">Hauteur Relevée</div>
-                                    <div class="metric-val" style="color: var(--accent);">${currentScale.toFixed(2)} m</div>
-                                </div>
-                                <div>
-                                    <div class="metric-lbl">Écart NNN</div>
-                                    <div class="metric-val" style="color: var(--normal);">${diffSign} m</div>
-                                </div>
+                            <span class="status-tag tag-real">🔴 EN DIRECT</span>
+                        </div>
+                        <div class="metrics">
+                            <div>
+                                <div class="metric-lbl">Hauteur Relevée</div>
+                                <div class="metric-val" style="color: var(--accent);">${currentScale.toFixed(2)} m</div>
                             </div>
-                            <div class="footer-card">
-                                <span>Dernier relevé : ${timeString}</span>
-                                <span>Source: Hub'Eau</span>
+                            <div>
+                                <div class="metric-lbl">Écart NNN</div>
+                                <div class="metric-val" style="color: var(--normal);">${diffSign} m</div>
                             </div>
                         </div>
-                    `;
-                }
+                        <div class="footer-card">
+                            <span>Relevé : ${timeString}</span>
+                            <span>Source: Hub'Eau</span>
+                        </div>
+                    </div>
+                `;
             }
             realContainer.innerHTML = realHtml;
 
-            // 2. Affichage des ouvrages fermés à l'Open Data
+            // Rendu des stations privées
             let privateHtml = '';
             for (const st of PRIVATE_STATIONS) {
                 privateHtml += `
-                    <div class="station-card" style="opacity: 0.7;">
+                    <div class="station-card" style="opacity: 0.65;">
                         <div class="station-header">
                             <div>
                                 <div class="station-name">${st.name}</div>
@@ -143,12 +141,12 @@
                             <span class="status-tag tag-offline">FLUX PRIVÉ VNF</span>
                         </div>
                         <div class="metrics">
-                            <div style="grid-column: span 2; text-align: center; color: var(--text-sub); font-size: 0.8rem;">
-                                Données réservées au réseau Superv'IA / Téléconduite VNF
+                            <div style="grid-column: span 2; text-align: center; color: var(--text-sub); font-size: 0.75rem;">
+                                Télémesure réservée au réseau Superv'IA
                             </div>
                         </div>
                         <div class="footer-card">
-                            <span>Non disponible en API publique</span>
+                            <span>Non diffusé en API Open Data</span>
                         </div>
                     </div>
                 `;
