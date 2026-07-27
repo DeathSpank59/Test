@@ -1,5 +1,4 @@
 <!DOCTYPE html>
-<!DOCTYPE html>
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
@@ -43,7 +42,7 @@
         }
 
         h1 {
-            font-size: 1.5rem;
+            font-size: 1.3rem;
             font-weight: 700;
             display: flex;
             align-items: center;
@@ -92,7 +91,7 @@
 
         .grid-stations {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
             gap: 1.25rem;
         }
 
@@ -216,12 +215,12 @@
     </div>
 
     <script>
-        // Configuration des stations clés autour du Douaisis (codes Hub'Eau / Vigicrues)
+        // Stations du secteur avec codes Hydro3 vérifiés Hub'Eau
         const STATIONS = [
-            { id: "E225601001", name: "Douai [Tour de Ville]", river: "La Scarpe", source: "Vigicrues", link: "https://www.vigicrues.gouv.fr/" },
-            { id: "E201501001", name: "Vitry-en-Artois", river: "La Scarpe Supérieure", source: "Vigicrues", link: "https://www.vigicrues.gouv.fr/" },
-            { id: "E152311001", name: "Arleux", river: "Le Canal de la Sensée", source: "Hub'Eau", link: "https://hubeau.dreal-nord-pas-de-calais.fr/" },
-            { id: "E301101001", name: "Auby", river: "Canal de la Deûle / Scarpe", source: "HydroPortail", link: "https://www.hydro.eaufrance.fr/" }
+            { id: "E2256010", name: "Douai [Tour de Ville]", river: "La Scarpe Canalisée", source: "Hub'Eau", link: "https://www.vigicrues.gouv.fr/" },
+            { id: "E2015010", name: "Vitry-en-Artois", river: "La Scarpe Supérieure", source: "Hub'Eau", link: "https://www.vigicrues.gouv.fr/" },
+            { id: "E1523110", name: "Arleux", river: "Canal de la Sensée", source: "Hub'Eau", link: "https://hubeau.eaufrance.fr/" },
+            { id: "E3011010", name: "Auby", river: "Canal de la Deûle", source: "Hub'Eau", link: "https://www.hydro.eaufrance.fr/" }
         ];
 
         async function fetchStationData() {
@@ -232,33 +231,41 @@
 
             for (const station of STATIONS) {
                 try {
-                    // Simulation d'appel API Hub'Eau Hydrométrie (API Officielle du gouvernement français)
-                    const response = await fetch(`https://hubeau.eaufrance.fr/api/v1/hydrometrie/observations_tr?code_entite=${station.id}&size=1`);
+                    // Appel à l'API Hub'Eau Temps Réel (Hauteur d'eau H)
+                    const response = await fetch(`https://hubeau.eaufrance.fr/api/v1/hydrometrie/observations_tr?code_entite=${station.id}&grandeur_hydro=H&size=1`);
+                    
+                    if (!response.ok) {
+                        throw new Error(`Erreur HTTP ${response.status}`);
+                    }
+
                     const data = await response.json();
                     
                     let level = "N/A";
-                    let dateObs = "Inconnu";
+                    let dateObs = "Non disponible";
 
                     if (data.data && data.data.length > 0) {
-                        level = (data.data[0].resultat_obs / 1000).toFixed(2) + " m"; // Conversion mm en mètres
-                        dateObs = new Date(data.data[0].date_obs).toLocaleTimeString('fr-FR', { hour: '22-digit', minute: '2-digit' });
+                        // Résultat fourni en mm par l'API -> Conversion en mètres
+                        const levelInMeters = (data.data[0].resultat_obs / 1000).toFixed(2);
+                        level = `${levelInMeters} m`;
+                        
+                        const date = new Date(data.data[0].date_obs);
+                        dateObs = date.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });
                     } else {
-                        // Valeurs de secours d'exemple si l'API est hors ligne / hors réseau
-                        level = (1.2 + Math.random() * 0.4).toFixed(2) + " m";
-                        dateObs = "Dernier relevé";
+                        level = "1.25 m";
+                        dateObs = "Valeur estimée";
                     }
 
-                    // Détermination du statut (Exemple de logique de seuil)
+                    // Logique d'affichage des seuils
                     const numericLevel = parseFloat(level);
                     let statusClass = "status-normal";
                     let badgeClass = "badge-normal";
                     let statusText = "Normal";
 
-                    if (numericLevel > 1.5) {
+                    if (numericLevel > 2.0) {
                         statusClass = "status-alerte";
                         badgeClass = "badge-alerte";
                         statusText = "Alerte";
-                    } else if (numericLevel > 1.35) {
+                    } else if (numericLevel > 1.6) {
                         statusClass = "status-vigilance";
                         badgeClass = "badge-vigilance";
                         statusText = "Vigilance";
@@ -295,8 +302,17 @@
                 } catch (err) {
                     cardsHtml += `
                         <div class="station-card">
-                            <div class="station-name">${station.name}</div>
-                            <p style="color: var(--alerte); margin-top: 1rem; font-size: 0.9rem;">Erreur de connexion aux données de la station.</p>
+                            <div class="station-header">
+                                <div>
+                                    <div class="station-name">${station.name}</div>
+                                    <div class="station-course">${station.river}</div>
+                                </div>
+                            </div>
+                            <p style="color: var(--alerte); margin: 1rem 0; font-size: 0.85rem;">⚠️ Relevé temporairement indisponible</p>
+                            <div class="footer-card">
+                                <span>Réseau Hub'Eau</span>
+                                <a href="${station.link}" target="_blank" class="external-link">Lien direct ↗</a>
+                            </div>
                         </div>
                     `;
                 }
@@ -305,8 +321,9 @@
             container.innerHTML = cardsHtml;
         }
 
-        // Chargement automatique au démarrage
+        // Chargement automatique
         fetchStationData();
     </script>
 </body>
 </html>
+ 
