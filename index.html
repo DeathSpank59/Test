@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Suivi des Canaux - Douaisis</title>
+    <title>Suivi des Canaux - Douaisis & Scarpe</title>
     <style>
         :root {
             --bg-color: #0f172a;
@@ -12,8 +12,6 @@
             --text-sub: #94a3b8;
             --accent: #38bdf8;
             --normal: #22c55e;
-            --vigilance: #eab308;
-            --alerte: #ef4444;
             --border: #334155;
         }
 
@@ -27,7 +25,7 @@
         body {
             background-color: var(--bg-color);
             color: var(--text-main);
-            padding: 1.5rem;
+            padding: 1.25rem;
             max-width: 1200px;
             margin: 0 auto;
         }
@@ -36,13 +34,13 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 2rem;
+            margin-bottom: 1.5rem;
             padding-bottom: 1rem;
             border-bottom: 1px solid var(--border);
         }
 
         h1 {
-            font-size: 1.25rem;
+            font-size: 1.2rem;
             font-weight: 700;
             display: flex;
             align-items: center;
@@ -57,51 +55,30 @@
             border-radius: 8px;
             cursor: pointer;
             font-weight: 600;
-            transition: all 0.2s;
         }
 
-        .refresh-btn:hover {
-            background-color: var(--border);
-        }
-
-        .quick-stats {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-            gap: 1rem;
-            margin-bottom: 2rem;
-        }
-
-        .stat-card {
-            background-color: var(--card-bg);
-            padding: 1rem;
-            border-radius: 10px;
-            border: 1px solid var(--border);
-        }
-
-        .stat-card span {
-            font-size: 0.85rem;
-            color: var(--text-sub);
-        }
-
-        .stat-card p {
-            font-size: 1.3rem;
-            font-weight: bold;
-            margin-top: 0.25rem;
+        .section-title {
+            font-size: 1rem;
+            color: var(--accent);
+            margin: 1.5rem 0 1rem 0;
+            padding-bottom: 0.4rem;
+            border-bottom: 1px dashed var(--border);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
 
         .grid-stations {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 1.25rem;
+            gap: 1rem;
         }
 
         .station-card {
             background-color: var(--card-bg);
-            border-radius: 12px;
+            border-radius: 10px;
             border: 1px solid var(--border);
-            padding: 1.25rem;
+            padding: 1rem;
             position: relative;
-            overflow: hidden;
             display: flex;
             flex-direction: column;
             justify-content: space-between;
@@ -112,45 +89,42 @@
             top: 0;
             left: 0;
             right: 0;
-            height: 4px;
+            height: 3px;
+            background-color: var(--normal);
         }
-
-        .status-normal { background-color: var(--normal); }
-        .status-vigilance { background-color: var(--vigilance); }
-        .status-alerte { background-color: var(--alerte); }
 
         .station-header {
             display: flex;
             justify-content: space-between;
             align-items: flex-start;
-            margin-bottom: 1rem;
+            margin-bottom: 0.8rem;
         }
 
         .station-name {
-            font-size: 1.05rem;
+            font-size: 1rem;
             font-weight: 600;
         }
 
         .station-course {
-            font-size: 0.8rem;
+            font-size: 0.75rem;
             color: var(--text-sub);
-            margin-top: 0.2rem;
+            margin-top: 0.1rem;
         }
 
-        .cote-box {
+        .nnn-box {
             font-size: 0.8rem;
-            padding: 0.3rem 0.6rem;
+            padding: 0.25rem 0.5rem;
             border-radius: 6px;
             font-weight: 600;
-            background: rgba(56, 189, 248, 0.12);
-            color: var(--accent);
-            border: 1px solid rgba(56, 189, 248, 0.3);
+            background: rgba(34, 197, 94, 0.12);
+            color: var(--normal);
+            border: 1px solid rgba(34, 197, 94, 0.3);
             text-align: right;
         }
 
-        .cote-label {
+        .nnn-label {
             display: block;
-            font-size: 0.65rem;
+            font-size: 0.6rem;
             color: var(--text-sub);
             text-transform: uppercase;
         }
@@ -159,20 +133,20 @@
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 0.5rem;
-            margin: 1rem 0;
+            margin: 0.8rem 0;
             background: rgba(15, 23, 42, 0.5);
-            padding: 0.75rem;
-            border-radius: 8px;
+            padding: 0.6rem;
+            border-radius: 6px;
         }
 
         .metric-val {
-            font-size: 1.2rem;
+            font-size: 1.15rem;
             font-weight: bold;
             color: var(--text-main);
         }
 
         .metric-lbl {
-            font-size: 0.75rem;
+            font-size: 0.7rem;
             color: var(--text-sub);
         }
 
@@ -180,72 +154,54 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            font-size: 0.75rem;
+            font-size: 0.7rem;
             color: var(--text-sub);
-            margin-top: 0.5rem;
-        }
-
-        .external-link {
-            color: var(--accent);
-            text-decoration: none;
-        }
-
-        .external-link:hover {
-            text-decoration: underline;
         }
     </style>
 </head>
 <body>
 
     <header>
-        <h1>💧 Canaux & Cours d'eau du Douaisis</h1>
+        <h1>💧 Suivi des Écluses & Biefs</h1>
         <button class="refresh-btn" onclick="fetchStationData()">🔄 Actualiser</button>
     </header>
 
-    <div class="quick-stats">
-        <div class="stat-card">
-            <span>Secteur surveillé</span>
-            <p>Douaisis / Scarpe</p>
-        </div>
-        <div class="stat-card">
-            <span>Stations suivies</span>
-            <p id="total-stations">4</p>
-        </div>
-        <div class="stat-card">
-            <span>Référentiel</span>
-            <p style="color: var(--accent);" id="global-status">Côtes NGF</p>
-        </div>
-    </div>
+    <div class="section-title">📍 Scarpe Supérieure</div>
+    <div class="grid-stations" id="scarpe-container"></div>
 
-    <div class="grid-stations" id="stations-container">
-        <!-- Les cartes des stations seront injectées ici -->
-    </div>
+    <div class="section-title">📍 Grand Gabarit & Douaisis</div>
+    <div class="grid-stations" id="gabarit-container"></div>
 
     <script>
-        // Stations du secteur avec Côtes de retenue / Référence NGF précises
-        const STATIONS = [
-            { id: "E225601001", name: "Douai [Tour de Ville]", river: "La Scarpe Canalisée", coteRef: "21.50 m", defaultHeight: 1.28, source: "Vigicrues", link: "https://www.vigicrues.gouv.fr/" },
-            { id: "E201501001", name: "Vitry-en-Artois", river: "La Scarpe Supérieure", coteRef: "28.30 m", defaultHeight: 1.15, source: "Vigicrues", link: "https://www.vigicrues.gouv.fr/" },
-            { id: "E152311001", name: "Arleux", river: "Canal de la Sensée", coteRef: "35.85 m", defaultHeight: 1.42, source: "Hub'Eau", link: "https://hubeau.eaufrance.fr/" },
-            { id: "E301101001", name: "Auby", river: "Canal de la Deûle", coteRef: "19.80 m", defaultHeight: 1.30, source: "HydroPortail", link: "https://www.hydro.eaufrance.fr/" }
+        // Liste des ouvrages avec leur NNN cible à l'échelle (en mètres)
+        const SCARPE_STATIONS = [
+            { id: "E201501001", name: "Écluse d'Athies", river: "Scarpe Supérieure", nnnTarget: 2.20, defaultVal: 2.20 },
+            { id: "E201501002", name: "Écluse de Fampoux", river: "Scarpe Supérieure", nnnTarget: 2.20, defaultVal: 2.18 },
+            { id: "E201501003", name: "Écluse de Biache-St-Vaast", river: "Scarpe Supérieure", nnnTarget: 2.20, defaultVal: 2.21 },
+            { id: "E201501004", name: "Écluse de Brebières", river: "Scarpe Supérieure", nnnTarget: 2.20, defaultVal: 2.19 },
+            { id: "E201501001", name: "Écluse de Corbehem", river: "Scarpe Supérieure", nnnTarget: 2.20, defaultVal: 2.20 }
         ];
 
-        async function fetchStationData() {
-            const container = document.getElementById('stations-container');
-            container.innerHTML = '<p style="color: var(--text-sub)">Recherche des côtes en direct...</p>';
+        const GABARIT_STATIONS = [
+            { id: "E201501000", name: "Écluse de Courchelettes", river: "Grand Gabarit (Liaison)", nnnTarget: 3.50, defaultVal: 3.50 },
+            { id: "E152311001", name: "Écluse de Gœulzin", river: "Canal de la Sensée", nnnTarget: 3.00, defaultVal: 3.02 },
+            { id: "E225601001", name: "Douai [Tour de Ville]", river: "Scarpe Canalisée", nnnTarget: 2.20, defaultVal: 2.22 }
+        ];
 
-            let cardsHtml = '';
+        async function renderGroup(stations, containerId) {
+            const container = document.getElementById(containerId);
+            let html = '';
             const now = new Date();
             const timeString = now.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });
 
-            for (const station of STATIONS) {
-                let currentHeight = station.defaultHeight;
+            for (const st of stations) {
+                let currentScale = st.defaultVal;
 
                 try {
                     const controller = new AbortController();
-                    const timeoutId = setTimeout(() => controller.abort(), 2000);
+                    const timeoutId = setTimeout(() => controller.abort(), 1200);
 
-                    const response = await fetch(`https://hubeau.eaufrance.fr/api/v1/hydrometrie/observations_tr?code_entite=${station.id}&size=1`, {
+                    const response = await fetch(`https://hubeau.eaufrance.fr/api/v1/hydrometrie/observations_tr?code_entite=${st.id}&size=1`, {
                         signal: controller.signal
                     });
                     clearTimeout(timeoutId);
@@ -253,49 +209,56 @@
                     if (response.ok) {
                         const data = await response.json();
                         if (data.data && data.data.length > 0) {
-                            currentHeight = (data.data[0].resultat_obs / 1000);
+                            currentScale = (data.data[0].resultat_obs / 1000);
                         }
                     }
                 } catch (e) {
-                    currentHeight = station.defaultHeight;
+                    currentScale = st.defaultVal;
                 }
 
-                const displayHeight = currentHeight.toFixed(2) + " m";
+                const diff = (currentScale - st.nnnTarget).toFixed(2);
+                const diffSign = diff >= 0 ? `+${diff}` : `${diff}`;
+                const diffColor = Math.abs(diff) <= 0.05 ? "var(--normal)" : (diff > 0 ? "var(--accent)" : "#ef4444");
 
-                cardsHtml += `
+                html += `
                     <div class="station-card">
-                        <div class="status-bar status-normal"></div>
+                        <div class="status-bar"></div>
                         <div>
                             <div class="station-header">
                                 <div>
-                                    <div class="station-name">${station.name}</div>
-                                    <div class="station-course">${station.river}</div>
+                                    <div class="station-name">${st.name}</div>
+                                    <div class="station-course">${st.river}</div>
                                 </div>
-                                <div class="cote-box">
-                                    <span class="cote-label">Côte Réf.</span>
-                                    ${station.coteRef}
+                                <div class="nnn-box">
+                                    <span class="nnn-label">NNN Cible</span>
+                                    ${st.nnnTarget.toFixed(2)} m
                                 </div>
                             </div>
                             <div class="metrics">
                                 <div>
-                                    <div class="metric-lbl">Hauteur d'eau</div>
-                                    <div class="metric-val" style="color: var(--accent);">${displayHeight}</div>
+                                    <div class="metric-lbl">Niveau Échelle</div>
+                                    <div class="metric-val" style="color: var(--accent);">${currentScale.toFixed(2)} m</div>
                                 </div>
                                 <div>
-                                    <div class="metric-lbl">Côte instantanée</div>
-                                    <div class="metric-val">${(parseFloat(station.coteRef) + currentHeight).toFixed(2)} m</div>
+                                    <div class="metric-lbl">Écart au NNN</div>
+                                    <div class="metric-val" style="color: ${diffColor};">${diffSign} m</div>
                                 </div>
                             </div>
                         </div>
                         <div class="footer-card">
                             <span>Relevé : ${timeString}</span>
-                            <a href="${station.link}" target="_blank" class="external-link">Source: ${station.source} ↗</a>
+                            <span>Ref. Échelle Amont</span>
                         </div>
                     </div>
                 `;
             }
 
-            container.innerHTML = cardsHtml;
+            container.innerHTML = html;
+        }
+
+        function fetchStationData() {
+            renderGroup(SCARPE_STATIONS, 'scarpe-container');
+            renderGroup(GABARIT_STATIONS, 'gabarit-container');
         }
 
         fetchStationData();
