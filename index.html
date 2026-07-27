@@ -3,65 +3,105 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Suivi des Canaux - Douaisis</title>
+    <title>Supervision VNF - Douaisis</title>
+    <!-- Import de Chart.js pour les graphiques -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         :root {
-            --bg-color: #0f172a;
-            --card-bg: #1e293b;
+            --bg-base: #0b1120;
+            --bg-card: #1e293b;
+            --bg-card-hover: #334155;
             --text-main: #f8fafc;
-            --text-sub: #94a3b8;
+            --text-muted: #94a3b8;
             --accent: #38bdf8;
-            --normal: #22c55e;
+            --accent-glow: rgba(56, 189, 248, 0.2);
+            --success: #10b981;
             --warning: #f59e0b;
             --border: #334155;
         }
 
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: system-ui, -apple-system, sans-serif; }
-        body { background-color: var(--bg-color); color: var(--text-main); padding: 1.25rem; max-width: 1200px; margin: 0 auto; }
-        header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; padding-bottom: 1rem; border-bottom: 1px solid var(--border); }
-        h1 { font-size: 1.1rem; font-weight: 700; }
-        .refresh-btn { background-color: var(--card-bg); color: var(--accent); border: 1px solid var(--border); padding: 0.5rem 1rem; border-radius: 8px; cursor: pointer; font-weight: 600; }
-
-        .section-title { font-size: 0.85rem; color: var(--accent); margin: 1.5rem 0 0.8rem 0; text-transform: uppercase; letter-spacing: 0.5px; }
-        .grid-stations { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1rem; }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; }
+        body { background-color: var(--bg-base); color: var(--text-main); padding: 1.5rem; max-width: 1200px; margin: 0 auto; line-height: 1.5; }
         
-        .station-card { background-color: var(--card-bg); border-radius: 10px; border: 1px solid var(--border); padding: 1rem; position: relative; }
-        .status-tag { font-size: 0.65rem; padding: 0.2rem 0.5rem; border-radius: 4px; font-weight: bold; text-transform: uppercase; }
-        .tag-real { background: rgba(34, 197, 94, 0.2); color: var(--normal); border: 1px solid var(--normal); }
-        .tag-offline { background: rgba(245, 158, 11, 0.2); color: var(--warning); border: 1px solid var(--warning); }
+        header { display: flex; justify-content: space-between; align-items: center; padding-bottom: 1.5rem; border-bottom: 1px solid var(--border); margin-bottom: 2rem; }
+        h1 { font-size: 1.3rem; font-weight: 700; letter-spacing: 0.5px; }
+        
+        .btn { background: var(--bg-card); color: var(--accent); border: 1px solid var(--accent); padding: 0.6rem 1.2rem; border-radius: 8px; font-weight: 600; cursor: pointer; transition: all 0.2s; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); }
+        .btn:hover { background: var(--accent); color: var(--bg-base); }
 
-        .station-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.8rem; }
-        .station-name { font-size: 1rem; font-weight: 600; }
-        .station-course { font-size: 0.75rem; color: var(--text-sub); margin-top: 0.2rem; }
+        .section-title { font-size: 0.9rem; color: var(--text-muted); margin: 2rem 0 1rem 0; text-transform: uppercase; letter-spacing: 1px; font-weight: 600; display: flex; align-items: center; gap: 0.5rem; }
+        .section-title::after { content: ''; flex: 1; height: 1px; background: var(--border); }
 
-        .metrics { display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; margin: 0.8rem 0; background: rgba(15, 23, 42, 0.5); padding: 0.6rem; border-radius: 6px; }
-        .metric-val { font-size: 1.15rem; font-weight: bold; }
-        .metric-lbl { font-size: 0.7rem; color: var(--text-sub); }
-        .footer-card { font-size: 0.7rem; color: var(--text-sub); display: flex; justify-content: space-between; margin-top: 0.5rem; }
+        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.25rem; }
+        
+        /* Design des cartes */
+        .card { background: var(--bg-card); border-radius: 12px; border: 1px solid var(--border); padding: 1.25rem; transition: transform 0.2s, box-shadow 0.2s, background 0.2s; position: relative; overflow: hidden; }
+        .card.clickable { cursor: pointer; }
+        .card.clickable:hover { transform: translateY(-3px); box-shadow: 0 10px 15px -3px rgba(0,0,0,0.3); border-color: var(--accent); background: var(--bg-card-hover); }
+        .card.disabled { opacity: 0.6; }
+
+        .card-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1rem; }
+        .station-name { font-size: 1.1rem; font-weight: 600; }
+        .station-river { font-size: 0.8rem; color: var(--text-muted); margin-top: 0.2rem; }
+        
+        .badge { font-size: 0.65rem; padding: 0.3rem 0.6rem; border-radius: 6px; font-weight: bold; letter-spacing: 0.5px; text-transform: uppercase; }
+        .badge-live { background: rgba(16, 185, 129, 0.15); color: var(--success); border: 1px solid rgba(16, 185, 129, 0.3); }
+        .badge-private { background: rgba(245, 158, 11, 0.15); color: var(--warning); border: 1px solid rgba(245, 158, 11, 0.3); }
+
+        .metrics-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; background: rgba(0,0,0,0.2); padding: 0.75rem; border-radius: 8px; margin-bottom: 1rem; }
+        .metric-value { font-size: 1.25rem; font-weight: bold; color: var(--accent); }
+        .metric-label { font-size: 0.7rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; }
+
+        .card-footer { font-size: 0.75rem; color: var(--text-muted); display: flex; justify-content: space-between; align-items: center; }
+
+        /* Fenêtre Modale (Graphique) */
+        .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.8); z-index: 1000; justify-content: center; align-items: center; backdrop-filter: blur(4px); }
+        .modal-overlay.active { display: flex; }
+        .modal-content { background: var(--bg-card); border: 1px solid var(--border); border-radius: 12px; padding: 1.5rem; width: 95%; max-width: 800px; position: relative; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5); }
+        .modal-close { position: absolute; top: 1rem; right: 1rem; background: none; border: none; color: var(--text-muted); font-size: 1.5rem; cursor: pointer; transition: color 0.2s; }
+        .modal-close:hover { color: white; }
+        .modal-title { font-size: 1.2rem; margin-bottom: 0.5rem; }
+        .chart-container { position: relative; height: 40vh; width: 100%; margin-top: 1rem; }
+        #chartLoader { text-align: center; color: var(--text-muted); padding: 2rem; font-style: italic; }
+
     </style>
 </head>
 <body>
 
     <header>
-        <h1>💧 Canaux & Écluses - Douaisis</h1>
-        <button class="refresh-btn" onclick="fetchStationData()">🔄 Actualiser</button>
+        <h1>📊 Supervision VNF - Douaisis</h1>
+        <button class="btn" onclick="fetchLiveData()">Actualiser</button>
     </header>
 
-    <div class="section-title">📡 4 Stations Ouvertes en Temps Réel</div>
-    <div class="grid-stations" id="real-container">
-        <p style="color: var(--text-sub); font-size: 0.85rem;">Connexion à l'API Hub'Eau...</p>
+    <div class="section-title">📡 Réseau Open Data (Temps Réel)</div>
+    <div class="grid" id="real-container">
+        <!-- Rempli par le JS -->
     </div>
 
-    <div class="section-title">🔒 Ouvrages VNF (Réseau Téléconduite Privé)</div>
-    <div class="grid-stations" id="private-container"></div>
+    <div class="section-title">🔒 Réseau Téléconduite (Flux Interne VNF)</div>
+    <div class="grid" id="private-container">
+        <!-- Rempli par le JS -->
+    </div>
+
+    <!-- Modale pour le graphique -->
+    <div class="modal-overlay" id="chartModal" onclick="closeModal(event)">
+        <div class="modal-content" onclick="event.stopPropagation()">
+            <button class="modal-close" onclick="closeModal(event)">×</button>
+            <h2 class="modal-title" id="modalTitle">Historique Station</h2>
+            <p style="color: var(--text-muted); font-size: 0.85rem;">Fluctuations sur les 12 dernières heures</p>
+            <div id="chartLoader">Chargement des données...</div>
+            <div class="chart-container">
+                <canvas id="stationChart"></canvas>
+            </div>
+        </div>
+    </div>
 
     <script>
-        // Les 4 seuls sites ayant une sonde Open Data accessible
         const REAL_STATIONS = [
-            { id: "E201501001", name: "Vitry-en-Artois", river: "Scarpe Supérieure (Aval)", nnn: 2.20, defaultHeight: 1.15 },
-            { id: "E225601001", name: "Douai [Tour de Ville]", river: "Scarpe Canalisée", nnn: 2.20, defaultHeight: 1.28 },
-            { id: "E152311001", name: "Arleux", river: "Canal de la Sensée / Grand Gabarit", nnn: 3.00, defaultHeight: 1.42 },
-            { id: "E301101001", name: "Auby", river: "Canal de la Deûle", nnn: 2.50, defaultHeight: 1.30 }
+            { id: "E201501001", name: "Vitry-en-Artois", river: "Scarpe Sup.", nnn: 2.20 },
+            { id: "E225601001", name: "Douai [Tour de Ville]", river: "Scarpe Canal.", nnn: 2.20 },
+            { id: "E152311001", name: "Arleux", river: "Canal de la Sensée", nnn: 3.00 },
+            { id: "E301101001", name: "Auby", river: "Canal de la Deûle", nnn: 2.50 }
         ];
 
         const PRIVATE_STATIONS = [
@@ -70,91 +110,185 @@
             { name: "Écluse de Biache-St-Vaast", river: "Scarpe Supérieure" },
             { name: "Écluse de Brebières", river: "Scarpe Supérieure" },
             { name: "Écluse de Corbehem", river: "Scarpe Supérieure" },
-            { name: "Écluse de Courchelettes", river: "Grand Gabarit (Liaison)" },
-            { name: "Écluse de Gœulzin", river: "Canal de la Sensée" }
+            { name: "Écluse de Courchelettes", river: "Liaison Gd Gabarit" },
+            { name: "Écluse de Gœulzin", river: "Liaison Gd Gabarit" }
         ];
 
-        async function fetchStationData() {
-            const realContainer = document.getElementById('real-container');
-            const privateContainer = document.getElementById('private-container');
+        let currentChart = null;
+
+        async function fetchLiveData() {
+            const container = document.getElementById('real-container');
+            container.innerHTML = '<p style="color: var(--text-muted); padding: 1rem;">Connexion aux sondes...</p>';
+            let html = '';
             
-            let realHtml = '';
-            const now = new Date();
-            const timeString = now.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });
-
             for (const st of REAL_STATIONS) {
-                let currentScale = st.defaultHeight;
-
+                let height = 0;
+                let isLive = false;
                 try {
                     const res = await fetch(`https://hubeau.eaufrance.fr/api/v1/hydrometrie/observations_tr?code_entite=${st.id}&size=1`);
                     if (res.ok) {
                         const data = await res.json();
-                        if (data.data && data.data.length > 0) {
-                            currentScale = (data.data[0].resultat_obs / 1000);
+                        if (data.data.length > 0) {
+                            height = (data.data[0].resultat_obs / 1000);
+                            isLive = true;
                         }
                     }
-                } catch (e) {
-                    currentScale = st.defaultHeight;
-                }
+                } catch (e) { console.error(e); }
 
-                const diff = (currentScale - st.nnn).toFixed(2);
-                const diffSign = diff >= 0 ? `+${diff}` : `${diff}`;
+                const diff = (height - st.nnn).toFixed(2);
+                const colorClass = Math.abs(diff) <= 0.05 ? "var(--success)" : (diff > 0 ? "var(--accent)" : "var(--warning)");
 
-                realHtml += `
-                    <div class="station-card">
-                        <div class="station-header">
+                html += `
+                    <div class="card clickable" onclick="openChart('${st.id}', '${st.name}', ${st.nnn})">
+                        <div class="card-header">
                             <div>
                                 <div class="station-name">${st.name}</div>
-                                <div class="station-course">${st.river}</div>
+                                <div class="station-river">${st.river}</div>
                             </div>
-                            <span class="status-tag tag-real">🔴 EN DIRECT</span>
+                            <span class="badge badge-live">● EN DIRECT</span>
                         </div>
-                        <div class="metrics">
+                        <div class="metrics-grid">
                             <div>
-                                <div class="metric-lbl">Hauteur Relevée</div>
-                                <div class="metric-val" style="color: var(--accent);">${currentScale.toFixed(2)} m</div>
+                                <div class="metric-label">Niveau Actuel</div>
+                                <div class="metric-value">${isLive ? height.toFixed(2) : '--'} m</div>
                             </div>
                             <div>
-                                <div class="metric-lbl">Écart NNN</div>
-                                <div class="metric-val" style="color: var(--normal);">${diffSign} m</div>
+                                <div class="metric-label">Écart NNN (${st.nnn}m)</div>
+                                <div class="metric-value" style="color: ${colorClass}">${diff > 0 ? '+'+diff : diff} m</div>
                             </div>
                         </div>
-                        <div class="footer-card">
-                            <span>Relevé : ${timeString}</span>
-                            <span>Source: Hub'Eau</span>
+                        <div class="card-footer">
+                            <span>Cliquez pour voir l'historique 📈</span>
                         </div>
                     </div>
                 `;
             }
-            realContainer.innerHTML = realHtml;
+            container.innerHTML = html;
 
             // Rendu des stations privées
-            let privateHtml = '';
+            const privContainer = document.getElementById('private-container');
+            let privHtml = '';
             for (const st of PRIVATE_STATIONS) {
-                privateHtml += `
-                    <div class="station-card" style="opacity: 0.65;">
-                        <div class="station-header">
+                privHtml += `
+                    <div class="card disabled">
+                        <div class="card-header">
                             <div>
                                 <div class="station-name">${st.name}</div>
-                                <div class="station-course">${st.river}</div>
+                                <div class="station-river">${st.river}</div>
                             </div>
-                            <span class="status-tag tag-offline">FLUX PRIVÉ VNF</span>
+                            <span class="badge badge-private">🔒 FLUX VNF</span>
                         </div>
-                        <div class="metrics">
-                            <div style="grid-column: span 2; text-align: center; color: var(--text-sub); font-size: 0.75rem;">
-                                Télémesure réservée au réseau Superv'IA
+                        <div class="metrics-grid" style="opacity: 0.5;">
+                            <div style="grid-column: 1 / -1; text-align: center; font-size: 0.8rem; padding: 0.5rem 0;">
+                                En attente d'interconnexion réseau interne
                             </div>
-                        </div>
-                        <div class="footer-card">
-                            <span>Non diffusé en API Open Data</span>
                         </div>
                     </div>
                 `;
             }
-            privateContainer.innerHTML = privateHtml;
+            privContainer.innerHTML = privHtml;
         }
 
-        fetchStationData();
+        // --- GESTION DU GRAPHIQUE ---
+
+        async function openChart(stationId, stationName, nnnCible) {
+            const modal = document.getElementById('chartModal');
+            document.getElementById('modalTitle').innerText = `Évolution : ${stationName}`;
+            document.getElementById('chartLoader').style.display = 'block';
+            document.getElementById('stationChart').style.display = 'none';
+            modal.classList.add('active');
+
+            if (currentChart) {
+                currentChart.destroy();
+            }
+
+            try {
+                // On demande les 72 derniers relevés (approx 12h si 1 point toutes les 10 min)
+                const res = await fetch(`https://hubeau.eaufrance.fr/api/v1/hydrometrie/observations_tr?code_entite=${stationId}&size=72`);
+                const data = await res.json();
+                
+                if (data.data && data.data.length > 0) {
+                    // Les données arrivent de la plus récente à la plus ancienne, on inverse pour le graphique
+                    const chronologique = data.data.reverse();
+                    
+                    const labels = chronologique.map(d => {
+                        const date = new Date(d.date_obs);
+                        return date.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });
+                    });
+                    
+                    const dataset = chronologique.map(d => (d.resultat_obs / 1000).toFixed(2));
+                    
+                    // Ligne de référence NNN (tableau rempli avec la même valeur)
+                    const nnnLine = Array(dataset.length).fill(nnnCible);
+
+                    document.getElementById('chartLoader').style.display = 'none';
+                    document.getElementById('stationChart').style.display = 'block';
+
+                    const ctx = document.getElementById('stationChart').getContext('2d');
+                    currentChart = new Chart(ctx, {
+                        type: 'line',
+                        data: {
+                            labels: labels,
+                            datasets: [
+                                {
+                                    label: 'Niveau d\'eau (m)',
+                                    data: dataset,
+                                    borderColor: '#38bdf8',
+                                    backgroundColor: 'rgba(56, 189, 248, 0.1)',
+                                    borderWidth: 2,
+                                    pointRadius: 0,
+                                    pointHoverRadius: 5,
+                                    fill: true,
+                                    tension: 0.3
+                                },
+                                {
+                                    label: 'NNN Cible',
+                                    data: nnnLine,
+                                    borderColor: '#10b981',
+                                    borderWidth: 1,
+                                    borderDash: [5, 5],
+                                    pointRadius: 0,
+                                    fill: false
+                                }
+                            ]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            interaction: { mode: 'index', intersect: false },
+                            plugins: {
+                                legend: { labels: { color: '#f8fafc' } }
+                            },
+                            scales: {
+                                y: {
+                                    ticks: { color: '#94a3b8' },
+                                    grid: { color: '#334155' },
+                                    // Ajuste l'échelle Y pour ne pas écraser la courbe
+                                    suggestedMin: nnnCible - 0.2,
+                                    suggestedMax: nnnCible + 0.2
+                                },
+                                x: {
+                                    ticks: { color: '#94a3b8', maxTicksLimit: 8 },
+                                    grid: { display: false }
+                                }
+                            }
+                        }
+                    });
+                }
+            } catch (err) {
+                document.getElementById('chartLoader').innerText = "Erreur de chargement des données.";
+            }
+        }
+
+        function closeModal(event) {
+            // Ferme seulement si on clique sur la croix ou à l'extérieur de la boite
+            if (event.target === document.getElementById('chartModal') || event.target.className === 'modal-close') {
+                document.getElementById('chartModal').classList.remove('active');
+            }
+        }
+
+        // Lancement au démarrage
+        fetchLiveData();
     </script>
 </body>
 </html>
