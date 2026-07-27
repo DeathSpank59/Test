@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Suivi des Canaux - Douaisis & Scarpe</title>
+    <title>Suivi des Canaux - Douaisis</title>
     <style>
         :root {
             --bg-color: #0f172a;
@@ -12,253 +12,148 @@
             --text-sub: #94a3b8;
             --accent: #38bdf8;
             --normal: #22c55e;
+            --warning: #f59e0b;
             --border: #334155;
         }
 
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-        }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: system-ui, sans-serif; }
+        body { background-color: var(--bg-color); color: var(--text-main); padding: 1.25rem; max-width: 1200px; margin: 0 auto; }
+        header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; padding-bottom: 1rem; border-bottom: 1px solid var(--border); }
+        h1 { font-size: 1.2rem; font-weight: 700; }
+        .refresh-btn { background-color: var(--card-bg); color: var(--accent); border: 1px solid var(--border); padding: 0.5rem 1rem; border-radius: 8px; cursor: pointer; font-weight: 600; }
 
-        body {
-            background-color: var(--bg-color);
-            color: var(--text-main);
-            padding: 1.25rem;
-            max-width: 1200px;
-            margin: 0 auto;
-        }
+        .section-title { font-size: 0.9rem; color: var(--accent); margin: 1.5rem 0 0.8rem 0; text-transform: uppercase; letter-spacing: 0.5px; }
+        .grid-stations { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1rem; }
+        
+        .station-card { background-color: var(--card-bg); border-radius: 10px; border: 1px solid var(--border); padding: 1rem; position: relative; }
+        .status-tag { font-size: 0.65rem; padding: 0.2rem 0.5rem; border-radius: 4px; font-weight: bold; text-transform: uppercase; }
+        .tag-real { background: rgba(34, 197, 94, 0.2); color: var(--normal); border: 1px solid var(--normal); }
+        .tag-offline { background: rgba(245, 158, 11, 0.2); color: var(--warning); border: 1px solid var(--warning); }
 
-        header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 1.5rem;
-            padding-bottom: 1rem;
-            border-bottom: 1px solid var(--border);
-        }
+        .station-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.8rem; }
+        .station-name { font-size: 1rem; font-weight: 600; }
+        .station-course { font-size: 0.75rem; color: var(--text-sub); }
 
-        h1 {
-            font-size: 1.2rem;
-            font-weight: 700;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-
-        .refresh-btn {
-            background-color: var(--card-bg);
-            color: var(--accent);
-            border: 1px solid var(--border);
-            padding: 0.5rem 1rem;
-            border-radius: 8px;
-            cursor: pointer;
-            font-weight: 600;
-        }
-
-        .section-title {
-            font-size: 1rem;
-            color: var(--accent);
-            margin: 1.5rem 0 1rem 0;
-            padding-bottom: 0.4rem;
-            border-bottom: 1px dashed var(--border);
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        .grid-stations {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 1rem;
-        }
-
-        .station-card {
-            background-color: var(--card-bg);
-            border-radius: 10px;
-            border: 1px solid var(--border);
-            padding: 1rem;
-            position: relative;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-        }
-
-        .status-bar {
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 3px;
-            background-color: var(--normal);
-        }
-
-        .station-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-            margin-bottom: 0.8rem;
-        }
-
-        .station-name {
-            font-size: 1rem;
-            font-weight: 600;
-        }
-
-        .station-course {
-            font-size: 0.75rem;
-            color: var(--text-sub);
-            margin-top: 0.1rem;
-        }
-
-        .nnn-box {
-            font-size: 0.8rem;
-            padding: 0.25rem 0.5rem;
-            border-radius: 6px;
-            font-weight: 600;
-            background: rgba(34, 197, 94, 0.12);
-            color: var(--normal);
-            border: 1px solid rgba(34, 197, 94, 0.3);
-            text-align: right;
-        }
-
-        .nnn-label {
-            display: block;
-            font-size: 0.6rem;
-            color: var(--text-sub);
-            text-transform: uppercase;
-        }
-
-        .metrics {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 0.5rem;
-            margin: 0.8rem 0;
-            background: rgba(15, 23, 42, 0.5);
-            padding: 0.6rem;
-            border-radius: 6px;
-        }
-
-        .metric-val {
-            font-size: 1.15rem;
-            font-weight: bold;
-            color: var(--text-main);
-        }
-
-        .metric-lbl {
-            font-size: 0.7rem;
-            color: var(--text-sub);
-        }
-
-        .footer-card {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            font-size: 0.7rem;
-            color: var(--text-sub);
-        }
+        .metrics { display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; margin: 0.8rem 0; background: rgba(15, 23, 42, 0.5); padding: 0.6rem; border-radius: 6px; }
+        .metric-val { font-size: 1.15rem; font-weight: bold; }
+        .metric-lbl { font-size: 0.7rem; color: var(--text-sub); }
+        .footer-card { font-size: 0.7rem; color: var(--text-sub); display: flex; justify-content: space-between; }
     </style>
 </head>
 <body>
 
     <header>
-        <h1>💧 Suivi des Écluses & Biefs</h1>
+        <h1>💧 Suivi Temps Réel - Canaux Douaisis</h1>
         <button class="refresh-btn" onclick="fetchStationData()">🔄 Actualiser</button>
     </header>
 
-    <div class="section-title">📍 Scarpe Supérieure</div>
-    <div class="grid-stations" id="scarpe-container"></div>
+    <div class="section-title">📡 Stations de mesure en Direct (API Open Data)</div>
+    <div class="grid-stations" id="real-container"></div>
 
-    <div class="section-title">📍 Grand Gabarit & Douaisis</div>
-    <div class="grid-stations" id="gabarit-container"></div>
+    <div class="section-title">🔒 Ouvrages VNF (Flux Télégestion Réseau Privé)</div>
+    <div class="grid-stations" id="private-container"></div>
 
     <script>
-        // Liste des ouvrages avec leur NNN cible à l'échelle (en mètres)
-        const SCARPE_STATIONS = [
-            { id: "E201501001", name: "Écluse d'Athies", river: "Scarpe Supérieure", nnnTarget: 2.20, defaultVal: 2.20 },
-            { id: "E201501002", name: "Écluse de Fampoux", river: "Scarpe Supérieure", nnnTarget: 2.20, defaultVal: 2.18 },
-            { id: "E201501003", name: "Écluse de Biache-St-Vaast", river: "Scarpe Supérieure", nnnTarget: 2.20, defaultVal: 2.21 },
-            { id: "E201501004", name: "Écluse de Brebières", river: "Scarpe Supérieure", nnnTarget: 2.20, defaultVal: 2.19 },
-            { id: "E201501001", name: "Écluse de Corbehem", river: "Scarpe Supérieure", nnnTarget: 2.20, defaultVal: 2.20 }
+        // Stations réellement ouvertes sur l'API Hub'Eau
+        const REAL_STATIONS = [
+            { id: "E201501001", name: "Vitry-en-Artois", river: "Scarpe Supérieure (Aval)", nnn: 2.20 },
+            { id: "E225601001", name: "Douai [Tour de Ville]", river: "Scarpe Canalisée", nnn: 2.20 },
+            { id: "E152311001", name: "Arleux", river: "Canal de la Sensée", nnn: 3.00 },
+            { id: "E301101001", name: "Auby", river: "Canal de la Deûle", nnn: 2.50 }
         ];
 
-        const GABARIT_STATIONS = [
-            { id: "E201501000", name: "Écluse de Courchelettes", river: "Grand Gabarit (Liaison)", nnnTarget: 3.50, defaultVal: 3.50 },
-            { id: "E152311001", name: "Écluse de Gœulzin", river: "Canal de la Sensée", nnnTarget: 3.00, defaultVal: 3.02 },
-            { id: "E225601001", name: "Douai [Tour de Ville]", river: "Scarpe Canalisée", nnnTarget: 2.20, defaultVal: 2.22 }
+        // Écluses avec télégestion privée non diffusée sur l'API publique
+        const PRIVATE_STATIONS = [
+            { name: "Écluse d'Athies", river: "Scarpe Supérieure" },
+            { name: "Écluse de Fampoux", river: "Scarpe Supérieure" },
+            { name: "Écluse de Biache-St-Vaast", river: "Scarpe Supérieure" },
+            { name: "Écluse de Brebières", river: "Scarpe Supérieure" },
+            { name: "Écluse de Corbehem", river: "Scarpe Supérieure" },
+            { name: "Écluse de Courchelettes", river: "Grand Gabarit" },
+            { name: "Écluse de Gœulzin", river: "Canal de la Sensée" }
         ];
 
-        async function renderGroup(stations, containerId) {
-            const container = document.getElementById(containerId);
-            let html = '';
+        async function fetchStationData() {
+            const realContainer = document.getElementById('real-container');
+            const privateContainer = document.getElementById('private-container');
+            
+            let realHtml = '';
             const now = new Date();
             const timeString = now.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });
 
-            for (const st of stations) {
-                let currentScale = st.defaultVal;
+            // 1. Chargement des vraies stations
+            for (const st of REAL_STATIONS) {
+                let currentScale = 0;
+                let isLive = false;
 
                 try {
-                    const controller = new AbortController();
-                    const timeoutId = setTimeout(() => controller.abort(), 1200);
-
-                    const response = await fetch(`https://hubeau.eaufrance.fr/api/v1/hydrometrie/observations_tr?code_entite=${st.id}&size=1`, {
-                        signal: controller.signal
-                    });
-                    clearTimeout(timeoutId);
-
-                    if (response.ok) {
-                        const data = await response.json();
+                    const res = await fetch(`https://hubeau.eaufrance.fr/api/v1/hydrometrie/observations_tr?code_entite=${st.id}&size=1`);
+                    if (res.ok) {
+                        const data = await res.json();
                         if (data.data && data.data.length > 0) {
                             currentScale = (data.data[0].resultat_obs / 1000);
+                            isLive = true;
                         }
                     }
-                } catch (e) {
-                    currentScale = st.defaultVal;
-                }
+                } catch (e) { isLive = false; }
 
-                const diff = (currentScale - st.nnnTarget).toFixed(2);
-                const diffSign = diff >= 0 ? `+${diff}` : `${diff}`;
-                const diffColor = Math.abs(diff) <= 0.05 ? "var(--normal)" : (diff > 0 ? "var(--accent)" : "#ef4444");
+                if (isLive) {
+                    const diff = (currentScale - st.nnn).toFixed(2);
+                    const diffSign = diff >= 0 ? `+${diff}` : `${diff}`;
 
-                html += `
-                    <div class="station-card">
-                        <div class="status-bar"></div>
-                        <div>
+                    realHtml += `
+                        <div class="station-card">
                             <div class="station-header">
                                 <div>
                                     <div class="station-name">${st.name}</div>
                                     <div class="station-course">${st.river}</div>
                                 </div>
-                                <div class="nnn-box">
-                                    <span class="nnn-label">NNN Cible</span>
-                                    ${st.nnnTarget.toFixed(2)} m
-                                </div>
+                                <span class="status-tag tag-real">🔴 EN DIRECT</span>
                             </div>
                             <div class="metrics">
                                 <div>
-                                    <div class="metric-lbl">Niveau Échelle</div>
+                                    <div class="metric-lbl">Hauteur Relevée</div>
                                     <div class="metric-val" style="color: var(--accent);">${currentScale.toFixed(2)} m</div>
                                 </div>
                                 <div>
-                                    <div class="metric-lbl">Écart au NNN</div>
-                                    <div class="metric-val" style="color: ${diffColor};">${diffSign} m</div>
+                                    <div class="metric-lbl">Écart NNN</div>
+                                    <div class="metric-val" style="color: var(--normal);">${diffSign} m</div>
                                 </div>
+                            </div>
+                            <div class="footer-card">
+                                <span>Dernier relevé : ${timeString}</span>
+                                <span>Source: Hub'Eau</span>
+                            </div>
+                        </div>
+                    `;
+                }
+            }
+            realContainer.innerHTML = realHtml;
+
+            // 2. Affichage des ouvrages fermés à l'Open Data
+            let privateHtml = '';
+            for (const st of PRIVATE_STATIONS) {
+                privateHtml += `
+                    <div class="station-card" style="opacity: 0.7;">
+                        <div class="station-header">
+                            <div>
+                                <div class="station-name">${st.name}</div>
+                                <div class="station-course">${st.river}</div>
+                            </div>
+                            <span class="status-tag tag-offline">FLUX PRIVÉ VNF</span>
+                        </div>
+                        <div class="metrics">
+                            <div style="grid-column: span 2; text-align: center; color: var(--text-sub); font-size: 0.8rem;">
+                                Données réservées au réseau Superv'IA / Téléconduite VNF
                             </div>
                         </div>
                         <div class="footer-card">
-                            <span>Relevé : ${timeString}</span>
-                            <span>Ref. Échelle Amont</span>
+                            <span>Non disponible en API publique</span>
                         </div>
                     </div>
                 `;
             }
-
-            container.innerHTML = html;
-        }
-
-        function fetchStationData() {
-            renderGroup(SCARPE_STATIONS, 'scarpe-container');
-            renderGroup(GABARIT_STATIONS, 'gabarit-container');
+            privateContainer.innerHTML = privateHtml;
         }
 
         fetchStationData();
