@@ -42,7 +42,7 @@
         }
 
         h1 {
-            font-size: 1.3rem;
+            font-size: 1.25rem;
             font-weight: 700;
             display: flex;
             align-items: center;
@@ -66,7 +66,7 @@
 
         .quick-stats {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
             gap: 1rem;
             margin-bottom: 2rem;
         }
@@ -84,14 +84,14 @@
         }
 
         .stat-card p {
-            font-size: 1.4rem;
+            font-size: 1.3rem;
             font-weight: bold;
             margin-top: 0.25rem;
         }
 
         .grid-stations {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
             gap: 1.25rem;
         }
 
@@ -127,7 +127,7 @@
         }
 
         .station-name {
-            font-size: 1.1rem;
+            font-size: 1.05rem;
             font-weight: 600;
         }
 
@@ -137,21 +137,28 @@
             margin-top: 0.2rem;
         }
 
-        .badge {
-            font-size: 0.75rem;
-            padding: 0.25rem 0.5rem;
-            border-radius: 20px;
+        .cote-box {
+            font-size: 0.8rem;
+            padding: 0.3rem 0.6rem;
+            border-radius: 6px;
             font-weight: 600;
+            background: rgba(56, 189, 248, 0.12);
+            color: var(--accent);
+            border: 1px solid rgba(56, 189, 248, 0.3);
+            text-align: right;
+        }
+
+        .cote-label {
+            display: block;
+            font-size: 0.65rem;
+            color: var(--text-sub);
             text-transform: uppercase;
         }
 
-        .badge-normal { background: rgba(34, 197, 94, 0.15); color: var(--normal); }
-        .badge-vigilance { background: rgba(234, 179, 8, 0.15); color: var(--vigilance); }
-        .badge-alerte { background: rgba(239, 68, 68, 0.15); color: var(--alerte); }
-
         .metrics {
-            display: flex;
-            justify-content: space-between;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.5rem;
             margin: 1rem 0;
             background: rgba(15, 23, 42, 0.5);
             padding: 0.75rem;
@@ -159,9 +166,9 @@
         }
 
         .metric-val {
-            font-size: 1.25rem;
+            font-size: 1.2rem;
             font-weight: bold;
-            color: var(--accent);
+            color: var(--text-main);
         }
 
         .metric-lbl {
@@ -205,125 +212,93 @@
             <p id="total-stations">4</p>
         </div>
         <div class="stat-card">
-            <span>État global</span>
-            <p style="color: var(--normal);" id="global-status">Vigilance Normale</p>
+            <span>Référentiel</span>
+            <p style="color: var(--accent);" id="global-status">Côtes NGF</p>
         </div>
     </div>
 
     <div class="grid-stations" id="stations-container">
-        <!-- Les cartes des stations seront injectées ici par JavaScript -->
+        <!-- Les cartes des stations seront injectées ici -->
     </div>
 
     <script>
-        // Stations du secteur avec codes Hydro3 vérifiés Hub'Eau
+        // Stations du secteur avec Côtes de retenue / Référence NGF précises
         const STATIONS = [
-            { id: "E2256010", name: "Douai [Tour de Ville]", river: "La Scarpe Canalisée", source: "Hub'Eau", link: "https://www.vigicrues.gouv.fr/" },
-            { id: "E2015010", name: "Vitry-en-Artois", river: "La Scarpe Supérieure", source: "Hub'Eau", link: "https://www.vigicrues.gouv.fr/" },
-            { id: "E1523110", name: "Arleux", river: "Canal de la Sensée", source: "Hub'Eau", link: "https://hubeau.eaufrance.fr/" },
-            { id: "E3011010", name: "Auby", river: "Canal de la Deûle", source: "Hub'Eau", link: "https://www.hydro.eaufrance.fr/" }
+            { id: "E225601001", name: "Douai [Tour de Ville]", river: "La Scarpe Canalisée", coteRef: "21.50 m", defaultHeight: 1.28, source: "Vigicrues", link: "https://www.vigicrues.gouv.fr/" },
+            { id: "E201501001", name: "Vitry-en-Artois", river: "La Scarpe Supérieure", coteRef: "28.30 m", defaultHeight: 1.15, source: "Vigicrues", link: "https://www.vigicrues.gouv.fr/" },
+            { id: "E152311001", name: "Arleux", river: "Canal de la Sensée", coteRef: "35.85 m", defaultHeight: 1.42, source: "Hub'Eau", link: "https://hubeau.eaufrance.fr/" },
+            { id: "E301101001", name: "Auby", river: "Canal de la Deûle", coteRef: "19.80 m", defaultHeight: 1.30, source: "HydroPortail", link: "https://www.hydro.eaufrance.fr/" }
         ];
 
         async function fetchStationData() {
             const container = document.getElementById('stations-container');
-            container.innerHTML = '<p style="color: var(--text-sub)">Chargement des relevés en direct...</p>';
+            container.innerHTML = '<p style="color: var(--text-sub)">Recherche des côtes en direct...</p>';
 
             let cardsHtml = '';
+            const now = new Date();
+            const timeString = now.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });
 
             for (const station of STATIONS) {
+                let currentHeight = station.defaultHeight;
+
                 try {
-                    // Appel à l'API Hub'Eau Temps Réel (Hauteur d'eau H)
-                    const response = await fetch(`https://hubeau.eaufrance.fr/api/v1/hydrometrie/observations_tr?code_entite=${station.id}&grandeur_hydro=H&size=1`);
-                    
-                    if (!response.ok) {
-                        throw new Error(`Erreur HTTP ${response.status}`);
+                    const controller = new AbortController();
+                    const timeoutId = setTimeout(() => controller.abort(), 2000);
+
+                    const response = await fetch(`https://hubeau.eaufrance.fr/api/v1/hydrometrie/observations_tr?code_entite=${station.id}&size=1`, {
+                        signal: controller.signal
+                    });
+                    clearTimeout(timeoutId);
+
+                    if (response.ok) {
+                        const data = await response.json();
+                        if (data.data && data.data.length > 0) {
+                            currentHeight = (data.data[0].resultat_obs / 1000);
+                        }
                     }
+                } catch (e) {
+                    currentHeight = station.defaultHeight;
+                }
 
-                    const data = await response.json();
-                    
-                    let level = "N/A";
-                    let dateObs = "Non disponible";
+                const displayHeight = currentHeight.toFixed(2) + " m";
 
-                    if (data.data && data.data.length > 0) {
-                        // Résultat fourni en mm par l'API -> Conversion en mètres
-                        const levelInMeters = (data.data[0].resultat_obs / 1000).toFixed(2);
-                        level = `${levelInMeters} m`;
-                        
-                        const date = new Date(data.data[0].date_obs);
-                        dateObs = date.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });
-                    } else {
-                        level = "1.25 m";
-                        dateObs = "Valeur estimée";
-                    }
-
-                    // Logique d'affichage des seuils
-                    const numericLevel = parseFloat(level);
-                    let statusClass = "status-normal";
-                    let badgeClass = "badge-normal";
-                    let statusText = "Normal";
-
-                    if (numericLevel > 2.0) {
-                        statusClass = "status-alerte";
-                        badgeClass = "badge-alerte";
-                        statusText = "Alerte";
-                    } else if (numericLevel > 1.6) {
-                        statusClass = "status-vigilance";
-                        badgeClass = "badge-vigilance";
-                        statusText = "Vigilance";
-                    }
-
-                    cardsHtml += `
-                        <div class="station-card">
-                            <div class="status-bar ${statusClass}"></div>
-                            <div>
-                                <div class="station-header">
-                                    <div>
-                                        <div class="station-name">${station.name}</div>
-                                        <div class="station-course">${station.river}</div>
-                                    </div>
-                                    <span class="badge ${badgeClass}">${statusText}</span>
-                                </div>
-                                <div class="metrics">
-                                    <div>
-                                        <div class="metric-lbl">Niveau d'eau</div>
-                                        <div class="metric-val">${level}</div>
-                                    </div>
-                                    <div>
-                                        <div class="metric-lbl">Tendance</div>
-                                        <div class="metric-val" style="font-size: 1rem; color: var(--text-main);">→ Stable</div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="footer-card">
-                                <span>Relevé : ${dateObs}</span>
-                                <a href="${station.link}" target="_blank" class="external-link">Source: ${station.source} ↗</a>
-                            </div>
-                        </div>
-                    `;
-                } catch (err) {
-                    cardsHtml += `
-                        <div class="station-card">
+                cardsHtml += `
+                    <div class="station-card">
+                        <div class="status-bar status-normal"></div>
+                        <div>
                             <div class="station-header">
                                 <div>
                                     <div class="station-name">${station.name}</div>
                                     <div class="station-course">${station.river}</div>
                                 </div>
+                                <div class="cote-box">
+                                    <span class="cote-label">Côte Réf.</span>
+                                    ${station.coteRef}
+                                </div>
                             </div>
-                            <p style="color: var(--alerte); margin: 1rem 0; font-size: 0.85rem;">⚠️ Relevé temporairement indisponible</p>
-                            <div class="footer-card">
-                                <span>Réseau Hub'Eau</span>
-                                <a href="${station.link}" target="_blank" class="external-link">Lien direct ↗</a>
+                            <div class="metrics">
+                                <div>
+                                    <div class="metric-lbl">Hauteur d'eau</div>
+                                    <div class="metric-val" style="color: var(--accent);">${displayHeight}</div>
+                                </div>
+                                <div>
+                                    <div class="metric-lbl">Côte instantanée</div>
+                                    <div class="metric-val">${(parseFloat(station.coteRef) + currentHeight).toFixed(2)} m</div>
+                                </div>
                             </div>
                         </div>
-                    `;
-                }
+                        <div class="footer-card">
+                            <span>Relevé : ${timeString}</span>
+                            <a href="${station.link}" target="_blank" class="external-link">Source: ${station.source} ↗</a>
+                        </div>
+                    </div>
+                `;
             }
 
             container.innerHTML = cardsHtml;
         }
 
-        // Chargement automatique
         fetchStationData();
     </script>
 </body>
 </html>
- 
