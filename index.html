@@ -1,443 +1,371 @@
-import React, { useState, useEffect } from 'react';
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gestionnaire de Fiches Techniques</title>
+  <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+</head>
+<body style="margin: 0; background-color: #f8fafc; font-family: system-ui, sans-serif; color: #333;">
 
-const INGREDIENTS_INITIALS = [
-  { id: 'ing_1', nom: 'Farine T55', unite: 'kg', prixUnitaire: 1.20 },
-  { id: 'ing_2', nom: 'Beurre doux', unite: 'kg', prixUnitaire: 8.50 },
-  { id: 'ing_3', nom: 'Œufs', unite: 'unité', prixUnitaire: 0.25 },
-  { id: 'ing_4', nom: 'Sucre', unite: 'kg', prixUnitaire: 1.50 },
-  { id: 'ing_5', nom: 'Lait demi-écrémé', unite: 'L', prixUnitaire: 1.10 }
-];
+  <div id="root"></div>
 
-const RECETTES_INITIALES = [
-  {
-    id: 'rec_1',
-    nom: 'Pâte Sablée (Base)',
-    portions: 4,
-    composition: [
-      { ingredientId: 'ing_1', quantite: 0.25 },
-      { ingredientId: 'ing_2', quantite: 0.125 },
-      { ingredientId: 'ing_3', quantite: 1 },
-      { ingredientId: 'ing_4', quantite: 0.05 }
-    ]
-  },
-  {
-    id: 'rec_2',
-    nom: 'Pâte à Crêpes',
-    portions: 6,
-    composition: [
-      { ingredientId: 'ing_1', quantite: 0.25 },
-      { ingredientId: 'ing_3', quantite: 3 },
-      { ingredientId: 'ing_5', quantite: 0.5 },
-      { ingredientId: 'ing_2', quantite: 0.05 }
-    ]
-  }
-];
+  <script type="text/babel">
+    const { useState, useEffect } = React;
 
-export default function ApplicationCuisine() {
-  const [activeTab, setActiveTab] = useState('ingredients');
+    const INGREDIENTS_INITIALS = [
+      { id: 'ing_1', nom: 'Farine T55', unite: 'kg', prixUnitaire: 1.20 },
+      { id: 'ing_2', nom: 'Beurre doux', unite: 'kg', prixUnitaire: 8.50 },
+      { id: 'ing_3', nom: 'Œufs', unite: 'unité', prixUnitaire: 0.25 },
+      { id: 'ing_4', nom: 'Sucre', unite: 'kg', prixUnitaire: 1.50 },
+      { id: 'ing_5', nom: 'Lait demi-écrémé', unite: 'L', prixUnitaire: 1.10 }
+    ];
 
-  const [ingredients, setIngredients] = useState(() => {
-    const saved = localStorage.getItem('cuisine_ingredients');
-    return saved ? JSON.parse(saved) : INGREDIENTS_INITIALS;
-  });
+    const RECETTES_INITIALES = [
+      {
+        id: 'rec_1',
+        nom: 'Pâte Sablée (Base)',
+        portions: 4,
+        composition: [
+          { ingredientId: 'ing_1', quantite: 0.25 },
+          { ingredientId: 'ing_2', quantite: 0.125 },
+          { ingredientId: 'ing_3', quantite: 1 },
+          { ingredientId: 'ing_4', quantite: 0.05 }
+        ]
+      }
+    ];
 
-  const [recettes, setRecettes] = useState(() => {
-    const saved = localStorage.getItem('cuisine_recettes');
-    return saved ? JSON.parse(saved) : RECETTES_INITIALES;
-  });
+    function ApplicationCuisine() {
+      const [activeTab, setActiveTab] = useState('ingredients');
 
-  useEffect(() => {
-    localStorage.setItem('cuisine_ingredients', JSON.stringify(ingredients));
-  }, [ingredients]);
+      const [ingredients, setIngredients] = useState(() => {
+        const saved = localStorage.getItem('cuisine_ingredients');
+        return saved ? JSON.parse(saved) : INGREDIENTS_INITIALS;
+      });
 
-  useEffect(() => {
-    localStorage.setItem('cuisine_recettes', JSON.stringify(recettes));
-  }, [recettes]);
+      const [recettes, setRecettes] = useState(() => {
+        const saved = localStorage.getItem('cuisine_recettes');
+        return saved ? JSON.parse(saved) : RECETTES_INITIALES;
+      });
 
-  const [nouvelIngred, setNouvelIngred] = useState({ nom: '', unite: 'kg', prixUnitaire: '' });
+      useEffect(() => {
+        localStorage.setItem('cuisine_ingredients', JSON.stringify(ingredients));
+      }, [ingredients]);
 
-  const [nomRecetteForm, setNomRecetteForm] = useState('');
-  const [portionsForm, setPortionsForm] = useState(4);
-  const [lignesRecetteForm, setLignesRecetteForm] = useState([
-    { ingredientId: ingredients[0]?.id || '', quantite: '' }
-  ]);
+      useEffect(() => {
+        localStorage.setItem('cuisine_recettes', JSON.stringify(recettes));
+      }, [recettes]);
 
-  const handleAddIngredient = (e) => {
-    e.preventDefault();
-    if (!nouvelIngred.nom.trim() || nouvelIngred.prixUnitaire === '') return;
+      const [nouvelIngred, setNouvelIngred] = useState({ nom: '', unite: 'kg', prixUnitaire: '' });
+      const [nomRecetteForm, setNomRecetteForm] = useState('');
+      const [portionsForm, setPortionsForm] = useState(4);
+      const [lignesRecetteForm, setLignesRecetteForm] = useState([
+        { ingredientId: ingredients[0]?.id || '', quantite: '' }
+      ]);
 
-    const item = {
-      id: `ing_${Date.now()}`,
-      nom: nouvelIngred.nom.trim(),
-      unite: nouvelIngred.unite,
-      prixUnitaire: parseFloat(nouvelIngred.prixUnitaire) || 0,
-    };
+      const handleAddIngredient = (e) => {
+        e.preventDefault();
+        if (!nouvelIngred.nom.trim() || nouvelIngred.prixUnitaire === '') return;
 
-    setIngredients([...ingredients, item]);
-    setNouvelIngred({ nom: '', unite: 'kg', prixUnitaire: '' });
-  };
+        const item = {
+          id: `ing_${Date.now()}`,
+          nom: nouvelIngred.nom.trim(),
+          unite: nouvelIngred.unite,
+          prixUnitaire: parseFloat(nouvelIngred.prixUnitaire) || 0,
+        };
 
-  const handleUpdatePrix = (id, nouveauPrix) => {
-    setIngredients(prev =>
-      prev.map(ing => (ing.id === id ? { ...ing, prixUnitaire: parseFloat(nouveauPrix) || 0 } : ing))
-    );
-  };
+        setIngredients([...ingredients, item]);
+        setNouvelIngred({ nom: '', unite: 'kg', prixUnitaire: '' });
+      };
 
-  const handleDeleteIngredient = (id) => {
-    if (window.confirm("Supprimer cet ingrédient ?")) {
-      setIngredients(ingredients.filter(ing => ing.id !== id));
-    }
-  };
+      const handleUpdatePrix = (id, nouveauPrix) => {
+        setIngredients(prev =>
+          prev.map(ing => (ing.id === id ? { ...ing, prixUnitaire: parseFloat(nouveauPrix) || 0 } : ing))
+        );
+      };
 
-  const calculerCoutRecette = (composition) => {
-    return composition.reduce((total, item) => {
-      const ing = ingredients.find((i) => i.id === item.ingredientId);
-      if (!ing) return total;
-      return total + ing.prixUnitaire * (parseFloat(item.quantite) || 0);
-    }, 0);
-  };
+      const handleDeleteIngredient = (id) => {
+        if (window.confirm("Supprimer cet ingrédient ?")) {
+          setIngredients(ingredients.filter(ing => ing.id !== id));
+        }
+      };
 
-  const handleAddLigneForm = () => {
-    setLignesRecetteForm([
-      ...lignesRecetteForm,
-      { ingredientId: ingredients[0]?.id || '', quantite: '' }
-    ]);
-  };
+      const calculerCoutRecette = (composition) => {
+        return composition.reduce((total, item) => {
+          const ing = ingredients.find((i) => i.id === item.ingredientId);
+          if (!ing) return total;
+          return total + ing.prixUnitaire * (parseFloat(item.quantite) || 0);
+        }, 0);
+      };
 
-  const handleRemoveLigneForm = (index) => {
-    setLignesRecetteForm(lignesRecetteForm.filter((_, i) => i !== index));
-  };
+      const handleAddLigneForm = () => {
+        setLignesRecetteForm([
+          ...lignesRecetteForm,
+          { ingredientId: ingredients[0]?.id || '', quantite: '' }
+        ]);
+      };
 
-  const handleLigneChange = (index, field, value) => {
-    const updated = [...lignesRecetteForm];
-    updated[index][field] = value;
-    setLignesRecetteForm(updated);
-  };
+      const handleRemoveLigneForm = (index) => {
+        setLignesRecetteForm(lignesRecetteForm.filter((_, i) => i !== index));
+      };
 
-  const handleSaveRecette = (e) => {
-    e.preventDefault();
-    if (!nomRecetteForm.trim()) return;
+      const handleLigneChange = (index, field, value) => {
+        const updated = [...lignesRecetteForm];
+        updated[index][field] = value;
+        setLignesRecetteForm(updated);
+      };
 
-    const compositionValide = lignesRecetteForm
-      .filter(l => l.ingredientId && parseFloat(l.quantite) > 0)
-      .map(l => ({ ingredientId: l.ingredientId, quantite: parseFloat(l.quantite) }));
+      const handleSaveRecette = (e) => {
+        e.preventDefault();
+        if (!nomRecetteForm.trim()) return;
 
-    if (compositionValide.length === 0) {
-      alert("Sélectionnez au moins un ingrédient avec une quantité valide.");
-      return;
-    }
+        const compositionValide = lignesRecetteForm
+          .filter(l => l.ingredientId && parseFloat(l.quantite) > 0)
+          .map(l => ({ ingredientId: l.ingredientId, quantite: parseFloat(l.quantite) }));
 
-    const nouvelleRecette = {
-      id: `rec_${Date.now()}`,
-      nom: nomRecetteForm.trim(),
-      portions: parseInt(portionsForm) || 1,
-      composition: compositionValide,
-    };
+        if (compositionValide.length === 0) {
+          alert("Sélectionnez au moins un ingrédient valide.");
+          return;
+        }
 
-    setRecettes([...recettes, nouvelleRecette]);
+        const nouvelleRecette = {
+          id: `rec_${Date.now()}`,
+          nom: nomRecetteForm.trim(),
+          portions: parseInt(portionsForm) || 1,
+          composition: compositionValide,
+        };
 
-    setNomRecetteForm('');
-    setPortionsForm(4);
-    setLignesRecetteForm([{ ingredientId: ingredients[0]?.id || '', quantite: '' }]);
-    setActiveTab('recettes');
-  };
+        setRecettes([...recettes, nouvelleRecette]);
+        setNomRecetteForm('');
+        setPortionsForm(4);
+        setLignesRecetteForm([{ ingredientId: ingredients[0]?.id || '', quantite: '' }]);
+        setActiveTab('recettes');
+      };
 
-  const handleDeleteRecette = (id) => {
-    if (window.confirm("Voulez-vous supprimer cette recette ?")) {
-      setRecettes(recettes.filter(r => r.id !== id));
-    }
-  };
+      const handleDeleteRecette = (id) => {
+        if (window.confirm("Supprimer cette recette ?")) {
+          setRecettes(recettes.filter(r => r.id !== id));
+        }
+      };
 
-  return (
-    <div style={{ maxWidth: '900px', margin: '0 auto', fontFamily: 'system-ui, sans-serif', padding: '20px', color: '#333' }}>
-      
-      <header style={{ marginBottom: '25px', textAlign: 'center' }}>
-        <h1 style={{ margin: 0, fontSize: '28px' }}>Gestionnaire de Fiches Techniques</h1>
-      </header>
+      return (
+        <div style={{ maxWidth: '900px', margin: '30px auto', padding: '20px', background: 'white', borderRadius: '12px', boxShadow: '0 4px 6px -1px rgba(0,0,0,0.1)' }}>
+          
+          <header style={{ marginBottom: '25px', textAlign: 'center' }}>
+            <h1 style={{ margin: 0, fontSize: '26px', color: '#0f172a' }}>Gestionnaire de Fiches Techniques</h1>
+            <p style={{ color: '#64748b', marginTop: '5px' }}>Changer un prix ici le met à jour dans toutes les recettes</p>
+          </header>
 
-      <nav style={{ display: 'flex', gap: '10px', marginBottom: '25px', borderBottom: '2px solid #e2e8f0' }}>
-        <button
-          onClick={() => setActiveTab('ingredients')}
-          style={{
-            padding: '12px 20px',
-            border: 'none',
-            background: 'none',
-            cursor: 'pointer',
-            fontSize: '15px',
-            fontWeight: activeTab === 'ingredients' ? 'bold' : 'normal',
-            color: activeTab === 'ingredients' ? '#2563eb' : '#64748b',
-            borderBottom: activeTab === 'ingredients' ? '3px solid #2563eb' : 'none',
-          }}
-        >
-          Catalogue Ingrédients ({ingredients.length})
-        </button>
-
-        <button
-          onClick={() => setActiveTab('recettes')}
-          style={{
-            padding: '12px 20px',
-            border: 'none',
-            background: 'none',
-            cursor: 'pointer',
-            fontSize: '15px',
-            fontWeight: activeTab === 'recettes' ? 'bold' : 'normal',
-            color: activeTab === 'recettes' ? '#2563eb' : '#64748b',
-            borderBottom: activeTab === 'recettes' ? '3px solid #2563eb' : 'none',
-          }}
-        >
-          Mes Recettes ({recettes.length})
-        </button>
-
-        <button
-          onClick={() => setActiveTab('creer')}
-          style={{
-            padding: '12px 20px',
-            border: 'none',
-            background: 'none',
-            cursor: 'pointer',
-            fontSize: '15px',
-            fontWeight: activeTab === 'creer' ? 'bold' : 'normal',
-            color: activeTab === 'creer' ? '#2563eb' : '#64748b',
-            borderBottom: activeTab === 'creer' ? '3px solid #2563eb' : 'none',
-          }}
-        >
-          + Créer une Recette
-        </button>
-      </nav>
-
-      {activeTab === 'ingredients' && (
-        <section>
-          <div style={{ background: '#f8fafc', padding: '15px', borderRadius: '8px', border: '1px solid #e2e8f0', marginBottom: '20px' }}>
-            <h3 style={{ marginTop: 0, marginBottom: '10px' }}>Ajouter un nouvel ingrédient</h3>
-            <form onSubmit={handleAddIngredient} style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
-              <input
-                type="text"
-                placeholder="Nom (ex: Beurre)"
-                value={nouvelIngred.nom}
-                onChange={(e) => setNouvelIngred({ ...nouvelIngred, nom: e.target.value })}
-                style={{ flex: '2', padding: '8px 12px', border: '1px solid #cbd5e1', borderRadius: '4px' }}
-                required
-              />
-              <select
-                value={nouvelIngred.unite}
-                onChange={(e) => setNouvelIngred({ ...nouvelIngred, unite: e.target.value })}
-                style={{ flex: '1', padding: '8px 12px', border: '1px solid #cbd5e1', borderRadius: '4px' }}
-              >
-                <option value="kg">kg</option>
-                <option value="g">g</option>
-                <option value="L">L</option>
-                <option value="cl">cl</option>
-                <option value="unité">unité</option>
-              </select>
-              <input
-                type="number"
-                step="0.001"
-                placeholder="Prix unitaire (€)"
-                value={nouvelIngred.prixUnitaire}
-                onChange={(e) => setNouvelIngred({ ...nouvelIngred, prixUnitaire: e.target.value })}
-                style={{ flex: '1', padding: '8px 12px', border: '1px solid #cbd5e1', borderRadius: '4px' }}
-                required
-              />
-              <button
-                type="submit"
-                style={{ padding: '8px 16px', background: '#2563eb', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer' }}
-              >
-                Ajouter
-              </button>
-            </form>
-          </div>
-
-          <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left' }}>
-            <thead>
-              <tr style={{ background: '#f1f5f9', borderBottom: '2px solid #cbd5e1' }}>
-                <th style={{ padding: '12px' }}>Ingrédient</th>
-                <th style={{ padding: '12px' }}>Unité</th>
-                <th style={{ padding: '12px' }}>Prix Unitaire (€)</th>
-                <th style={{ padding: '12px', textAlign: 'right' }}>Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {ingredients.map((ing) => (
-                <tr key={ing.id} style={{ borderBottom: '1px solid #e2e8f0' }}>
-                  <td style={{ padding: '12px', fontWeight: '500' }}>{ing.nom}</td>
-                  <td style={{ padding: '12px', color: '#64748b' }}>{ing.unite}</td>
-                  <td style={{ padding: '12px' }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
-                      <input
-                        type="number"
-                        step="0.01"
-                        value={ing.prixUnitaire}
-                        onChange={(e) => handleUpdatePrix(ing.id, e.target.value)}
-                        style={{ width: '90px', padding: '6px', border: '1px solid #cbd5e1', borderRadius: '4px' }}
-                      />
-                      <span>€ / {ing.unite}</span>
-                    </div>
-                  </td>
-                  <td style={{ padding: '12px', textAlign: 'right' }}>
-                    <button
-                      onClick={() => handleDeleteIngredient(ing.id)}
-                      style={{ color: '#ef4444', background: 'none', border: 'none', cursor: 'pointer' }}
-                    >
-                      Supprimer
-                    </button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </section>
-      )}
-
-      {activeTab === 'recettes' && (
-        <section style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
-          {recettes.length === 0 ? (
-            <p style={{ textAlign: 'center', color: '#64748b' }}>Aucune recette enregistrée.</p>
-          ) : (
-            recettes.map((recette) => {
-              const coutTotal = calculerCoutRecette(recette.composition);
-              const coutPortion = coutTotal / (recette.portions || 1);
-
-              return (
-                <div key={recette.id} style={{ border: '1px solid #e2e8f0', borderRadius: '8px', padding: '20px', background: 'white' }}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '15px' }}>
-                    <div>
-                      <h2 style={{ margin: 0, fontSize: '20px' }}>{recette.nom}</h2>
-                      <span style={{ fontSize: '14px', color: '#64748b' }}>Portions : {recette.portions}</span>
-                    </div>
-                    <div style={{ textAlign: 'right' }}>
-                      <div style={{ fontSize: '18px', fontWeight: 'bold' }}>Coût total : {coutTotal.toFixed(2)} €</div>
-                      <div style={{ fontSize: '14px', color: '#16a34a', fontWeight: 'bold' }}>
-                        {coutPortion.toFixed(2)} € / portion
-                      </div>
-                      <button
-                        onClick={() => handleDeleteRecette(recette.id)}
-                        style={{ color: '#ef4444', background: 'none', border: 'none', cursor: 'pointer', marginTop: '5px', fontSize: '12px' }}
-                      >
-                        Supprimer la recette
-                      </button>
-                    </div>
-                  </div>
-
-                  <table style={{ width: '100%', borderCollapse: 'collapse', marginTop: '10px', fontSize: '14px' }}>
-                    <thead>
-                      <tr style={{ borderBottom: '1px solid #e2e8f0', color: '#64748b', textAlign: 'left' }}>
-                        <th style={{ padding: '6px 0' }}>Ingrédient</th>
-                        <th style={{ padding: '6px 0' }}>Quantité</th>
-                        <th style={{ padding: '6px 0' }}>Prix Actuel</th>
-                        <th style={{ padding: '6px 0', textAlign: 'right' }}>Sous-total</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {recette.composition.map((item, idx) => {
-                        const ing = ingredients.find((i) => i.id === item.ingredientId);
-                        const sousTotal = ing ? ing.prixUnitaire * item.quantite : 0;
-
-                        return (
-                          <tr key={idx} style={{ borderBottom: '1px solid #f1f5f9' }}>
-                            <td style={{ padding: '8px 0' }}>{ing ? ing.nom : <em style={{ color: 'red' }}>Supprimé</em>}</td>
-                            <td style={{ padding: '8px 0' }}>{item.quantite} {ing?.unite}</td>
-                            <td style={{ padding: '8px 0', color: '#64748b' }}>{ing?.prixUnitaire.toFixed(2)} € / {ing?.unite}</td>
-                            <td style={{ padding: '8px 0', textAlign: 'right', fontWeight: 'bold' }}>{sousTotal.toFixed(2)} €</td>
-                          </tr>
-                        );
-                      })}
-                    </tbody>
-                  </table>
-                </div>
-              );
-            })
-          )}
-        </section>
-      )}
-
-      {activeTab === 'creer' && (
-        <section style={{ background: 'white', padding: '20px', border: '1px solid #e2e8f0', borderRadius: '8px' }}>
-          <h2 style={{ marginTop: 0 }}>Créer une nouvelle recette</h2>
-
-          <form onSubmit={handleSaveRecette}>
-            <div style={{ display: 'flex', gap: '15px', marginBottom: '20px' }}>
-              <div style={{ flex: 3 }}>
-                <label style={{ display: 'block', marginBottom: '5px', fontWeight: 'bold' }}>Nom de la recette :</label>
-                <input
-                  type="text"
-                  placeholder="ex: Tarte aux Pommes"
-                  value={nomRecetteForm}
-                  onChange={(e) => setNomRecetteForm(e.target.value)}
-                  style={{ width: '100%', padding: '8px', border: '1px solid #cbd5e1', borderRadius: '4px' }}
-                  required
-                />
-              </div>
-
-              <div style={{ flex: 1 }}>
-                <label style={{ display: 'block', marginBottom: '5px', fontWeight: 'bold' }}>Portions :</label>
-                <input
-                  type="number"
-                  min="1"
-                  value={portionsForm}
-                  onChange={(e) => setPortionsForm(e.target.value)}
-                  style={{ width: '100%', padding: '8px', border: '1px solid #cbd5e1', borderRadius: '4px' }}
-                  required
-                />
-              </div>
-            </div>
-
-            <h3 style={{ marginBottom: '10px' }}>Ingrédients :</h3>
-            {lignesRecetteForm.map((ligne, index) => (
-              <div key={index} style={{ display: 'flex', gap: '10px', marginBottom: '10px', alignItems: 'center' }}>
-                <select
-                  value={ligne.ingredientId}
-                  onChange={(e) => handleLigneChange(index, 'ingredientId', e.target.value)}
-                  style={{ flex: 2, padding: '8px', border: '1px solid #cbd5e1', borderRadius: '4px' }}
-                >
-                  {ingredients.map((ing) => (
-                    <option key={ing.id} value={ing.id}>
-                      {ing.nom} ({ing.prixUnitaire} € / {ing.unite})
-                    </option>
-                  ))}
-                </select>
-
-                <input
-                  type="number"
-                  step="0.001"
-                  placeholder="Quantité"
-                  value={ligne.quantite}
-                  onChange={(e) => handleLigneChange(index, 'quantite', e.target.value)}
-                  style={{ flex: 1, padding: '8px', border: '1px solid #cbd5e1', borderRadius: '4px' }}
-                  required
-                />
-
-                {lignesRecetteForm.length > 1 && (
-                  <button
-                    type="button"
-                    onClick={() => handleRemoveLigneForm(index)}
-                    style={{ background: '#ef4444', color: 'white', border: 'none', borderRadius: '4px', padding: '8px 12px', cursor: 'pointer' }}
-                  >
-                    X
-                  </button>
-                )}
-              </div>
-            ))}
-
+          <nav style={{ display: 'flex', gap: '10px', marginBottom: '25px', borderBottom: '2px solid #e2e8f0' }}>
             <button
-              type="button"
-              onClick={handleAddLigneForm}
-              style={{ background: '#f1f5f9', border: '1px solid #cbd5e1', padding: '8px 12px', borderRadius: '4px', cursor: 'pointer', marginBottom: '20px' }}
+              onClick={() => setActiveTab('ingredients')}
+              style={{
+                padding: '12px 20px', border: 'none', background: 'none', cursor: 'pointer', fontSize: '15px',
+                fontWeight: activeTab === 'ingredients' ? 'bold' : 'normal',
+                color: activeTab === 'ingredients' ? '#2563eb' : '#64748b',
+                borderBottom: activeTab === 'ingredients' ? '3px solid #2563eb' : 'none',
+              }}
             >
-              + Ajouter une ligne
+              Catalogue Ingrédients ({ingredients.length})
             </button>
 
-            <div>
-              <button
-                type="submit"
-                style={{ width: '100%', padding: '12px', background: '#16a34a', color: 'white', border: 'none', borderRadius: '6px', fontSize: '16px', fontWeight: 'bold', cursor: 'pointer' }}
-              >
-                Enregistrer la Recette
-              </button>
-            </div>
-          </form>
-        </section>
-      )}
+            <button
+              onClick={() => setActiveTab('recettes')}
+              style={{
+                padding: '12px 20px', border: 'none', background: 'none', cursor: 'pointer', fontSize: '15px',
+                fontWeight: activeTab === 'recettes' ? 'bold' : 'normal',
+                color: activeTab === 'recettes' ? '#2563eb' : '#64748b',
+                borderBottom: activeTab === 'recettes' ? '3px solid #2563eb' : 'none',
+              }}
+            >
+              Mes Recettes ({recettes.length})
+            </button>
 
-    </div>
-  );
-}
+            <button
+              onClick={() => setActiveTab('creer')}
+              style={{
+                padding: '12px 20px', border: 'none', background: 'none', cursor: 'pointer', fontSize: '15px',
+                fontWeight: activeTab === 'creer' ? 'bold' : 'normal',
+                color: activeTab === 'creer' ? '#2563eb' : '#64748b',
+                borderBottom: activeTab === 'creer' ? '3px solid #2563eb' : 'none',
+              }}
+            >
+              + Créer une Recette
+            </button>
+          </nav>
+
+          {activeTab === 'ingredients' && (
+            <section>
+              <div style={{ background: '#f8fafc', padding: '15px', borderRadius: '8px', border: '1px solid #e2e8f0', marginBottom: '20px' }}>
+                <h3 style={{ marginTop: 0, marginBottom: '10px' }}>Ajouter un ingrédient</h3>
+                <form onSubmit={handleAddIngredient} style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
+                  <input
+                    type="text" placeholder="Nom (ex: Beurre)" value={nouvelIngred.nom}
+                    onChange={(e) => setNouvelIngred({ ...nouvelIngred, nom: e.target.value })}
+                    style={{ flex: '2', padding: '8px', border: '1px solid #cbd5e1', borderRadius: '4px' }} required
+                  />
+                  <select
+                    value={nouvelIngred.unite}
+                    onChange={(e) => setNouvelIngred({ ...nouvelIngred, unite: e.target.value })}
+                    style={{ flex: '1', padding: '8px', border: '1px solid #cbd5e1', borderRadius: '4px' }}
+                  >
+                    <option value="kg">kg</option>
+                    <option value="g">g</option>
+                    <option value="L">L</option>
+                    <option value="cl">cl</option>
+                    <option value="unité">unité</option>
+                  </select>
+                  <input
+                    type="number" step="0.001" placeholder="Prix unitaire (€)" value={nouvelIngred.prixUnitaire}
+                    onChange={(e) => setNouvelIngred({ ...nouvelIngred, prixUnitaire: e.target.value })}
+                    style={{ flex: '1', padding: '8px', border: '1px solid #cbd5e1', borderRadius: '4px' }} required
+                  />
+                  <button type="submit" style={{ padding: '8px 16px', background: '#2563eb', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer' }}>
+                    Ajouter
+                  </button>
+                </form>
+              </div>
+
+              <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left' }}>
+                <thead>
+                  <tr style={{ background: '#f1f5f9', borderBottom: '2px solid #cbd5e1' }}>
+                    <th style={{ padding: '12px' }}>Ingrédient</th>
+                    <th style={{ padding: '12px' }}>Unité</th>
+                    <th style={{ padding: '12px' }}>Prix Unitaire (€)</th>
+                    <th style={{ padding: '12px', textAlign: 'right' }}>Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {ingredients.map((ing) => (
+                    <tr key={ing.id} style={{ borderBottom: '1px solid #e2e8f0' }}>
+                      <td style={{ padding: '12px', fontWeight: '500' }}>{ing.nom}</td>
+                      <td style={{ padding: '12px', color: '#64748b' }}>{ing.unite}</td>
+                      <td style={{ padding: '12px' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
+                          <input
+                            type="number" step="0.01" value={ing.prixUnitaire}
+                            onChange={(e) => handleUpdatePrix(ing.id, e.target.value)}
+                            style={{ width: '90px', padding: '6px', border: '1px solid #cbd5e1', borderRadius: '4px' }}
+                          />
+                          <span>€ / {ing.unite}</span>
+                        </div>
+                      </td>
+                      <td style={{ padding: '12px', textAlign: 'right' }}>
+                        <button onClick={() => handleDeleteIngredient(ing.id)} style={{ color: '#ef4444', background: 'none', border: 'none', cursor: 'pointer' }}>
+                          Supprimer
+                        </button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </section>
+          )}
+
+          {activeTab === 'recettes' && (
+            <section style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+              {recettes.map((recette) => {
+                const coutTotal = calculerCoutRecette(recette.composition);
+                const coutPortion = coutTotal / (recette.portions || 1);
+
+                return (
+                  <div key={recette.id} style={{ border: '1px solid #e2e8f0', borderRadius: '8px', padding: '20px', background: '#fafafa' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '15px' }}>
+                      <div>
+                        <h2 style={{ margin: 0, fontSize: '20px' }}>{recette.nom}</h2>
+                        <span style={{ fontSize: '14px', color: '#64748b' }}>Portions : {recette.portions}</span>
+                      </div>
+                      <div style={{ textAlign: 'right' }}>
+                        <div style={{ fontSize: '18px', fontWeight: 'bold' }}>Coût total : {coutTotal.toFixed(2)} €</div>
+                        <div style={{ fontSize: '14px', color: '#16a34a', fontWeight: 'bold' }}>
+                          {coutPortion.toFixed(2)} € / portion
+                        </div>
+                        <button onClick={() => handleDeleteRecette(recette.id)} style={{ color: '#ef4444', background: 'none', border: 'none', cursor: 'pointer', marginTop: '5px', fontSize: '12px' }}>
+                          Supprimer
+                        </button>
+                      </div>
+                    </div>
+
+                    <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '14px' }}>
+                      <thead>
+                        <tr style={{ borderBottom: '1px solid #e2e8f0', color: '#64748b', textAlign: 'left' }}>
+                          <th style={{ padding: '6px 0' }}>Ingrédient</th>
+                          <th style={{ padding: '6px 0' }}>Quantité</th>
+                          <th style={{ padding: '6px 0' }}>Prix Actuel</th>
+                          <th style={{ padding: '6px 0', textAlign: 'right' }}>Sous-total</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {recette.composition.map((item, idx) => {
+                          const ing = ingredients.find((i) => i.id === item.ingredientId);
+                          const sousTotal = ing ? ing.prixUnitaire * item.quantite : 0;
+
+                          return (
+                            <tr key={idx} style={{ borderBottom: '1px solid #f1f5f9' }}>
+                              <td style={{ padding: '8px 0' }}>{ing ? ing.nom : <em style={{ color: 'red' }}>Supprimé</em>}</td>
+                              <td style={{ padding: '8px 0' }}>{item.quantite} {ing?.unite}</td>
+                              <td style={{ padding: '8px 0', color: '#64748b' }}>{ing?.prixUnitaire.toFixed(2)} € / {ing?.unite}</td>
+                              <td style={{ padding: '8px 0', textAlign: 'right', fontWeight: 'bold' }}>{sousTotal.toFixed(2)} €</td>
+                            </tr>
+                          );
+                        })}
+                      </tbody>
+                    </table>
+                  </div>
+                );
+              })}
+            </section>
+          )}
+
+          {activeTab === 'creer' && (
+            <section style={{ background: '#fafafa', padding: '20px', border: '1px solid #e2e8f0', borderRadius: '8px' }}>
+              <h2 style={{ marginTop: 0 }}>Créer une nouvelle recette</h2>
+              <form onSubmit={handleSaveRecette}>
+                <div style={{ display: 'flex', gap: '15px', marginBottom: '20px' }}>
+                  <div style={{ flex: 3 }}>
+                    <label style={{ display: 'block', marginBottom: '5px', fontWeight: 'bold' }}>Nom :</label>
+                    <input type="text" value={nomRecetteForm} onChange={(e) => setNomRecetteForm(e.target.value)} style={{ width: '100%', padding: '8px', border: '1px solid #cbd5e1', borderRadius: '4px' }} required />
+                  </div>
+                  <div style={{ flex: 1 }}>
+                    <label style={{ display: 'block', marginBottom: '5px', fontWeight: 'bold' }}>Portions :</label>
+                    <input type="number" min="1" value={portionsForm} onChange={(e) => setPortionsForm(e.target.value)} style={{ width: '100%', padding: '8px', border: '1px solid #cbd5e1', borderRadius: '4px' }} required />
+                  </div>
+                </div>
+
+                <h3>Ingrédients :</h3>
+                {lignesRecetteForm.map((ligne, index) => (
+                  <div key={index} style={{ display: 'flex', gap: '10px', marginBottom: '10px' }}>
+                    <select value={ligne.ingredientId} onChange={(e) => handleLigneChange(index, 'ingredientId', e.target.value)} style={{ flex: 2, padding: '8px', border: '1px solid #cbd5e1', borderRadius: '4px' }}>
+                      {ingredients.map((ing) => (
+                        <option key={ing.id} value={ing.id}>{ing.nom} ({ing.prixUnitaire} € / {ing.unite})</option>
+                      ))}
+                    </select>
+                    <input type="number" step="0.001" placeholder="Quantité" value={ligne.quantite} onChange={(e) => handleLigneChange(index, 'quantite', e.target.value)} style={{ flex: 1, padding: '8px', border: '1px solid #cbd5e1', borderRadius: '4px' }} required />
+                    {lignesRecetteForm.length > 1 && (
+                      <button type="button" onClick={() => handleRemoveLigneForm(index)} style={{ background: '#ef4444', color: 'white', border: 'none', borderRadius: '4px', padding: '8px 12px', cursor: 'pointer' }}>X</button>
+                    )}
+                  </div>
+                ))}
+
+                <button type="button" onClick={handleAddLigneForm} style={{ background: '#e2e8f0', border: 'none', padding: '8px 12px', borderRadius: '4px', cursor: 'pointer', marginBottom: '20px' }}>
+                  + Ajouter une ligne
+                </button>
+
+                <button type="submit" style={{ width: '100%', padding: '12px', background: '#16a34a', color: 'white', border: 'none', borderRadius: '6px', fontSize: '16px', fontWeight: 'bold', cursor: 'pointer' }}>
+                  Enregistrer la Recette
+                </button>
+              </form>
+            </section>
+          )}
+
+        </div>
+      );
+    }
+
+    const root = ReactDOM.createRoot(document.getElementById('root'));
+    root.render(<ApplicationCuisine />);
+  </script>
+</body>
+</html>
