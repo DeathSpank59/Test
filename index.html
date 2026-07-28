@@ -1,12 +1,11 @@
 import React, { useState, useEffect } from 'react';
 
-// --- Données initiales par défaut (utilisées uniquement si le stockage est vide) ---
 const INGREDIENTS_INITIALS = [
   { id: 'ing_1', nom: 'Farine T55', unite: 'kg', prixUnitaire: 1.20 },
   { id: 'ing_2', nom: 'Beurre doux', unite: 'kg', prixUnitaire: 8.50 },
   { id: 'ing_3', nom: 'Œufs', unite: 'unité', prixUnitaire: 0.25 },
   { id: 'ing_4', nom: 'Sucre', unite: 'kg', prixUnitaire: 1.50 },
-  { id: 'ing_5', nom: 'Lait demi-écrémé', unite: 'L', prixUnitaire: 1.10 },
+  { id: 'ing_5', nom: 'Lait demi-écrémé', unite: 'L', prixUnitaire: 1.10 }
 ];
 
 const RECETTES_INITIALES = [
@@ -15,30 +14,28 @@ const RECETTES_INITIALES = [
     nom: 'Pâte Sablée (Base)',
     portions: 4,
     composition: [
-      { ingredientId: 'ing_1', quantite: 0.25 },  // 250g
-      { ingredientId: 'ing_2', quantite: 0.125 }, // 125g
-      { ingredientId: 'ing_3', quantite: 1 },     // 1 œuf
-      { ingredientId: 'ing_4', quantite: 0.05 },  // 50g
-    ],
+      { ingredientId: 'ing_1', quantite: 0.25 },
+      { ingredientId: 'ing_2', quantite: 0.125 },
+      { ingredientId: 'ing_3', quantite: 1 },
+      { ingredientId: 'ing_4', quantite: 0.05 }
+    ]
   },
   {
     id: 'rec_2',
     nom: 'Pâte à Crêpes',
     portions: 6,
     composition: [
-      { ingredientId: 'ing_1', quantite: 0.25 },  // 250g
-      { ingredientId: 'ing_3', quantite: 3 },     // 3 œufs
-      { ingredientId: 'ing_5', quantite: 0.5 },   // 0.5 L
-      { ingredientId: 'ing_2', quantite: 0.05 },  // 50g
-    ],
+      { ingredientId: 'ing_1', quantite: 0.25 },
+      { ingredientId: 'ing_3', quantite: 3 },
+      { ingredientId: 'ing_5', quantite: 0.5 },
+      { ingredientId: 'ing_2', quantite: 0.05 }
+    ]
   }
 ];
 
 export default function ApplicationCuisine() {
-  // --- 1. GESTION DE LA NAVIGATION (ONGLETS) ---
-  const [activeTab, setActiveTab] = useState('ingredients'); // 'ingredients' | 'recettes' | 'creer'
+  const [activeTab, setActiveTab] = useState('ingredients');
 
-  // --- 2. ÉTATS PERSISTANTS (LOCALSTORAGE) ---
   const [ingredients, setIngredients] = useState(() => {
     const saved = localStorage.getItem('cuisine_ingredients');
     return saved ? JSON.parse(saved) : INGREDIENTS_INITIALS;
@@ -49,7 +46,6 @@ export default function ApplicationCuisine() {
     return saved ? JSON.parse(saved) : RECETTES_INITIALES;
   });
 
-  // Enregistrement automatique dans localStorage dès qu'une donnée change
   useEffect(() => {
     localStorage.setItem('cuisine_ingredients', JSON.stringify(ingredients));
   }, [ingredients]);
@@ -58,18 +54,14 @@ export default function ApplicationCuisine() {
     localStorage.setItem('cuisine_recettes', JSON.stringify(recettes));
   }, [recettes]);
 
-  // --- 3. ÉTATS DES FORMULAIRES ---
-  // Ajout ingrédient
   const [nouvelIngred, setNouvelIngred] = useState({ nom: '', unite: 'kg', prixUnitaire: '' });
 
-  // Création recette
   const [nomRecetteForm, setNomRecetteForm] = useState('');
   const [portionsForm, setPortionsForm] = useState(4);
   const [lignesRecetteForm, setLignesRecetteForm] = useState([
     { ingredientId: ingredients[0]?.id || '', quantite: '' }
   ]);
 
-  // --- 4. LOGIQUE DES INGRÉDIENTS ---
   const handleAddIngredient = (e) => {
     e.preventDefault();
     if (!nouvelIngred.nom.trim() || nouvelIngred.prixUnitaire === '') return;
@@ -92,12 +84,11 @@ export default function ApplicationCuisine() {
   };
 
   const handleDeleteIngredient = (id) => {
-    if (window.confirm("Supprimer cet ingrédient ? Cela aura un impact sur les recettes qui l'utilisent.")) {
+    if (window.confirm("Supprimer cet ingrédient ?")) {
       setIngredients(ingredients.filter(ing => ing.id !== id));
     }
   };
 
-  // --- 5. LOGIQUE DES RECETTES & CALCULS ---
   const calculerCoutRecette = (composition) => {
     return composition.reduce((total, item) => {
       const ing = ingredients.find((i) => i.id === item.ingredientId);
@@ -145,7 +136,6 @@ export default function ApplicationCuisine() {
 
     setRecettes([...recettes, nouvelleRecette]);
 
-    // Réinitialisation du formulaire
     setNomRecetteForm('');
     setPortionsForm(4);
     setLignesRecetteForm([{ ingredientId: ingredients[0]?.id || '', quantite: '' }]);
@@ -158,16 +148,13 @@ export default function ApplicationCuisine() {
     }
   };
 
-  // --- 6. RENDU GRAPHIQUE (UI) ---
   return (
-    <div style={{ maxWidth: '900px', margin: '0 auto', fontFamily: 'system-ui, -apple-system, sans-serif', padding: '20px', color: '#333' }}>
+    <div style={{ maxWidth: '900px', margin: '0 auto', fontFamily: 'system-ui, sans-serif', padding: '20px', color: '#333' }}>
       
       <header style={{ marginBottom: '25px', textAlign: 'center' }}>
-        <h1 style={{ margin: 0, fontSize: '28px' }}>Gestionnaire de Fiches Techniques & Coûts</h1>
-        <p style={{ color: '#666', marginTop: '5px' }}>Source de vérité unique pour les prix de vos ingrédients</p>
+        <h1 style={{ margin: 0, fontSize: '28px' }}>Gestionnaire de Fiches Techniques</h1>
       </header>
 
-      {/* --- BARRE DE NAVIGATION --- */}
       <nav style={{ display: 'flex', gap: '10px', marginBottom: '25px', borderBottom: '2px solid #e2e8f0' }}>
         <button
           onClick={() => setActiveTab('ingredients')}
@@ -218,9 +205,6 @@ export default function ApplicationCuisine() {
         </button>
       </nav>
 
-      {/* ========================================================================= */}
-      {/* --- ONGLET 1 : CATALOGUE INGRÉDIENTS --- */}
-      {/* ========================================================================= */}
       {activeTab === 'ingredients' && (
         <section>
           <div style={{ background: '#f8fafc', padding: '15px', borderRadius: '8px', border: '1px solid #e2e8f0', marginBottom: '20px' }}>
@@ -228,7 +212,7 @@ export default function ApplicationCuisine() {
             <form onSubmit={handleAddIngredient} style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
               <input
                 type="text"
-                placeholder="Nom (ex: Beurre doux)"
+                placeholder="Nom (ex: Beurre)"
                 value={nouvelIngred.nom}
                 onChange={(e) => setNouvelIngred({ ...nouvelIngred, nom: e.target.value })}
                 style={{ flex: '2', padding: '8px 12px', border: '1px solid #cbd5e1', borderRadius: '4px' }}
@@ -304,27 +288,21 @@ export default function ApplicationCuisine() {
         </section>
       )}
 
-      {/* ========================================================================= */}
-      {/* --- ONGLET 2 : LISTE DES RECETTES --- */}
-      {/* ========================================================================= */}
       {activeTab === 'recettes' && (
         <section style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
           {recettes.length === 0 ? (
-            <p style={{ textAlign: 'center', color: '#64748b' }}>Aucune recette enregistrée. Cliquez sur "+ Créer une Recette".</p>
+            <p style={{ textAlign: 'center', color: '#64748b' }}>Aucune recette enregistrée.</p>
           ) : (
             recettes.map((recette) => {
               const coutTotal = calculerCoutRecette(recette.composition);
               const coutPortion = coutTotal / (recette.portions || 1);
 
               return (
-                <div
-                  key={recette.id}
-                  style={{ border: '1px solid #e2e8f0', borderRadius: '8px', padding: '20px', background: 'white' }}
-                >
+                <div key={recette.id} style={{ border: '1px solid #e2e8f0', borderRadius: '8px', padding: '20px', background: 'white' }}>
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '15px' }}>
                     <div>
                       <h2 style={{ margin: 0, fontSize: '20px' }}>{recette.nom}</h2>
-                      <span style={{ fontSize: '14px', color: '#64748b' }}>Rendement : {recette.portions} portion(s)</span>
+                      <span style={{ fontSize: '14px', color: '#64748b' }}>Portions : {recette.portions}</span>
                     </div>
                     <div style={{ textAlign: 'right' }}>
                       <div style={{ fontSize: '18px', fontWeight: 'bold' }}>Coût total : {coutTotal.toFixed(2)} €</div>
@@ -372,12 +350,9 @@ export default function ApplicationCuisine() {
         </section>
       )}
 
-      {/* ========================================================================= */}
-      {/* --- ONGLET 3 : CRÉER UNE RECETTE --- */}
-      {/* ========================================================================= */}
       {activeTab === 'creer' && (
         <section style={{ background: 'white', padding: '20px', border: '1px solid #e2e8f0', borderRadius: '8px' }}>
-          <h2 style={{ marginTop: 0 }}>Créer une nouvelle fiche recette</h2>
+          <h2 style={{ marginTop: 0 }}>Créer une nouvelle recette</h2>
 
           <form onSubmit={handleSaveRecette}>
             <div style={{ display: 'flex', gap: '15px', marginBottom: '20px' }}>
@@ -385,7 +360,7 @@ export default function ApplicationCuisine() {
                 <label style={{ display: 'block', marginBottom: '5px', fontWeight: 'bold' }}>Nom de la recette :</label>
                 <input
                   type="text"
-                  placeholder="ex: Tarteleuse aux Pommes"
+                  placeholder="ex: Tarte aux Pommes"
                   value={nomRecetteForm}
                   onChange={(e) => setNomRecetteForm(e.target.value)}
                   style={{ width: '100%', padding: '8px', border: '1px solid #cbd5e1', borderRadius: '4px' }}
