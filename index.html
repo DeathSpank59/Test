@@ -19,6 +19,7 @@
     --rose-pastel: #EBB6CE;
     --sage: #88A98C;
     --gold: #D4A359;
+    --fraise: #B5495B;
     --ligne: rgba(74, 50, 88, 0.12);
     --shadow: 0 10px 24px rgba(46, 28, 56, 0.07), 0 2px 6px rgba(46, 28, 56, 0.04);
   }
@@ -66,7 +67,7 @@
 
   .main-nav {
     position: relative; z-index: 1;
-    display: flex; justify-content: center; gap: 12px; margin-top: 20px;
+    display: flex; justify-content: center; gap: 12px; margin-top: 20px; flex-wrap: wrap;
   }
   .nav-tab {
     background: var(--paper-card); border: 1px solid var(--ligne);
@@ -92,14 +93,18 @@
   .chip:hover { border-color: var(--violet-main); background: #FAF0FE; }
   .chip.active { background: var(--ink); color: #fff; border-color: var(--ink); }
 
-  .search-add { display: flex; gap: 10px; align-items: center; }
-  input[type="text"], input[type="number"], input[type="search"] {
+  .search-add { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+  input[type="text"], input[type="search"] {
     font-family: 'Work Sans', sans-serif;
     padding: 9px 14px; border-radius: 10px; border: 1px solid var(--ligne);
     background: #fff; font-size: 14px; color: var(--ink);
   }
-  input[type="text"]:focus, input[type="number"]:focus, input[type="search"]:focus, textarea:focus, select:focus {
+  input[type="text"]:focus, input[type="search"]:focus, textarea:focus, select:focus {
     outline: 2px solid var(--violet-soft); outline-offset: 1px;
+  }
+  select#sortSelect {
+    padding: 9px 14px; border-radius: 10px; border: 1px solid var(--ligne);
+    background: #fff; font-size: 13.5px; color: var(--cacao);
   }
   button { font-family: 'Work Sans', sans-serif; cursor: pointer; }
   .btn-primary {
@@ -109,6 +114,11 @@
     transition: transform .12s ease, background-color .15s ease;
   }
   .btn-primary:hover { transform: translateY(-1px); background: #7B4E92; }
+  .btn-secondary {
+    background: #fff; color: var(--violet-main); border: 1px solid var(--violet-soft);
+    padding: 9px 16px; border-radius: 10px; font-size: 13px; font-weight: 600;
+  }
+  .btn-secondary:hover { background: var(--violet-light); }
   .btn-reset {
     background: none; border: 1px solid var(--violet-soft); color: var(--violet-main);
     padding: 8px 14px; border-radius: 10px; font-size: 12px; font-weight: 600;
@@ -156,12 +166,18 @@
     padding: 24px; box-shadow: var(--shadow); margin-top: 10px;
   }
   .catalog-box h2 { font-family: 'Fraunces', serif; margin-top: 0; color: var(--ink); font-size: 22px; }
-  .catalog-form { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 24px; background: var(--paper); padding: 16px; border-radius: 12px; }
+  .catalog-form { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 20px; background: var(--paper); padding: 16px; border-radius: 12px; }
   .catalog-form input, .catalog-form select { flex: 1; min-width: 120px; }
-  
+  .catalog-search { margin-bottom: 14px; }
+  .catalog-search input { width: 100%; max-width: 320px; }
+
   .catalog-table { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 14px; }
   .catalog-table th { text-align: left; padding: 10px; font-size: 12px; text-transform: uppercase; color: var(--cacao); border-bottom: 2px solid var(--violet-light); }
   .catalog-table td { padding: 12px 10px; border-bottom: 1px solid var(--ligne); }
+  .warn-tag {
+    display: inline-block; font-size: 11px; background: #FBE7E7; color: var(--fraise); border-radius: 6px;
+    padding: 2px 8px; margin-left: 8px; font-weight: 600;
+  }
 
   .overlay {
     position: fixed; inset: 0; background: rgba(35, 18, 44, 0.45); backdrop-filter: blur(3px);
@@ -180,34 +196,44 @@
   .field { margin-bottom: 16px; }
   .field label { display: block; font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: var(--cacao); margin-bottom: 6px; }
   .field input, .field textarea, .field select { width: 100%; }
+  .field .hint { font-size: 11.5px; color: #8C7599; margin-top: 4px; }
   .row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
-  .row3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; }
   textarea { font-family: 'Work Sans', sans-serif; padding: 10px 14px; border-radius: 10px; border: 1px solid var(--ligne); font-size: 14px; resize: vertical; }
   select { padding: 9px 14px; border-radius: 10px; border: 1px solid var(--ligne); background: #fff; font-size: 14px; }
 
   .ing-header { display: flex; gap: 8px; font-size: 11px; font-weight: 600; text-transform: uppercase; color: var(--violet-main); margin-bottom: 6px; }
   .ing-row { display: flex; gap: 8px; margin-bottom: 8px; align-items: center; }
   .ing-row select.ing-select { flex: 2; }
-  .ing-row input.ing-qty { flex: 1; min-width: 80px; }
+  .ing-row input.ing-qty { flex: 1; min-width: 70px; }
   .ing-row .ing-subtotal { flex: 1; text-align: right; font-weight: 600; font-size: 13px; color: var(--violet-main); }
   .small-btn {
     border: 1px solid var(--ligne); background: #fff; border-radius: 8px; height: 36px; width: 36px;
-    display: flex; align-items: center; justify-content: center; font-size: 16px; color: #b5495b; flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center; font-size: 16px; color: var(--fraise); flex-shrink: 0;
   }
   .add-line { background: #fff; border: 1px dashed var(--violet-soft); border-radius: 8px; padding: 9px 14px; font-size: 13px; color: var(--violet-main); width: 100%; text-align: center; font-weight: 500; }
   .add-line:hover { background: var(--violet-light); }
 
-  .cost-summary-box {
-    background: #fff; border: 1px solid var(--violet-soft); border-radius: 12px; padding: 14px 16px;
-    margin-top: 12px; font-size: 13.5px;
-  }
-  .cost-summary-box .total { font-weight: 700; color: var(--violet-main); font-size: 16px; }
+  .acc-row { display: flex; gap: 8px; margin-bottom: 8px; align-items: center; }
+  .acc-row input.acc-name { flex: 2; }
+  .acc-row input.acc-price { flex: 1; min-width: 70px; }
+  .acc-row .acc-subtotal { flex: 1; text-align: right; font-weight: 600; font-size: 13px; color: var(--fraise); }
 
-  .modal-actions { display: flex; justify-content: space-between; margin-top: 24px; align-items: center; }
-  .btn-danger { background: none; border: none; color: #b5495b; font-size: 13px; font-weight: 600; padding: 0; }
+  .cost-summary-box {
+    background: #fff; border: 1px solid var(--violet-soft); border-radius: 12px; padding: 12px 16px;
+    margin-top: 10px; font-size: 13.5px;
+  }
+  .cost-summary-box.final {
+    background: linear-gradient(135deg, var(--violet-light) 0%, #F8EBF2 100%);
+    border: 1px solid var(--violet-soft); display: flex; flex-direction: column; gap: 8px;
+  }
+  .cost-summary-box.final .rowline { display: flex; justify-content: space-between; }
+  .cost-summary-box.final .rowline.big { font-size: 16px; font-weight: 700; color: var(--violet-main); border-top: 1px dashed var(--ligne); padding-top: 8px; margin-top: 2px; }
+
+  .modal-actions { display: flex; justify-content: space-between; margin-top: 24px; align-items: center; flex-wrap: wrap; gap: 10px; }
+  .btn-danger { background: none; border: none; color: var(--fraise); font-size: 13px; font-weight: 600; padding: 0; cursor: pointer; }
 
   .detail-grid { display: grid; grid-template-columns: 1fr 1.2fr; gap: 26px; }
-  @media (max-width:580px){ .detail-grid { grid-template-columns: 1fr; } .row2, .row3 { grid-template-columns: 1fr; } }
+  @media (max-width:580px){ .detail-grid { grid-template-columns: 1fr; } .row2 { grid-template-columns: 1fr; } }
   .detail-grid h4 { font-family: 'Fraunces', serif; font-size: 16px; margin: 0 0 10px; color: var(--violet-main); border-bottom: 1px solid var(--ligne); padding-bottom: 4px; }
   
   .ing-table { width: 100%; border-collapse: collapse; font-size: 13.5px; }
@@ -227,6 +253,12 @@
   .steps li { margin-bottom: 10px; font-size: 14px; line-height: 1.5; color: #3D2D45; }
 
   footer { text-align: center; padding: 30px; font-size: 12px; color: #8C7599; position: relative; z-index: 1; }
+
+  @media print {
+    body * { visibility: hidden; }
+    #printArea, #printArea * { visibility: visible; }
+    #printArea { position: absolute; top: 0; left: 0; width: 100%; padding: 20px; }
+  }
 </style>
 </head>
 <body>
@@ -248,6 +280,15 @@
     <div class="filters" id="filters"></div>
     <div class="search-add">
       <input type="search" id="search" placeholder="Rechercher une recette…">
+      <select id="sortSelect">
+        <option value="name">Trier : Alphabétique</option>
+        <option value="cost-desc">Trier : Coût (plus cher)</option>
+        <option value="cost-asc">Trier : Coût (moins cher)</option>
+        <option value="rating">Trier : Meilleure note</option>
+      </select>
+      <button class="btn-secondary" id="btnExport">⬇ Exporter</button>
+      <button class="btn-secondary" id="btnImport">⬆ Importer</button>
+      <input type="file" id="importFile" accept="application/json" style="display:none;">
       <button class="btn-primary" id="btnNew">+ Nouvelle recette</button>
       <button class="btn-reset" onclick="resetToDefault50()">↺ Recharger les 50 recettes</button>
     </div>
@@ -281,9 +322,13 @@
           <option value="c.à.s">c.à.s</option>
           <option value="c.à.c">c.à.c</option>
         </select>
-        <input type="number" step="0.001" min="0" id="cat-price" placeholder="Prix unitaire (€)" required>
+        <input type="text" id="cat-price" placeholder="Prix unitaire (€) ex: 1,20" required>
         <button type="submit" class="btn-primary">+ Ajouter au catalogue</button>
       </form>
+
+      <div class="catalog-search">
+        <input type="search" id="catalogSearch" placeholder="Rechercher un ingrédient du catalogue…">
+      </div>
 
       <table class="catalog-table">
         <thead>
@@ -326,17 +371,17 @@
         </div>
         <div class="field">
           <label>Temps total (min)</label>
-          <input type="number" id="f-time" placeholder="Ex : 90">
+          <input type="text" id="f-time" placeholder="Ex : 90">
         </div>
       </div>
       <div class="row2">
         <div class="field">
           <label>Nombre de parts</label>
-          <input type="number" id="f-servings" placeholder="Ex : 8">
+          <input type="text" id="f-servings" placeholder="Ex : 8">
         </div>
         <div class="field">
           <label>Note (0 à 5)</label>
-          <input type="number" id="f-rating" min="0" max="5" placeholder="Ex : 5">
+          <input type="text" id="f-rating" placeholder="Ex : 5">
         </div>
       </div>
       <div class="field">
@@ -356,50 +401,36 @@
         <button type="button" class="add-line" id="addIng">+ Ajouter un ingrédient</button>
       </div>
 
-      <!-- FRAIS ANNEXES & PRIX DE VENTE -->
-      <div class="field" style="background: var(--paper); padding: 14px; border-radius: 12px; border: 1px solid var(--ligne);">
-        <label style="color:var(--violet-main);">💼 Frais Annexes & Marge</label>
-        <div class="row3" style="margin-top: 8px;">
-          <div>
-            <label style="font-size:10.5px; text-transform:none; color:#695175;">Emballages & Boîtes (€)</label>
-            <input type="number" step="0.01" min="0" id="f-packaging" placeholder="Ex: 1.50">
-          </div>
-          <div>
-            <label style="font-size:10.5px; text-transform:none; color:#695175;">Main-d'œuvre (€)</label>
-            <input type="number" step="0.01" min="0" id="f-labor" placeholder="Ex: 4.00">
-          </div>
-          <div>
-            <label style="font-size:10.5px; text-transform:none; color:#695175;">Matériel / Énergie (€)</label>
-            <input type="number" step="0.01" min="0" id="f-overhead" placeholder="Ex: 1.00">
-          </div>
+      <div class="field">
+        <label>Accessoires & frais annexes (emballage, main d'œuvre, location, transport…)</label>
+        <div class="ing-header">
+          <span style="flex:2;">Nom du frais</span>
+          <span style="flex:1;">Prix (€)</span>
+          <span style="width:36px;"></span>
         </div>
-        <div style="margin-top: 10px;">
-          <label style="font-size:10.5px; text-transform:none; color:#695175;">Marge souhaitée (%)</label>
-          <input type="number" step="1" min="0" max="99" id="f-margin" placeholder="Ex: 35">
+        <div id="accList"></div>
+        <button type="button" class="add-line" id="addAcc">+ Ajouter un frais annexe</button>
+      </div>
+
+      <div class="row2">
+        <div class="field">
+          <label>Marge souhaitée (%)</label>
+          <input type="text" id="f-margin" placeholder="Ex : 30">
+          <div class="hint">Laisser vide pour ne pas calculer de prix de vente.</div>
+        </div>
+        <div class="field">
+          <label>&nbsp;</label>
+          <div class="cost-summary-box final" id="liveCostSummary">
+            <div class="rowline"><span>Ingrédients</span><span id="liveIngCost">0.00 €</span></div>
+            <div class="rowline"><span>Accessoires / frais</span><span id="liveAccCost">0.00 €</span></div>
+            <div class="rowline big"><span>Coût total</span><span id="liveTotalCost">0.00 €</span></div>
+            <div class="rowline"><span>Coût / part</span><span id="livePerServing">0.00 €</span></div>
+            <div class="rowline"><span>Prix de vente suggéré / part</span><span id="liveSuggestedPrice">—</span></div>
+          </div>
         </div>
       </div>
 
-      <div class="cost-summary-box">
-        <div style="display:flex; justify-content:space-between; margin-bottom:4px;">
-          <span>Coût ingrédients :</span>
-          <span style="font-weight:600;" id="liveTotalCost">0.00 €</span>
-        </div>
-        <div style="display:flex; justify-content:space-between; margin-bottom:4px;">
-          <span>Frais annexes :</span>
-          <span style="font-weight:600;" id="liveExtraCost">0.00 €</span>
-        </div>
-        <hr style="border:0; border-top:1px dashed var(--ligne); margin:6px 0;">
-        <div style="display:flex; justify-content:space-between; font-weight:700;">
-          <span>Coût de revient total :</span>
-          <span class="total" id="liveCostTotal">0.00 €</span>
-        </div>
-        <div style="display:flex; justify-content:space-between; color:var(--violet-main); font-weight:700; margin-top:4px;">
-          <span>Prix de vente conseillé :</span>
-          <span id="livePriceAdvice">0.00 € (0.00 €/part)</span>
-        </div>
-      </div>
-
-      <div class="field" style="margin-top:16px;">
+      <div class="field">
         <label>Étapes (une par ligne)</label>
         <textarea id="f-steps" rows="4" placeholder="Préparer la pâte sablée…&#10;Cuire à blanc 20 min…"></textarea>
       </div>
@@ -427,8 +458,16 @@ const CATEGORY_COLORS = {
   "Tarte": "#B593CA", "Gâteau": "#8E5EA5", "Viennoiserie": "#EBB6CE",
   "Entremet": "#7B68EE", "Biscuit": "#88A98C", "Chocolat": "#5C3D61", "Autre": "#8499B5"
 };
-const STORAGE_KEY = "cahier-patisserie-floral-recettes-50v1";
-const CATALOG_KEY = "cahier-patisserie-floral-catalog-50v1";
+const STORAGE_KEY = "cahier-patisserie-floral-recettes-50v2";
+const CATALOG_KEY = "cahier-patisserie-floral-catalog-50v2";
+
+// Accepte "1.20" ou "1,20" (virgule française)
+function parseNum(v){
+  if(v === null || v === undefined) return 0;
+  const cleaned = String(v).trim().replace(',', '.');
+  const n = parseFloat(cleaned);
+  return isNaN(n) ? 0 : n;
+}
 
 function seedCatalog(){
   return [
@@ -465,6 +504,9 @@ function seedCatalog(){
   ];
 }
 
+// Données d'origine : les 50 recettes gardent leurs anciens champs
+// packagingCost / laborCost / overheadCost. Ils sont convertis
+// automatiquement en "accessories" flexibles par migrateRecipe().
 function seedData(){
   return [
     {
@@ -848,7 +890,7 @@ function seedData(){
       desc: "Choux croustillants garnis de crémeux caramel au beurre salé et d'un cœur coulant.",
       packagingCost: "1.00", laborCost: "3.50", overheadCost: "0.60", marginPercent: "35",
       ingredients: [{ingId:'ing_1',qty:'0.12'},{ingId:'ing_2',qty:'0.12'},{ingId:'ing_5',qty:'4'},{ingId:'ing_8',qty:'0.15'},{ingId:'ing_10',qty:'0.2'},{ingId:'ing_18',qty:'3'}],
-      steps: ["Cuire un caramel à sec, décuire à la crème chaude et ajouter le beurre salé.","Garnir les choux craquelins de crème caramel légère.","Inserer un cœur de caramel liquide au centre.","Décorer d'une pointe de fleur de sel sur le dessus."],
+      steps: ["Cuire un caramel à sec, décuire à la crème chaude et ajouter le beurre salé.","Garnir les choux craquelins de crème caramel légère.","Insérer un cœur de caramel liquide au centre.","Décorer d'une pointe de fleur de sel sur le dessus."],
       notes: "Un équilibre parfait entre le croustillant, le doux et le salé."
     },
     {
@@ -878,11 +920,31 @@ function loadCatalog(){
 }
 function saveCatalog(){ localStorage.setItem(CATALOG_KEY, JSON.stringify(catalog)); }
 
+// Convertit les anciens champs packagingCost/laborCost/overheadCost
+// en une liste flexible "accessories" (une seule fois, à la volée).
+function migrateRecipe(r){
+  if(!Array.isArray(r.accessories)){
+    const accessories = [];
+    const pack = parseNum(r.packagingCost);
+    const labor = parseNum(r.laborCost);
+    const overhead = parseNum(r.overheadCost);
+    if(pack) accessories.push({ name: 'Emballages & boîtes', price: pack });
+    if(labor) accessories.push({ name: "Main-d'œuvre", price: labor });
+    if(overhead) accessories.push({ name: 'Matériel / Énergie', price: overhead });
+    r.accessories = accessories;
+  }
+  if(r.margin === undefined){
+    r.margin = r.marginPercent !== undefined ? String(r.marginPercent) : '';
+  }
+  return r;
+}
+
 function loadRecipes(){
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
-    return raw ? JSON.parse(raw) : seedData();
-  } catch(e) { return seedData(); }
+    const list = raw ? JSON.parse(raw) : seedData();
+    return list.map(migrateRecipe);
+  } catch(e) { return seedData().map(migrateRecipe); }
 }
 function saveRecipes(){ localStorage.setItem(STORAGE_KEY, JSON.stringify(recipes)); }
 
@@ -890,11 +952,12 @@ let catalog = loadCatalog();
 let recipes = loadRecipes();
 let activeCategory = "Toutes";
 let searchTerm = "";
+let sortMode = "name";
 let editingId = null;
 
 function resetToDefault50(){
-  if(confirm("Voulez-vous réinitialiser votre carnet avec les 50 recettes d'origine ? (Toutes vos modifications personnelles seront remplacées)")){
-    recipes = seedData();
+  if(confirm("Voulez-vous réinitialiser votre carnet avec les 50 recettes d'origine ?\n\nAttention : cela remplacera aussi VOS PRIX DE CATALOGUE personnalisés par les prix d'origine, et toutes vos modifications ou recettes ajoutées seront perdues.\n\nAstuce : pensez à exporter vos données avant si vous voulez les garder.")){
+    recipes = seedData().map(migrateRecipe);
     catalog = seedCatalog();
     saveRecipes();
     saveCatalog();
@@ -911,54 +974,46 @@ function switchMainTab(tab){
   if(tab === 'catalog') renderCatalog();
 }
 
-function calculateCosts(r, servingsOverride){
-  let ingredientsCost = 0;
-  const ingredientsList = Array.isArray(r) ? r : (r.ingredients || []);
-  const numServings = parseFloat(servingsOverride || r.servings) || 1;
-  const packaging = parseFloat(r.packagingCost) || 0;
-  const labor = parseFloat(r.laborCost) || 0;
-  const overhead = parseFloat(r.overheadCost) || 0;
-  const margin = parseFloat(r.marginPercent) || 0;
-
-  (ingredientsList || []).forEach(item => {
+function calculateCosts(recipe){
+  let ingCost = 0;
+  (recipe.ingredients || []).forEach(item => {
     const ing = catalog.find(c => c.id === item.ingId);
     if(ing){
-      const qtyNum = parseFloat(item.qty) || 0;
-      ingredientsCost += qtyNum * (parseFloat(ing.price) || 0);
+      ingCost += parseNum(item.qty) * parseNum(ing.price);
     }
   });
+  let accCost = 0;
+  (recipe.accessories || []).forEach(a => { accCost += parseNum(a.price); });
 
-  const extraCosts = packaging + labor + overhead;
-  const totalCost = ingredientsCost + extraCosts;
-  const perServingCost = totalCost / numServings;
+  const total = ingCost + accCost;
+  const numServings = parseNum(recipe.servings) || 1;
+  const perServing = total / numServings;
+  const marginNum = parseNum(recipe.margin);
+  let suggestedPrice = null;
+  if(recipe.margin !== undefined && String(recipe.margin).trim() !== '' && marginNum < 100 && marginNum >= 0){
+    suggestedPrice = perServing / (1 - marginNum / 100);
+  }
+  return { ingCost, accCost, total, perServing, suggestedPrice };
+}
 
-  const marginDec = margin > 0 && margin < 100 ? (margin / 100) : 0;
-  const sellingPriceTotal = marginDec > 0 ? (totalCost / (1 - marginDec)) : totalCost;
-  const sellingPricePerServing = sellingPriceTotal / numServings;
-
-  return {
-    ingredientsCost,
-    extraCosts,
-    totalCost,
-    perServingCost,
-    margin,
-    sellingPriceTotal,
-    sellingPricePerServing
-  };
+function recipeUsesCatalogItem(recipe, ingId){
+  return (recipe.ingredients || []).some(i => i.ingId === ingId);
 }
 
 function renderCatalog(){
   const tbody = document.getElementById('catalogTableBody');
+  const q = (document.getElementById('catalogSearch').value || '').toLowerCase();
   tbody.innerHTML = "";
-  catalog.forEach(item => {
+  catalog.filter(item => item.name.toLowerCase().includes(q)).forEach(item => {
+    const usedIn = recipes.filter(r => recipeUsesCatalogItem(r, item.id));
     const tr = document.createElement('tr');
     tr.innerHTML = `
-      <td><strong>${escapeHtml(item.name)}</strong></td>
+      <td><strong>${escapeHtml(item.name)}</strong>${usedIn.length ? `<span class="warn-tag">utilisé dans ${usedIn.length} recette${usedIn.length>1?'s':''}</span>` : ''}</td>
       <td style="color:#7B6388;">${escapeHtml(item.unit)}</td>
       <td>
-        <input type="number" step="0.01" value="${item.price}" 
-          style="width:90px; padding:6px 10px;" 
-          onchange="updateCatalogPrice('${item.id}', this.value)"> € / ${item.unit}
+        <input type="text" value="${item.price}"
+          style="width:90px; padding:6px 10px;"
+          onchange="updateCatalogPrice('${item.id}', this.value)"> € / ${escapeHtml(item.unit)}
       </td>
       <td style="text-align:right;">
         <button class="btn-danger" onclick="deleteCatalogItem('${item.id}')">Supprimer</button>
@@ -969,13 +1024,19 @@ function renderCatalog(){
 }
 
 function updateCatalogPrice(id, newPrice){
-  catalog = catalog.map(c => c.id === id ? {...c, price: parseFloat(newPrice)||0} : c);
+  catalog = catalog.map(c => c.id === id ? {...c, price: parseNum(newPrice)} : c);
   saveCatalog();
   render();
 }
 
 function deleteCatalogItem(id){
-  if(confirm("Supprimer cet ingrédient du catalogue ?")){
+  const item = catalog.find(c => c.id === id);
+  const usedIn = recipes.filter(r => recipeUsesCatalogItem(r, id));
+  let msg = `Supprimer "${item ? item.name : ''}" du catalogue ?`;
+  if(usedIn.length){
+    msg += `\n\nAttention : cet ingrédient est utilisé dans ${usedIn.length} recette(s) :\n- ${usedIn.map(r=>r.name).join('\n- ')}\n\nSi tu le supprimes, son coût disparaîtra silencieusement du calcul de ces recettes.`;
+  }
+  if(confirm(msg)){
     catalog = catalog.filter(c => c.id !== id);
     saveCatalog();
     renderCatalog();
@@ -987,7 +1048,7 @@ document.getElementById('addCatalogForm').addEventListener('submit', (e) => {
   e.preventDefault();
   const name = document.getElementById('cat-name').value.trim();
   const unit = document.getElementById('cat-unit').value;
-  const price = parseFloat(document.getElementById('cat-price').value) || 0;
+  const price = parseNum(document.getElementById('cat-price').value);
 
   if(name){
     catalog.push({ id: `ing_${Date.now()}`, name, unit, price });
@@ -997,6 +1058,8 @@ document.getElementById('addCatalogForm').addEventListener('submit', (e) => {
     document.getElementById('cat-price').value = '';
   }
 });
+
+document.getElementById('catalogSearch').addEventListener('input', renderCatalog);
 
 const grid = document.getElementById('grid');
 const filtersEl = document.getElementById('filters');
@@ -1017,13 +1080,25 @@ function renderFilters(){
   });
 }
 
+function sortRecipes(list){
+  const withCosts = list.map(r => ({ r, c: calculateCosts(r) }));
+  switch(sortMode){
+    case 'cost-desc': withCosts.sort((a,b)=> b.c.total - a.c.total); break;
+    case 'cost-asc': withCosts.sort((a,b)=> a.c.total - b.c.total); break;
+    case 'rating': withCosts.sort((a,b)=> (parseInt(b.r.rating)||0) - (parseInt(a.r.rating)||0)); break;
+    default: withCosts.sort((a,b)=> a.r.name.localeCompare(b.r.name, 'fr'));
+  }
+  return withCosts.map(x => x.r);
+}
+
 function render(){
   renderFilters();
-  const filtered = recipes.filter(r => {
+  let filtered = recipes.filter(r => {
     const matchCat = activeCategory === "Toutes" || r.category === activeCategory;
     const matchSearch = r.name.toLowerCase().includes(searchTerm.toLowerCase());
     return matchCat && matchSearch;
   });
+  filtered = sortRecipes(filtered);
 
   grid.innerHTML = "";
   emptyState.style.display = filtered.length === 0 ? 'block' : 'none';
@@ -1045,8 +1120,8 @@ function render(){
         </div>
         <div class="desc">${escapeHtml(r.desc || '')}</div>
         <div class="cost-badge">
-          <div>Coût total : <strong>${costs.totalCost.toFixed(2)} €</strong> <span style="font-size:11px; opacity:0.85;">(${costs.perServingCost.toFixed(2)} €/part)</span></div>
-          ${costs.margin > 0 ? `<div style="font-size:11.5px; font-weight:600; color:var(--violet-main);">Prix conseillé : ${costs.sellingPricePerServing.toFixed(2)} € / part</div>` : ''}
+          <div>Coût total : <strong>${costs.total.toFixed(2)} €</strong> <span style="font-size:11px; opacity:0.85;">(${costs.perServing.toFixed(2)} €/part)</span></div>
+          ${costs.suggestedPrice !== null ? `<div style="font-size:11.5px; font-weight:600;">Prix conseillé : ${costs.suggestedPrice.toFixed(2)} € / part</div>` : ''}
         </div>
         <div class="foot">
           <span class="rating">${stars}</span>
@@ -1067,46 +1142,46 @@ function escapeHtml(str){
 const formOverlay = document.getElementById('formOverlay');
 const detailOverlay = document.getElementById('detailOverlay');
 const ingList = document.getElementById('ingList');
+const accList = document.getElementById('accList');
 
 function updateLiveCost(){
-  const ingData = [];
+  let ingTotal = 0;
   ingList.querySelectorAll('.ing-row').forEach(row => {
     const ingId = row.querySelector('.ing-select').value;
-    const qty = row.querySelector('.ing-qty').value;
+    const qty = parseNum(row.querySelector('.ing-qty').value);
     const ing = catalog.find(c => c.id === ingId);
     if(ing){
-      const subtotal = (parseFloat(qty) || 0) * ing.price;
+      const subtotal = qty * parseNum(ing.price);
       row.querySelector('.ing-subtotal').textContent = subtotal.toFixed(2) + " €";
+      ingTotal += subtotal;
     }
-    ingData.push({ ingId, qty });
   });
 
-  const servings = parseFloat(document.getElementById('f-servings').value) || 1;
-  const packagingCost = parseFloat(document.getElementById('f-packaging').value) || 0;
-  const laborCost = parseFloat(document.getElementById('f-labor').value) || 0;
-  const overheadCost = parseFloat(document.getElementById('f-overhead').value) || 0;
-  const marginPercent = parseFloat(document.getElementById('f-margin').value) || 0;
+  let accTotal = 0;
+  accList.querySelectorAll('.acc-row').forEach(row => {
+    const price = parseNum(row.querySelector('.acc-price').value);
+    row.querySelector('.acc-subtotal').textContent = price.toFixed(2) + " €";
+    accTotal += price;
+  });
 
-  const recipeTemp = {
-    ingredients: ingData,
-    servings,
-    packagingCost,
-    laborCost,
-    overheadCost,
-    marginPercent
-  };
+  const total = ingTotal + accTotal;
+  const servings = parseNum(document.getElementById('f-servings').value) || 1;
+  const perServing = total / servings;
+  const marginRaw = document.getElementById('f-margin').value;
+  const marginNum = parseNum(marginRaw);
 
-  const costs = calculateCosts(recipeTemp);
+  document.getElementById('liveIngCost').textContent = ingTotal.toFixed(2) + " €";
+  document.getElementById('liveAccCost').textContent = accTotal.toFixed(2) + " €";
+  document.getElementById('liveTotalCost').textContent = total.toFixed(2) + " €";
+  document.getElementById('livePerServing').textContent = perServing.toFixed(2) + " €";
 
-  document.getElementById('liveTotalCost').textContent = costs.ingredientsCost.toFixed(2) + " €";
-  document.getElementById('liveExtraCost').textContent = costs.extraCosts.toFixed(2) + " €";
-  document.getElementById('liveCostTotal').textContent = costs.totalCost.toFixed(2) + " €";
-  document.getElementById('livePriceAdvice').textContent = costs.sellingPriceTotal.toFixed(2) + " € (" + costs.sellingPricePerServing.toFixed(2) + " €/part)";
+  const suggestedEl = document.getElementById('liveSuggestedPrice');
+  if(marginRaw.trim() !== '' && marginNum < 100 && marginNum >= 0){
+    suggestedEl.textContent = (perServing / (1 - marginNum/100)).toFixed(2) + " €";
+  } else {
+    suggestedEl.textContent = "—";
+  }
 }
-
-['f-servings', 'f-packaging', 'f-labor', 'f-overhead', 'f-margin'].forEach(id => {
-  document.getElementById(id).addEventListener('input', updateLiveCost);
-});
 
 function ingredientRow(selectedIngId="", qty=""){
   const row = document.createElement('div');
@@ -1114,19 +1189,34 @@ function ingredientRow(selectedIngId="", qty=""){
 
   let options = catalog.map(c => `
     <option value="${c.id}" ${c.id === selectedIngId ? 'selected' : ''}>
-      ${escapeHtml(c.name)} (${c.price.toFixed(2)} € / ${c.unit})
+      ${escapeHtml(c.name)} (${parseNum(c.price).toFixed(2)} € / ${escapeHtml(c.unit)})
     </option>
   `).join('');
 
   row.innerHTML = `
     <select class="ing-select">${options}</select>
-    <input type="number" step="0.001" placeholder="Qté" class="ing-qty" value="${escapeHtml(qty)}">
+    <input type="text" placeholder="Qté" class="ing-qty" value="${escapeHtml(qty)}">
     <div class="ing-subtotal">0.00 €</div>
     <button type="button" class="small-btn" title="Retirer">×</button>
   `;
-  
+
   row.querySelector('.ing-select').addEventListener('change', updateLiveCost);
   row.querySelector('.ing-qty').addEventListener('input', updateLiveCost);
+  row.querySelector('.small-btn').onclick = () => { row.remove(); updateLiveCost(); };
+  return row;
+}
+
+function accessoryRow(name="", price=""){
+  const row = document.createElement('div');
+  row.className = 'acc-row';
+  row.innerHTML = `
+    <input type="text" placeholder="Ex : Boîte, ruban, location de matériel…" class="acc-name" value="${escapeHtml(name)}">
+    <input type="text" placeholder="Prix (€)" class="acc-price" value="${escapeHtml(String(price))}">
+    <div class="acc-subtotal">0.00 €</div>
+    <button type="button" class="small-btn" title="Retirer">×</button>
+  `;
+  row.querySelector('.acc-price').addEventListener('input', updateLiveCost);
+  row.querySelector('.acc-name').addEventListener('input', updateLiveCost);
   row.querySelector('.small-btn').onclick = () => { row.remove(); updateLiveCost(); };
   return row;
 }
@@ -1140,6 +1230,14 @@ document.getElementById('addIng').onclick = () => {
   updateLiveCost();
 };
 
+document.getElementById('addAcc').onclick = () => {
+  accList.appendChild(accessoryRow('', ''));
+  updateLiveCost();
+};
+
+document.getElementById('f-servings').addEventListener('input', updateLiveCost);
+document.getElementById('f-margin').addEventListener('input', updateLiveCost);
+
 function openForm(recipe = null){
   editingId = recipe ? recipe.id : null;
   document.getElementById('formTitle').textContent = recipe ? "Modifier la recette" : "Nouvelle recette";
@@ -1150,17 +1248,17 @@ function openForm(recipe = null){
   document.getElementById('f-servings').value = recipe?.servings || '';
   document.getElementById('f-rating').value = recipe?.rating || '';
   document.getElementById('f-desc').value = recipe?.desc || '';
-  document.getElementById('f-packaging').value = recipe?.packagingCost || '';
-  document.getElementById('f-labor').value = recipe?.laborCost || '';
-  document.getElementById('f-overhead').value = recipe?.overheadCost || '';
-  document.getElementById('f-margin').value = recipe?.marginPercent || '';
+  document.getElementById('f-margin').value = recipe?.margin || '';
   document.getElementById('f-steps').value = (recipe?.steps || []).join("\n");
   document.getElementById('f-notes').value = recipe?.notes || '';
-  
+
   ingList.innerHTML = '';
   const ings = recipe?.ingredients?.length ? recipe.ingredients : [{ingId: catalog[0]?.id, qty: ''}];
   ings.forEach(i => ingList.appendChild(ingredientRow(i.ingId, i.qty)));
-  
+
+  accList.innerHTML = '';
+  (recipe?.accessories || []).forEach(a => accList.appendChild(accessoryRow(a.name, a.price)));
+
   updateLiveCost();
   formOverlay.classList.add('open');
 }
@@ -1171,12 +1269,19 @@ document.getElementById('closeDetail').onclick = () => detailOverlay.classList.r
 formOverlay.onclick = (e) => { if(e.target === formOverlay) formOverlay.classList.remove('open'); };
 detailOverlay.onclick = (e) => { if(e.target === detailOverlay) detailOverlay.classList.remove('open'); };
 
+document.getElementById('sortSelect').addEventListener('change', (e)=>{ sortMode = e.target.value; render(); });
+
 document.getElementById('recipeForm').addEventListener('submit', (e) => {
   e.preventDefault();
   const ingredients = Array.from(ingList.querySelectorAll('.ing-row')).map(row => ({
     ingId: row.querySelector('.ing-select').value,
     qty: row.querySelector('.ing-qty').value.trim()
   })).filter(i => i.ingId && i.qty);
+
+  const accessories = Array.from(accList.querySelectorAll('.acc-row')).map(row => ({
+    name: row.querySelector('.acc-name').value.trim(),
+    price: parseNum(row.querySelector('.acc-price').value)
+  })).filter(a => a.name);
 
   const data = {
     id: editingId || crypto.randomUUID(),
@@ -1186,11 +1291,9 @@ document.getElementById('recipeForm').addEventListener('submit', (e) => {
     servings: document.getElementById('f-servings').value.trim(),
     rating: document.getElementById('f-rating').value.trim(),
     desc: document.getElementById('f-desc').value.trim(),
-    packagingCost: document.getElementById('f-packaging').value.trim(),
-    laborCost: document.getElementById('f-labor').value.trim(),
-    overheadCost: document.getElementById('f-overhead').value.trim(),
-    marginPercent: document.getElementById('f-margin').value.trim(),
     ingredients,
+    accessories,
+    margin: document.getElementById('f-margin').value.trim(),
     steps: document.getElementById('f-steps').value.split("\n").map(s => s.trim()).filter(Boolean),
     notes: document.getElementById('f-notes').value.trim()
   };
@@ -1222,97 +1325,145 @@ function openDetail(id){
   const costs = calculateCosts(r);
 
   document.getElementById('detailContent').innerHTML = `
-    <div class="tab" style="background:${color}; display:inline-block; margin-bottom:12px;">${r.category}</div>
-    <h2 style="margin-top:0;">${escapeHtml(r.name)}</h2>
-    <div class="meta" style="margin-bottom:14px; color:#7B6388; font-size:13px; display:flex; gap:16px;">
-      ${r.time ? `<span>⏱ ${escapeHtml(r.time)} min</span>` : ''}
-      ${r.servings ? `<span>🍽 ${escapeHtml(r.servings)} parts</span>` : ''}
-      <span class="rating">${stars}</span>
-    </div>
-    
-    <p style="color:#53415D;">${escapeHtml(r.desc || '')}</p>
+    <div id="printArea">
+      <div class="tab" style="background:${color}; display:inline-block; margin-bottom:12px;">${r.category}</div>
+      <h2 style="margin-top:0;">${escapeHtml(r.name)}</h2>
+      <div class="meta" style="margin-bottom:14px; color:#7B6388; font-size:13px; display:flex; gap:16px;">
+        ${r.time ? `<span>⏱ ${escapeHtml(r.time)} min</span>` : ''}
+        ${r.servings ? `<span>🍽 ${escapeHtml(r.servings)} parts</span>` : ''}
+        <span class="rating">${stars}</span>
+      </div>
 
-    <div class="cost-banner">
-      <div class="item">
-        <div class="label">Ingrédients</div>
-        <div class="val">${costs.ingredientsCost.toFixed(2)} €</div>
-      </div>
-      <div class="item">
-        <div class="label">Frais Annexes</div>
-        <div class="val">${costs.extraCosts.toFixed(2)} €</div>
-      </div>
-      <div class="item">
-        <div class="label">Coût de Revient</div>
-        <div class="val">${costs.totalCost.toFixed(2)} €</div>
-      </div>
-      <div class="item" style="border-left:1px dashed var(--violet-soft); padding-left:14px;">
-        <div class="label">Prix de Vente Conseillé (${costs.margin}%)</div>
-        <div class="val" style="color:#7B4E92;">${costs.sellingPriceTotal.toFixed(2)} €</div>
-        <div style="font-size:11px; color:#695175;">${costs.sellingPricePerServing.toFixed(2)} € / part</div>
-      </div>
-    </div>
+      <p style="color:#53415D;">${escapeHtml(r.desc || '')}</p>
 
-    <div class="detail-grid">
-      <div>
-        <h4>Ingrédients & Coûts</h4>
-        <table class="ing-table">
-          <thead>
-            <tr>
-              <th>Nom</th>
-              <th>Qté</th>
-              <th style="text-align:right;">Coût</th>
-            </tr>
-          </thead>
-          <tbody>
-            ${(r.ingredients || []).map(i => {
-              const ing = catalog.find(c => c.id === i.ingId);
-              const subtotal = ing ? (parseFloat(i.qty) || 0) * ing.price : 0;
-              return `
+      <div class="cost-banner">
+        <div class="item">
+          <div class="label">Ingrédients</div>
+          <div class="val">${costs.ingCost.toFixed(2)} €</div>
+        </div>
+        <div class="item">
+          <div class="label">Accessoires / frais</div>
+          <div class="val">${costs.accCost.toFixed(2)} €</div>
+        </div>
+        <div class="item">
+          <div class="label">Coût Total</div>
+          <div class="val">${costs.total.toFixed(2)} €</div>
+        </div>
+        <div class="item">
+          <div class="label">Prix de vente / part</div>
+          <div class="val">${costs.suggestedPrice !== null ? costs.suggestedPrice.toFixed(2) + ' €' : '—'}</div>
+        </div>
+      </div>
+
+      <div class="detail-grid">
+        <div>
+          <h4>Ingrédients & Coûts</h4>
+          <table class="ing-table">
+            <thead>
+              <tr>
+                <th>Nom</th>
+                <th>Qté</th>
+                <th style="text-align:right;">Coût</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${(r.ingredients || []).map(i => {
+                const ing = catalog.find(c => c.id === i.ingId);
+                const subtotal = ing ? parseNum(i.qty) * parseNum(ing.price) : 0;
+                return `
+                  <tr>
+                    <td>${escapeHtml(ing ? ing.name : 'Ingrédient supprimé du catalogue')}</td>
+                    <td style="color:#7B6388;">${escapeHtml(i.qty)} ${ing ? ing.unit : ''}</td>
+                    <td class="price-col">${subtotal.toFixed(2)} €</td>
+                  </tr>
+                `;
+              }).join('')}
+              ${(r.accessories || []).map(a => `
                 <tr>
-                  <td>${escapeHtml(ing ? ing.name : 'Inconnu')}</td>
-                  <td style="color:#7B6388;">${escapeHtml(i.qty)} ${ing ? ing.unit : ''}</td>
-                  <td class="price-col">${subtotal.toFixed(2)} €</td>
+                  <td>${escapeHtml(a.name)} <span style="color:#B47FD1; font-size:11px;">(frais annexe)</span></td>
+                  <td style="color:#7B6388;">—</td>
+                  <td class="price-col">${parseNum(a.price).toFixed(2)} €</td>
                 </tr>
-              `;
-            }).join('')}
-          </tbody>
-        </table>
-
-        ${(costs.extraCosts > 0) ? `
-          <div style="margin-top:14px; font-size:12.5px; background:var(--paper); padding:10px 12px; border-radius:8px;">
-            <strong>Détail des frais annexes :</strong>
-            <ul style="margin:4px 0 0; padding-left:18px; color:#53415D;">
-              ${parseFloat(r.packagingCost) ? `<li>Emballages & Boîtes : ${parseFloat(r.packagingCost).toFixed(2)} €</li>` : ''}
-              ${parseFloat(r.laborCost) ? `<li>Main-d'œuvre : ${parseFloat(r.laborCost).toFixed(2)} €</li>` : ''}
-              ${parseFloat(r.overheadCost) ? `<li>Matériel & Énergie : ${parseFloat(r.overheadCost).toFixed(2)} €</li>` : ''}
-            </ul>
-          </div>
-        ` : ''}
-
-        ${r.notes ? `<h4 style="margin-top:20px;">Notes & Astuces</h4><p style="font-size:13.5px; color:#53415D; line-height:1.4;">${escapeHtml(r.notes)}</p>` : ''}
-      </div>
-      <div>
-        <h4>Préparation</h4>
-        <ol class="steps">
-          ${r.steps.map(s => `<li>${escapeHtml(s)}</li>`).join('')}
-        </ol>
+              `).join('')}
+            </tbody>
+          </table>
+          ${r.notes ? `<h4 style="margin-top:20px;">Notes & Astuces</h4><p style="font-size:13.5px; color:#53415D; line-height:1.4;">${escapeHtml(r.notes)}</p>` : ''}
+        </div>
+        <div>
+          <h4>Préparation</h4>
+          <ol class="steps">
+            ${r.steps.map(s => `<li>${escapeHtml(s)}</li>`).join('')}
+          </ol>
+        </div>
       </div>
     </div>
     <div class="modal-actions">
+      <button type="button" class="btn-secondary" id="printBtn">🖨 Imprimer la fiche</button>
       <button type="button" class="btn-primary" id="editFromDetail">Modifier cette recette</button>
     </div>
   `;
-  
+
   document.getElementById('editFromDetail').onclick = () => {
     detailOverlay.classList.remove('open');
     openForm(r);
   };
+  document.getElementById('printBtn').onclick = () => window.print();
   detailOverlay.classList.add('open');
 }
 
 document.getElementById('search').addEventListener('input', (e) => {
   searchTerm = e.target.value;
   render();
+});
+
+// --- Export / Import ---
+document.getElementById('btnExport').onclick = () => {
+  const payload = { recipes, catalog, exportedAt: new Date().toISOString() };
+  const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `cahier-patisserie-${new Date().toISOString().slice(0,10)}.json`;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+};
+
+document.getElementById('btnImport').onclick = () => document.getElementById('importFile').click();
+
+document.getElementById('importFile').addEventListener('change', (e) => {
+  const file = e.target.files[0];
+  if(!file) return;
+  const reader = new FileReader();
+  reader.onload = (ev) => {
+    try{
+      const data = JSON.parse(ev.target.result);
+      if(!Array.isArray(data.recipes) || !Array.isArray(data.catalog)){
+        alert("Ce fichier ne semble pas être un export valide du Cahier de Pâtisserie.");
+        return;
+      }
+      const mode = confirm("Cliquez sur OK pour FUSIONNER ce fichier avec vos données actuelles, ou Annuler pour REMPLACER entièrement vos données actuelles par ce fichier.");
+      if(mode){
+        const existingRecipeIds = new Set(recipes.map(r=>r.id));
+        data.recipes.map(migrateRecipe).forEach(r => { if(!existingRecipeIds.has(r.id)) recipes.push(r); });
+        const existingCatIds = new Set(catalog.map(c=>c.id));
+        data.catalog.forEach(c => { if(!existingCatIds.has(c.id)) catalog.push(c); });
+      } else {
+        recipes = data.recipes.map(migrateRecipe);
+        catalog = data.catalog;
+      }
+      saveRecipes();
+      saveCatalog();
+      render();
+      renderCatalog();
+      alert("Import réussi !");
+    }catch(err){
+      alert("Erreur lors de la lecture du fichier : " + err.message);
+    }
+    e.target.value = '';
+  };
+  reader.readAsText(file);
 });
 
 render();
