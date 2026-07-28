@@ -1,294 +1,506 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Supervision VNF - Douaisis</title>
-    <!-- Import de Chart.js pour les graphiques -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <style>
-        :root {
-            --bg-base: #0b1120;
-            --bg-card: #1e293b;
-            --bg-card-hover: #334155;
-            --text-main: #f8fafc;
-            --text-muted: #94a3b8;
-            --accent: #38bdf8;
-            --accent-glow: rgba(56, 189, 248, 0.2);
-            --success: #10b981;
-            --warning: #f59e0b;
-            --border: #334155;
-        }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mon Cahier de Pâtisserie</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;0,9..144,700;1,9..144,500&family=Work+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --meringue:#FBF7F0;
+    --paper:#F3ECDF;
+    --ink:#2B1B14;
+    --cacao:#4A3327;
+    --or:#C9973A;
+    --fraise:#B5495B;
+    --pistache:#7C9473;
+    --ligne: rgba(43,27,20,0.12);
+    --shadow: 0 10px 24px rgba(43,27,20,0.10), 0 2px 6px rgba(43,27,20,0.06);
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    background:var(--meringue);
+    color:var(--ink);
+    font-family:'Work Sans', sans-serif;
+    -webkit-font-smoothing:antialiased;
+  }
+  .bg-texture{
+    position:fixed; inset:0; pointer-events:none; opacity:0.5; z-index:0;
+    background-image: radial-gradient(circle at 1px 1px, rgba(43,27,20,0.05) 1px, transparent 0);
+    background-size: 22px 22px;
+  }
+  header{
+    position:relative; z-index:1;
+    padding:48px 24px 28px;
+    text-align:center;
+    border-bottom:1px solid var(--ligne);
+  }
+  header .eyebrow{
+    font-size:12px; letter-spacing:0.18em; text-transform:uppercase;
+    color:var(--fraise); font-weight:600; margin-bottom:10px;
+  }
+  header h1{
+    font-family:'Fraunces', serif;
+    font-weight:600;
+    font-size:clamp(32px, 5vw, 52px);
+    margin:0;
+    letter-spacing:-0.01em;
+  }
+  header p{
+    font-size:15px; color:#6b5748; margin:10px auto 0; max-width:480px;
+  }
 
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; }
-        body { background-color: var(--bg-base); color: var(--text-main); padding: 1.5rem; max-width: 1200px; margin: 0 auto; line-height: 1.5; }
-        
-        header { display: flex; justify-content: space-between; align-items: center; padding-bottom: 1.5rem; border-bottom: 1px solid var(--border); margin-bottom: 2rem; }
-        h1 { font-size: 1.3rem; font-weight: 700; letter-spacing: 0.5px; }
-        
-        .btn { background: var(--bg-card); color: var(--accent); border: 1px solid var(--accent); padding: 0.6rem 1.2rem; border-radius: 8px; font-weight: 600; cursor: pointer; transition: all 0.2s; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); }
-        .btn:hover { background: var(--accent); color: var(--bg-base); }
+  .toolbar{
+    position:relative; z-index:1;
+    max-width:1080px; margin:0 auto;
+    padding:26px 24px 0;
+    display:flex; gap:14px; flex-wrap:wrap; align-items:center; justify-content:space-between;
+  }
+  .filters{ display:flex; gap:8px; flex-wrap:wrap; }
+  .chip{
+    border:1px solid var(--ligne); background:var(--paper);
+    padding:8px 16px; border-radius:999px; font-size:13px; font-weight:500;
+    cursor:pointer; transition:all .15s ease; color:var(--cacao);
+  }
+  .chip:hover{ border-color:var(--or); }
+  .chip.active{ background:var(--ink); color:var(--meringue); border-color:var(--ink); }
 
-        .section-title { font-size: 0.9rem; color: var(--text-muted); margin: 2rem 0 1rem 0; text-transform: uppercase; letter-spacing: 1px; font-weight: 600; display: flex; align-items: center; gap: 0.5rem; }
-        .section-title::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+  .search-add{ display:flex; gap:10px; align-items:center; }
+  input[type="text"], input[type="search"]{
+    font-family:'Work Sans', sans-serif;
+    padding:9px 14px; border-radius:10px; border:1px solid var(--ligne);
+    background:#fff; font-size:14px; color:var(--ink);
+  }
+  input[type="text"]:focus, input[type="search"]:focus, textarea:focus, select:focus{
+    outline:2px solid var(--or); outline-offset:1px;
+  }
+  button{ font-family:'Work Sans', sans-serif; cursor:pointer; }
+  .btn-primary{
+    background:var(--ink); color:var(--meringue); border:none;
+    padding:10px 20px; border-radius:10px; font-size:14px; font-weight:600;
+    box-shadow:var(--shadow);
+    transition:transform .12s ease;
+  }
+  .btn-primary:hover{ transform:translateY(-1px); }
 
-        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.25rem; }
-        
-        /* Design des cartes */
-        .card { background: var(--bg-card); border-radius: 12px; border: 1px solid var(--border); padding: 1.25rem; transition: transform 0.2s, box-shadow 0.2s, background 0.2s; position: relative; overflow: hidden; }
-        .card.clickable { cursor: pointer; }
-        .card.clickable:hover { transform: translateY(-3px); box-shadow: 0 10px 15px -3px rgba(0,0,0,0.3); border-color: var(--accent); background: var(--bg-card-hover); }
-        .card.disabled { opacity: 0.6; }
+  main{ position:relative; z-index:1; max-width:1080px; margin:0 auto; padding:28px 24px 80px; }
 
-        .card-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1rem; }
-        .station-name { font-size: 1.1rem; font-weight: 600; }
-        .station-river { font-size: 0.8rem; color: var(--text-muted); margin-top: 0.2rem; }
-        
-        .badge { font-size: 0.65rem; padding: 0.3rem 0.6rem; border-radius: 6px; font-weight: bold; letter-spacing: 0.5px; text-transform: uppercase; }
-        .badge-live { background: rgba(16, 185, 129, 0.15); color: var(--success); border: 1px solid rgba(16, 185, 129, 0.3); }
-        .badge-private { background: rgba(245, 158, 11, 0.15); color: var(--warning); border: 1px solid rgba(245, 158, 11, 0.3); }
+  .grid{
+    display:grid; grid-template-columns:repeat(auto-fill, minmax(260px,1fr)); gap:22px;
+    margin-top:20px;
+  }
 
-        .metrics-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; background: rgba(0,0,0,0.2); padding: 0.75rem; border-radius: 8px; margin-bottom: 1rem; }
-        .metric-value { font-size: 1.25rem; font-weight: bold; color: var(--accent); }
-        .metric-label { font-size: 0.7rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; }
+  .card{
+    background:#fff; border-radius:14px; box-shadow:var(--shadow);
+    position:relative; overflow:hidden; cursor:pointer;
+    border:1px solid var(--ligne);
+    transition:transform .15s ease, box-shadow .15s ease;
+    display:flex; flex-direction:column;
+  }
+  .card:hover{ transform:translateY(-3px); box-shadow:0 16px 30px rgba(43,27,20,0.14); }
+  .tab{
+    align-self:flex-start;
+    font-family:'Fraunces', serif; font-weight:600; font-size:11px; letter-spacing:0.06em;
+    text-transform:uppercase; color:#fff; padding:6px 14px 7px;
+    border-radius:0 0 10px 0;
+  }
+  .card-body{ padding:18px 20px 20px; flex:1; display:flex; flex-direction:column; }
+  .card h3{ font-family:'Fraunces', serif; font-size:20px; margin:2px 0 6px; font-weight:600; }
+  .card .meta{ font-size:12.5px; color:#8a7666; display:flex; gap:12px; margin-bottom:10px; }
+  .card .desc{ font-size:13.5px; color:#584a3d; line-height:1.5; flex:1; }
+  .card .foot{ margin-top:14px; display:flex; justify-content:space-between; align-items:center; }
+  .rating{ color:var(--or); font-size:13px; letter-spacing:1px; }
 
-        .card-footer { font-size: 0.75rem; color: var(--text-muted); display: flex; justify-content: space-between; align-items: center; }
+  .empty{
+    text-align:center; padding:60px 20px; color:#8a7666;
+  }
+  .empty .signature{ font-family:'Fraunces', serif; font-style:italic; font-size:22px; color:var(--cacao); }
 
-        /* Fenêtre Modale (Graphique) */
-        .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.8); z-index: 1000; justify-content: center; align-items: center; backdrop-filter: blur(4px); }
-        .modal-overlay.active { display: flex; }
-        .modal-content { background: var(--bg-card); border: 1px solid var(--border); border-radius: 12px; padding: 1.5rem; width: 95%; max-width: 800px; position: relative; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5); }
-        .modal-close { position: absolute; top: 1rem; right: 1rem; background: none; border: none; color: var(--text-muted); font-size: 1.5rem; cursor: pointer; transition: color 0.2s; }
-        .modal-close:hover { color: white; }
-        .modal-title { font-size: 1.2rem; margin-bottom: 0.5rem; }
-        .chart-container { position: relative; height: 40vh; width: 100%; margin-top: 1rem; }
-        #chartLoader { text-align: center; color: var(--text-muted); padding: 2rem; font-style: italic; }
+  /* Modal */
+  .overlay{
+    position:fixed; inset:0; background:rgba(43,27,20,0.45); backdrop-filter:blur(2px);
+    display:none; align-items:flex-start; justify-content:center; z-index:10; padding:40px 16px; overflow-y:auto;
+  }
+  .overlay.open{ display:flex; }
+  .modal{
+    background:var(--meringue); max-width:640px; width:100%; border-radius:16px;
+    box-shadow:0 30px 60px rgba(0,0,0,0.3); padding:32px 30px 30px; position:relative;
+  }
+  .modal h2{ font-family:'Fraunces', serif; font-size:26px; margin:0 0 18px; }
+  .modal .close{
+    position:absolute; top:18px; right:20px; background:none; border:none; font-size:22px; color:#8a7666;
+  }
+  .field{ margin-bottom:16px; }
+  .field label{ display:block; font-size:12.5px; font-weight:600; text-transform:uppercase; letter-spacing:0.05em; color:var(--cacao); margin-bottom:6px; }
+  .field input, .field textarea, .field select{ width:100%; }
+  .row2{ display:grid; grid-template-columns:1fr 1fr; gap:14px; }
+  textarea{ font-family:'Work Sans', sans-serif; padding:10px 14px; border-radius:10px; border:1px solid var(--ligne); font-size:14px; resize:vertical; }
+  select{ padding:9px 14px; border-radius:10px; border:1px solid var(--ligne); background:#fff; font-size:14px; }
 
-    </style>
+  .ing-row{ display:flex; gap:8px; margin-bottom:8px; }
+  .ing-row input{ flex:1; }
+  .small-btn{
+    border:1px solid var(--ligne); background:#fff; border-radius:8px; padding:0 12px; font-size:16px; color:var(--fraise);
+  }
+  .add-line{ background:none; border:1px dashed var(--ligne); border-radius:8px; padding:8px 14px; font-size:13px; color:var(--cacao); width:100%; text-align:left; }
+
+  .modal-actions{ display:flex; justify-content:space-between; margin-top:22px; }
+  .btn-danger{ background:none; border:none; color:var(--fraise); font-size:13px; font-weight:600; }
+
+  /* Detail view */
+  .detail-grid{ display:grid; grid-template-columns:1fr 1.2fr; gap:26px; }
+  @media (max-width:560px){ .detail-grid{ grid-template-columns:1fr; } .row2{ grid-template-columns:1fr; } }
+  .detail-grid h4{ font-family:'Fraunces', serif; font-size:15px; margin:0 0 10px; color:var(--fraise); }
+  .ing-list{ list-style:none; padding:0; margin:0; }
+  .ing-list li{ padding:7px 0; border-bottom:1px dashed var(--ligne); font-size:14px; display:flex; justify-content:space-between; }
+  .steps{ padding-left:20px; margin:0; }
+  .steps li{ margin-bottom:10px; font-size:14px; line-height:1.5; }
+
+  footer{ text-align:center; padding:26px; font-size:12px; color:#a3907e; position:relative; z-index:1; }
+</style>
 </head>
 <body>
+<div class="bg-texture"></div>
 
-    <header>
-        <h1>📊 Supervision VNF - Douaisis</h1>
-        <button class="btn" onclick="fetchLiveData()">Actualiser</button>
-    </header>
+<header>
+  <div class="eyebrow">Fait maison</div>
+  <h1>Mon Cahier de Pâtisserie</h1>
+  <p>Le carnet où je range mes recettes, mes ratios et mes petites astuces de four.</p>
+</header>
 
-    <div class="section-title">📡 Réseau Open Data (Temps Réel)</div>
-    <div class="grid" id="real-container">
-        <!-- Rempli par le JS -->
-    </div>
+<div class="toolbar">
+  <div class="filters" id="filters"></div>
+  <div class="search-add">
+    <input type="search" id="search" placeholder="Rechercher une recette…">
+    <button class="btn-primary" id="btnNew">+ Nouvelle recette</button>
+  </div>
+</div>
 
-    <div class="section-title">🔒 Réseau Téléconduite (Flux Interne VNF)</div>
-    <div class="grid" id="private-container">
-        <!-- Rempli par le JS -->
-    </div>
+<main>
+  <div class="grid" id="grid"></div>
+  <div class="empty" id="emptyState" style="display:none;">
+    <div class="signature">La pâte n'a pas encore levé…</div>
+    <p>Ajoute ta première recette pour remplir le cahier.</p>
+  </div>
+</main>
 
-    <!-- Modale pour le graphique -->
-    <div class="modal-overlay" id="chartModal" onclick="closeModal(event)">
-        <div class="modal-content" onclick="event.stopPropagation()">
-            <button class="modal-close" onclick="closeModal(event)">×</button>
-            <h2 class="modal-title" id="modalTitle">Historique Station</h2>
-            <p style="color: var(--text-muted); font-size: 0.85rem;">Fluctuations sur les 12 dernières heures</p>
-            <div id="chartLoader">Chargement des données...</div>
-            <div class="chart-container">
-                <canvas id="stationChart"></canvas>
-            </div>
+<footer>Cahier de pâtisserie — vos recettes sont enregistrées uniquement dans ce navigateur.</footer>
+
+<!-- Modal formulaire -->
+<div class="overlay" id="formOverlay">
+  <div class="modal">
+    <button class="close" id="closeForm">×</button>
+    <h2 id="formTitle">Nouvelle recette</h2>
+    <form id="recipeForm">
+      <div class="field">
+        <label>Nom de la recette</label>
+        <input type="text" id="f-name" required placeholder="Ex : Tarte au citron meringuée">
+      </div>
+      <div class="row2">
+        <div class="field">
+          <label>Catégorie</label>
+          <select id="f-category">
+            <option>Tarte</option>
+            <option>Gâteau</option>
+            <option>Viennoiserie</option>
+            <option>Entremet</option>
+            <option>Biscuit</option>
+            <option>Chocolat</option>
+            <option>Autre</option>
+          </select>
         </div>
+        <div class="field">
+          <label>Temps total (min)</label>
+          <input type="text" id="f-time" placeholder="Ex : 90">
+        </div>
+      </div>
+      <div class="row2">
+        <div class="field">
+          <label>Nombre de parts</label>
+          <input type="text" id="f-servings" placeholder="Ex : 6">
+        </div>
+        <div class="field">
+          <label>Note (0 à 5)</label>
+          <input type="text" id="f-rating" placeholder="Ex : 4">
+        </div>
+      </div>
+      <div class="field">
+        <label>Description courte</label>
+        <textarea id="f-desc" rows="2" placeholder="Une phrase pour se rappeler pourquoi cette recette est top."></textarea>
+      </div>
+      <div class="field">
+        <label>Ingrédients</label>
+        <div id="ingList"></div>
+        <button type="button" class="add-line" id="addIng">+ Ajouter un ingrédient</button>
+      </div>
+      <div class="field">
+        <label>Étapes (une par ligne)</label>
+        <textarea id="f-steps" rows="5" placeholder="Préchauffer le four à 180°C…&#10;Mélanger le beurre et le sucre…"></textarea>
+      </div>
+      <div class="field">
+        <label>Notes / astuces</label>
+        <textarea id="f-notes" rows="2" placeholder="Ex : bien laisser reposer la pâte 1h au frais."></textarea>
+      </div>
+      <div class="modal-actions">
+        <button type="button" class="btn-danger" id="deleteBtn" style="display:none;">Supprimer la recette</button>
+        <button type="submit" class="btn-primary">Enregistrer</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Modal détail -->
+<div class="overlay" id="detailOverlay">
+  <div class="modal" style="max-width:720px;">
+    <button class="close" id="closeDetail">×</button>
+    <div id="detailContent"></div>
+  </div>
+</div>
+
+<script>
+const CATEGORY_COLORS = {
+  "Tarte": "#B5495B", "Gâteau": "#C9973A", "Viennoiserie": "#7C9473",
+  "Entremet": "#8B6BA8", "Biscuit": "#4A3327", "Chocolat": "#5C4033", "Autre": "#6b5748"
+};
+const STORAGE_KEY = "cahier-patisserie-recettes";
+
+function loadRecipes(){
+  try{
+    const raw = localStorage.getItem(STORAGE_KEY);
+    return raw ? JSON.parse(raw) : seedData();
+  }catch(e){ return seedData(); }
+}
+function saveRecipes(){ localStorage.setItem(STORAGE_KEY, JSON.stringify(recipes)); }
+
+function seedData(){
+  return [
+    {
+      id: crypto.randomUUID(),
+      name: "Tarte au citron meringuée",
+      category: "Tarte",
+      time: "90",
+      servings: "8",
+      rating: "5",
+      desc: "Pâte sablée, crème citron bien acidulée et meringue italienne dorée au chalumeau.",
+      ingredients: [
+        {name:"Farine", qty:"200 g"}, {name:"Beurre froid", qty:"100 g"},
+        {name:"Sucre", qty:"70 g"}, {name:"Jus de citron", qty:"150 ml"},
+        {name:"Œufs", qty:"3"}, {name:"Blancs d'œufs", qty:"3"}
+      ],
+      steps: ["Préparer la pâte sablée et foncer le moule, cuire à blanc 20 min à 180°C.",
+              "Faire la crème citron sur feu doux jusqu'à épaississement.",
+              "Monter les blancs en meringue italienne avec un sirop de sucre.",
+              "Garnir la tarte et dorer la meringue au chalumeau."],
+      notes: "Bien filtrer la crème citron pour une texture lisse."
+    },
+    {
+      id: crypto.randomUUID(),
+      name: "Croissants maison",
+      category: "Viennoiserie",
+      time: "720",
+      servings: "10",
+      rating: "4",
+      desc: "Un feuilletage patient mais qui vaut chaque minute d'attente.",
+      ingredients: [{name:"Farine T45", qty:"500 g"}, {name:"Beurre de tourage", qty:"250 g"}, {name:"Levure fraîche", qty:"20 g"}, {name:"Lait", qty:"150 ml"}],
+      steps: ["Préparer la détrempe et laisser reposer une nuit.", "Réaliser le tourage avec 3 tours simples.", "Détailler, façonner et laisser pousser 2h.", "Dorer et cuire 18 min à 200°C."],
+      notes: "Le beurre et la détrempe doivent avoir la même consistance avant le tourage."
+    }
+  ];
+}
+
+let recipes = loadRecipes();
+let activeCategory = "Toutes";
+let searchTerm = "";
+let editingId = null;
+
+const grid = document.getElementById('grid');
+const filtersEl = document.getElementById('filters');
+const emptyState = document.getElementById('emptyState');
+
+function getCategories(){
+  return ["Toutes", ...Array.from(new Set(recipes.map(r=>r.category)))];
+}
+
+function renderFilters(){
+  filtersEl.innerHTML = "";
+  getCategories().forEach(cat=>{
+    const chip = document.createElement('button');
+    chip.className = 'chip' + (cat===activeCategory ? ' active':'');
+    chip.textContent = cat;
+    chip.onclick = ()=>{ activeCategory = cat; render(); };
+    filtersEl.appendChild(chip);
+  });
+}
+
+function render(){
+  renderFilters();
+  const filtered = recipes.filter(r=>{
+    const matchCat = activeCategory==="Toutes" || r.category===activeCategory;
+    const matchSearch = r.name.toLowerCase().includes(searchTerm.toLowerCase());
+    return matchCat && matchSearch;
+  });
+  grid.innerHTML = "";
+  emptyState.style.display = filtered.length===0 ? 'block':'none';
+  filtered.forEach(r=>{
+    const card = document.createElement('div');
+    card.className = 'card';
+    const color = CATEGORY_COLORS[r.category] || '#6b5748';
+    const stars = "★".repeat(parseInt(r.rating)||0) + "☆".repeat(5-(parseInt(r.rating)||0));
+    card.innerHTML = `
+      <div class="tab" style="background:${color}">${r.category}</div>
+      <div class="card-body">
+        <h3>${escapeHtml(r.name)}</h3>
+        <div class="meta">
+          ${r.time ? `<span>⏱ ${escapeHtml(r.time)} min</span>`:''}
+          ${r.servings ? `<span>🍽 ${escapeHtml(r.servings)} parts</span>`:''}
+        </div>
+        <div class="desc">${escapeHtml(r.desc||'')}</div>
+        <div class="foot">
+          <span class="rating">${stars}</span>
+        </div>
+      </div>
+    `;
+    card.onclick = ()=> openDetail(r.id);
+    grid.appendChild(card);
+  });
+}
+
+function escapeHtml(str){
+  const d = document.createElement('div');
+  d.textContent = str||'';
+  return d.innerHTML;
+}
+
+// --- Formulaire ---
+const formOverlay = document.getElementById('formOverlay');
+const detailOverlay = document.getElementById('detailOverlay');
+const ingList = document.getElementById('ingList');
+
+function ingredientRow(name="", qty=""){
+  const row = document.createElement('div');
+  row.className = 'ing-row';
+  row.innerHTML = `
+    <input type="text" placeholder="Ingrédient" class="ing-name" value="${escapeHtml(name)}">
+    <input type="text" placeholder="Quantité" class="ing-qty" value="${escapeHtml(qty)}" style="max-width:110px;">
+    <button type="button" class="small-btn" title="Retirer">×</button>
+  `;
+  row.querySelector('.small-btn').onclick = ()=> row.remove();
+  return row;
+}
+
+document.getElementById('addIng').onclick = ()=> ingList.appendChild(ingredientRow());
+
+function openForm(recipe=null){
+  editingId = recipe ? recipe.id : null;
+  document.getElementById('formTitle').textContent = recipe ? "Modifier la recette" : "Nouvelle recette";
+  document.getElementById('deleteBtn').style.display = recipe ? 'block':'none';
+  document.getElementById('f-name').value = recipe?.name || '';
+  document.getElementById('f-category').value = recipe?.category || 'Tarte';
+  document.getElementById('f-time').value = recipe?.time || '';
+  document.getElementById('f-servings').value = recipe?.servings || '';
+  document.getElementById('f-rating').value = recipe?.rating || '';
+  document.getElementById('f-desc').value = recipe?.desc || '';
+  document.getElementById('f-steps').value = (recipe?.steps || []).join("\n");
+  document.getElementById('f-notes').value = recipe?.notes || '';
+  ingList.innerHTML = '';
+  const ings = recipe?.ingredients?.length ? recipe.ingredients : [{name:'',qty:''}];
+  ings.forEach(i=> ingList.appendChild(ingredientRow(i.name, i.qty)));
+  formOverlay.classList.add('open');
+}
+
+document.getElementById('btnNew').onclick = ()=> openForm(null);
+document.getElementById('closeForm').onclick = ()=> formOverlay.classList.remove('open');
+document.getElementById('closeDetail').onclick = ()=> detailOverlay.classList.remove('open');
+formOverlay.onclick = (e)=>{ if(e.target===formOverlay) formOverlay.classList.remove('open'); };
+detailOverlay.onclick = (e)=>{ if(e.target===detailOverlay) detailOverlay.classList.remove('open'); };
+
+document.getElementById('recipeForm').addEventListener('submit', (e)=>{
+  e.preventDefault();
+  const ingredients = Array.from(ingList.querySelectorAll('.ing-row')).map(row=>({
+    name: row.querySelector('.ing-name').value.trim(),
+    qty: row.querySelector('.ing-qty').value.trim()
+  })).filter(i=>i.name);
+
+  const data = {
+    id: editingId || crypto.randomUUID(),
+    name: document.getElementById('f-name').value.trim(),
+    category: document.getElementById('f-category').value,
+    time: document.getElementById('f-time').value.trim(),
+    servings: document.getElementById('f-servings').value.trim(),
+    rating: document.getElementById('f-rating').value.trim(),
+    desc: document.getElementById('f-desc').value.trim(),
+    ingredients,
+    steps: document.getElementById('f-steps').value.split("\n").map(s=>s.trim()).filter(Boolean),
+    notes: document.getElementById('f-notes').value.trim()
+  };
+
+  if(editingId){
+    recipes = recipes.map(r=> r.id===editingId ? data : r);
+  } else {
+    recipes.push(data);
+  }
+  saveRecipes();
+  formOverlay.classList.remove('open');
+  render();
+});
+
+document.getElementById('deleteBtn').onclick = ()=>{
+  if(confirm("Supprimer définitivement cette recette ?")){
+    recipes = recipes.filter(r=>r.id!==editingId);
+    saveRecipes();
+    formOverlay.classList.remove('open');
+    render();
+  }
+};
+
+function openDetail(id){
+  const r = recipes.find(x=>x.id===id);
+  if(!r) return;
+  const color = CATEGORY_COLORS[r.category] || '#6b5748';
+  const stars = "★".repeat(parseInt(r.rating)||0) + "☆".repeat(5-(parseInt(r.rating)||0));
+  document.getElementById('detailContent').innerHTML = `
+    <div class="tab" style="background:${color}; display:inline-block; margin-bottom:12px;">${r.category}</div>
+    <h2 style="margin-top:0;">${escapeHtml(r.name)}</h2>
+    <div class="meta" style="margin-bottom:14px; color:#8a7666; font-size:13px; display:flex; gap:16px;">
+      ${r.time ? `<span>⏱ ${escapeHtml(r.time)} min</span>`:''}
+      ${r.servings ? `<span>🍽 ${escapeHtml(r.servings)} parts</span>`:''}
+      <span class="rating">${stars}</span>
     </div>
+    <p style="color:#584a3d;">${escapeHtml(r.desc||'')}</p>
+    <div class="detail-grid">
+      <div>
+        <h4>Ingrédients</h4>
+        <ul class="ing-list">
+          ${r.ingredients.map(i=>`<li><span>${escapeHtml(i.name)}</span><span>${escapeHtml(i.qty)}</span></li>`).join('')}
+        </ul>
+        ${r.notes ? `<h4 style="margin-top:18px;">Astuces</h4><p style="font-size:13.5px; color:#584a3d;">${escapeHtml(r.notes)}</p>` : ''}
+      </div>
+      <div>
+        <h4>Étapes</h4>
+        <ol class="steps">
+          ${r.steps.map(s=>`<li>${escapeHtml(s)}</li>`).join('')}
+        </ol>
+      </div>
+    </div>
+    <div class="modal-actions">
+      <button type="button" class="btn-primary" id="editFromDetail">Modifier cette recette</button>
+    </div>
+  `;
+  document.getElementById('editFromDetail').onclick = ()=>{
+    detailOverlay.classList.remove('open');
+    openForm(r);
+  };
+  detailOverlay.classList.add('open');
+}
 
-    <script>
-        const REAL_STATIONS = [
-            { id: "E201501001", name: "Vitry-en-Artois", river: "Scarpe Sup.", nnn: 2.20 },
-            { id: "E225601001", name: "Douai [Tour de Ville]", river: "Scarpe Canal.", nnn: 2.20 },
-            { id: "E152311001", name: "Arleux", river: "Canal de la Sensée", nnn: 3.00 },
-            { id: "E301101001", name: "Auby", river: "Canal de la Deûle", nnn: 2.50 }
-        ];
+document.getElementById('search').addEventListener('input', (e)=>{
+  searchTerm = e.target.value;
+  render();
+});
 
-        const PRIVATE_STATIONS = [
-            { name: "Écluse d'Athies", river: "Scarpe Supérieure" },
-            { name: "Écluse de Fampoux", river: "Scarpe Supérieure" },
-            { name: "Écluse de Biache-St-Vaast", river: "Scarpe Supérieure" },
-            { name: "Écluse de Brebières", river: "Scarpe Supérieure" },
-            { name: "Écluse de Corbehem", river: "Scarpe Supérieure" },
-            { name: "Écluse de Courchelettes", river: "Liaison Gd Gabarit" },
-            { name: "Écluse de Gœulzin", river: "Liaison Gd Gabarit" }
-        ];
-
-        let currentChart = null;
-
-        async function fetchLiveData() {
-            const container = document.getElementById('real-container');
-            container.innerHTML = '<p style="color: var(--text-muted); padding: 1rem;">Connexion aux sondes...</p>';
-            let html = '';
-            
-            for (const st of REAL_STATIONS) {
-                let height = 0;
-                let isLive = false;
-                try {
-                    const res = await fetch(`https://hubeau.eaufrance.fr/api/v1/hydrometrie/observations_tr?code_entite=${st.id}&size=1`);
-                    if (res.ok) {
-                        const data = await res.json();
-                        if (data.data.length > 0) {
-                            height = (data.data[0].resultat_obs / 1000);
-                            isLive = true;
-                        }
-                    }
-                } catch (e) { console.error(e); }
-
-                const diff = (height - st.nnn).toFixed(2);
-                const colorClass = Math.abs(diff) <= 0.05 ? "var(--success)" : (diff > 0 ? "var(--accent)" : "var(--warning)");
-
-                html += `
-                    <div class="card clickable" onclick="openChart('${st.id}', '${st.name}', ${st.nnn})">
-                        <div class="card-header">
-                            <div>
-                                <div class="station-name">${st.name}</div>
-                                <div class="station-river">${st.river}</div>
-                            </div>
-                            <span class="badge badge-live">● EN DIRECT</span>
-                        </div>
-                        <div class="metrics-grid">
-                            <div>
-                                <div class="metric-label">Niveau Actuel</div>
-                                <div class="metric-value">${isLive ? height.toFixed(2) : '--'} m</div>
-                            </div>
-                            <div>
-                                <div class="metric-label">Écart NNN (${st.nnn}m)</div>
-                                <div class="metric-value" style="color: ${colorClass}">${diff > 0 ? '+'+diff : diff} m</div>
-                            </div>
-                        </div>
-                        <div class="card-footer">
-                            <span>Cliquez pour voir l'historique 📈</span>
-                        </div>
-                    </div>
-                `;
-            }
-            container.innerHTML = html;
-
-            // Rendu des stations privées
-            const privContainer = document.getElementById('private-container');
-            let privHtml = '';
-            for (const st of PRIVATE_STATIONS) {
-                privHtml += `
-                    <div class="card disabled">
-                        <div class="card-header">
-                            <div>
-                                <div class="station-name">${st.name}</div>
-                                <div class="station-river">${st.river}</div>
-                            </div>
-                            <span class="badge badge-private">🔒 FLUX VNF</span>
-                        </div>
-                        <div class="metrics-grid" style="opacity: 0.5;">
-                            <div style="grid-column: 1 / -1; text-align: center; font-size: 0.8rem; padding: 0.5rem 0;">
-                                En attente d'interconnexion réseau interne
-                            </div>
-                        </div>
-                    </div>
-                `;
-            }
-            privContainer.innerHTML = privHtml;
-        }
-
-        // --- GESTION DU GRAPHIQUE ---
-
-        async function openChart(stationId, stationName, nnnCible) {
-            const modal = document.getElementById('chartModal');
-            document.getElementById('modalTitle').innerText = `Évolution : ${stationName}`;
-            document.getElementById('chartLoader').style.display = 'block';
-            document.getElementById('stationChart').style.display = 'none';
-            modal.classList.add('active');
-
-            if (currentChart) {
-                currentChart.destroy();
-            }
-
-            try {
-                // On demande les 72 derniers relevés (approx 12h si 1 point toutes les 10 min)
-                const res = await fetch(`https://hubeau.eaufrance.fr/api/v1/hydrometrie/observations_tr?code_entite=${stationId}&size=72`);
-                const data = await res.json();
-                
-                if (data.data && data.data.length > 0) {
-                    // Les données arrivent de la plus récente à la plus ancienne, on inverse pour le graphique
-                    const chronologique = data.data.reverse();
-                    
-                    const labels = chronologique.map(d => {
-                        const date = new Date(d.date_obs);
-                        return date.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });
-                    });
-                    
-                    const dataset = chronologique.map(d => (d.resultat_obs / 1000).toFixed(2));
-                    
-                    // Ligne de référence NNN (tableau rempli avec la même valeur)
-                    const nnnLine = Array(dataset.length).fill(nnnCible);
-
-                    document.getElementById('chartLoader').style.display = 'none';
-                    document.getElementById('stationChart').style.display = 'block';
-
-                    const ctx = document.getElementById('stationChart').getContext('2d');
-                    currentChart = new Chart(ctx, {
-                        type: 'line',
-                        data: {
-                            labels: labels,
-                            datasets: [
-                                {
-                                    label: 'Niveau d\'eau (m)',
-                                    data: dataset,
-                                    borderColor: '#38bdf8',
-                                    backgroundColor: 'rgba(56, 189, 248, 0.1)',
-                                    borderWidth: 2,
-                                    pointRadius: 0,
-                                    pointHoverRadius: 5,
-                                    fill: true,
-                                    tension: 0.3
-                                },
-                                {
-                                    label: 'NNN Cible',
-                                    data: nnnLine,
-                                    borderColor: '#10b981',
-                                    borderWidth: 1,
-                                    borderDash: [5, 5],
-                                    pointRadius: 0,
-                                    fill: false
-                                }
-                            ]
-                        },
-                        options: {
-                            responsive: true,
-                            maintainAspectRatio: false,
-                            interaction: { mode: 'index', intersect: false },
-                            plugins: {
-                                legend: { labels: { color: '#f8fafc' } }
-                            },
-                            scales: {
-                                y: {
-                                    ticks: { color: '#94a3b8' },
-                                    grid: { color: '#334155' },
-                                    // Ajuste l'échelle Y pour ne pas écraser la courbe
-                                    suggestedMin: nnnCible - 0.2,
-                                    suggestedMax: nnnCible + 0.2
-                                },
-                                x: {
-                                    ticks: { color: '#94a3b8', maxTicksLimit: 8 },
-                                    grid: { display: false }
-                                }
-                            }
-                        }
-                    });
-                }
-            } catch (err) {
-                document.getElementById('chartLoader').innerText = "Erreur de chargement des données.";
-            }
-        }
-
-        function closeModal(event) {
-            // Ferme seulement si on clique sur la croix ou à l'extérieur de la boite
-            if (event.target === document.getElementById('chartModal') || event.target.className === 'modal-close') {
-                document.getElementById('chartModal').classList.remove('active');
-            }
-        }
-
-        // Lancement au démarrage
-        fetchLiveData();
-    </script>
+render();
+</script>
 </body>
 </html>
