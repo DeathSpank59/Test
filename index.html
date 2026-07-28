@@ -136,8 +136,8 @@
   .card .meta { font-size: 12.5px; color: #7B6388; display: flex; gap: 12px; margin-bottom: 8px; flex-wrap: wrap; }
   .card .desc { font-size: 13.5px; color: #53415D; line-height: 1.5; flex: 1; }
   .card .cost-badge {
-    margin-top: 10px; background: var(--violet-light); padding: 6px 10px; border-radius: 8px;
-    font-size: 12.5px; font-weight: 600; color: var(--violet-main); display: inline-flex; justify-content: space-between; align-items: center;
+    margin-top: 10px; background: var(--violet-light); padding: 8px 12px; border-radius: 8px;
+    font-size: 12.5px; color: var(--violet-main); display: flex; flex-direction: column; gap: 2px;
   }
   .card .foot { margin-top: 12px; display: flex; justify-content: space-between; align-items: center; }
   .rating { color: var(--gold); font-size: 13px; letter-spacing: 1px; }
@@ -165,7 +165,7 @@
   }
   .overlay.open { display: flex; }
   .modal {
-    background: var(--bg-violet); max-width: 660px; width: 100%; border-radius: 18px;
+    background: var(--bg-violet); max-width: 680px; width: 100%; border-radius: 18px;
     box-shadow: 0 30px 60px rgba(0,0,0,0.25); padding: 32px 30px 30px; position: relative;
     border: 1px solid rgba(255,255,255,0.6);
   }
@@ -177,6 +177,7 @@
   .field label { display: block; font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: var(--cacao); margin-bottom: 6px; }
   .field input, .field textarea, .field select { width: 100%; }
   .row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  .row3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; }
   textarea { font-family: 'Work Sans', sans-serif; padding: 10px 14px; border-radius: 10px; border: 1px solid var(--ligne); font-size: 14px; resize: vertical; }
   select { padding: 9px 14px; border-radius: 10px; border: 1px solid var(--ligne); background: #fff; font-size: 14px; }
 
@@ -193,8 +194,8 @@
   .add-line:hover { background: var(--violet-light); }
 
   .cost-summary-box {
-    background: #fff; border: 1px solid var(--violet-soft); border-radius: 12px; padding: 12px 16px;
-    margin-top: 10px; display: flex; justify-content: space-between; align-items: center; font-size: 14px;
+    background: #fff; border: 1px solid var(--violet-soft); border-radius: 12px; padding: 14px 16px;
+    margin-top: 12px; font-size: 13.5px;
   }
   .cost-summary-box .total { font-weight: 700; color: var(--violet-main); font-size: 16px; }
 
@@ -202,7 +203,7 @@
   .btn-danger { background: none; border: none; color: #b5495b; font-size: 13px; font-weight: 600; padding: 0; }
 
   .detail-grid { display: grid; grid-template-columns: 1fr 1.2fr; gap: 26px; }
-  @media (max-width:580px){ .detail-grid { grid-template-columns: 1fr; } .row2 { grid-template-columns: 1fr; } }
+  @media (max-width:580px){ .detail-grid { grid-template-columns: 1fr; } .row2, .row3 { grid-template-columns: 1fr; } }
   .detail-grid h4 { font-family: 'Fraunces', serif; font-size: 16px; margin: 0 0 10px; color: var(--violet-main); border-bottom: 1px solid var(--ligne); padding-bottom: 4px; }
   
   .ing-table { width: 100%; border-collapse: collapse; font-size: 13.5px; }
@@ -213,10 +214,10 @@
   .cost-banner {
     background: linear-gradient(135deg, var(--violet-light) 0%, #F8EBF2 100%);
     border-radius: 12px; padding: 14px 18px; margin: 16px 0 20px;
-    display: flex; gap: 20px; justify-content: space-around; text-align: center;
+    display: flex; gap: 16px; justify-content: space-around; text-align: center; flex-wrap: wrap;
   }
   .cost-banner .item .label { font-size: 11px; text-transform: uppercase; letter-spacing: 0.05em; color: #695175; }
-  .cost-banner .item .val { font-family: 'Fraunces', serif; font-size: 20px; font-weight: 700; color: var(--violet-main); margin-top: 2px; }
+  .cost-banner .item .val { font-family: 'Fraunces', serif; font-size: 19px; font-weight: 700; color: var(--violet-main); margin-top: 2px; }
 
   .steps { padding-left: 20px; margin: 0; }
   .steps li { margin-bottom: 10px; font-size: 14px; line-height: 1.5; color: #3D2D45; }
@@ -348,14 +349,52 @@
         </div>
         <div id="ingList"></div>
         <button type="button" class="add-line" id="addIng">+ Ajouter un ingrédient</button>
-        
-        <div class="cost-summary-box">
-          <span>Coût estimé de la recette :</span>
-          <span class="total" id="liveTotalCost">0.00 €</span>
+      </div>
+
+      <!-- FRAIS ANNEXES & PRIX DE VENTE -->
+      <div class="field" style="background: var(--paper); padding: 14px; border-radius: 12px; border: 1px solid var(--ligne);">
+        <label style="color:var(--violet-main);">💼 Frais Annexes & Marge</label>
+        <div class="row3" style="margin-top: 8px;">
+          <div>
+            <label style="font-size:10.5px; text-transform:none; color:#695175;">Emballages & Boîtes (€)</label>
+            <input type="number" step="0.01" min="0" id="f-packaging" placeholder="Ex: 1.50">
+          </div>
+          <div>
+            <label style="font-size:10.5px; text-transform:none; color:#695175;">Main-d'œuvre (€)</label>
+            <input type="number" step="0.01" min="0" id="f-labor" placeholder="Ex: 4.00">
+          </div>
+          <div>
+            <label style="font-size:10.5px; text-transform:none; color:#695175;">Matériel / Énergie (€)</label>
+            <input type="number" step="0.01" min="0" id="f-overhead" placeholder="Ex: 1.00">
+          </div>
+        </div>
+        <div style="margin-top: 10px;">
+          <label style="font-size:10.5px; text-transform:none; color:#695175;">Marge souhaitée (%)</label>
+          <input type="number" step="1" min="0" max="99" id="f-margin" placeholder="Ex: 35">
         </div>
       </div>
 
-      <div class="field">
+      <div class="cost-summary-box">
+        <div style="display:flex; justify-content:space-between; margin-bottom:4px;">
+          <span>Coût ingrédients :</span>
+          <span style="font-weight:600;" id="liveTotalCost">0.00 €</span>
+        </div>
+        <div style="display:flex; justify-content:space-between; margin-bottom:4px;">
+          <span>Frais annexes :</span>
+          <span style="font-weight:600;" id="liveExtraCost">0.00 €</span>
+        </div>
+        <hr style="border:0; border-top:1px dashed var(--ligne); margin:6px 0;">
+        <div style="display:flex; justify-content:space-between; font-weight:700;">
+          <span>Coût de revient total :</span>
+          <span class="total" id="liveCostTotal">0.00 €</span>
+        </div>
+        <div style="display:flex; justify-content:space-between; color:var(--violet-main); font-weight:700; margin-top:4px;">
+          <span>Prix de vente conseillé :</span>
+          <span id="livePriceAdvice">0.00 € (0.00 €/part)</span>
+        </div>
+      </div>
+
+      <div class="field" style="margin-top:16px;">
         <label>Étapes (une par ligne)</label>
         <textarea id="f-steps" rows="4" placeholder="Préparer la pâte sablée…&#10;Cuire à blanc 20 min…"></textarea>
       </div>
@@ -434,6 +473,7 @@ function seedData(){
     {
       id: "rec_1", name: "Tarte au citron & Violette", category: "Tarte", time: "90", servings: "8", rating: "5",
       desc: "Pâte sablée aux amandes, crémeux citron acidulé et meringue délicatement parfumée à la violette.",
+      packagingCost: "1.20", laborCost: "4.00", overheadCost: "0.80", marginPercent: "35",
       ingredients: [{ingId:'ing_1',qty:'0.2'},{ingId:'ing_2',qty:'0.12'},{ingId:'ing_3',qty:'0.08'},{ingId:'ing_4',qty:'4'},{ingId:'ing_5',qty:'4'},{ingId:'ing_6',qty:'1'}],
       steps: ["Préparer la pâte sablée, foncer le moule et cuire à blanc 20 min à 180°C.","Cuire le crémeux citron à feu doux jusqu'à épaississement puis ajouter le beurre.","Monter la meringue avec une goutte d'arôme naturel de violette.","Dresser et pocher joliment avant de servir frais."],
       notes: "Ajouter quelques fleurs d'enseigne fraîches ou de violettes cristallisées pour la déco."
@@ -441,345 +481,10 @@ function seedData(){
     {
       id: "rec_2", name: "Sablés floraux à la lavande", category: "Biscuit", time: "45", servings: "12", rating: "4",
       desc: "Petits sablés fondants infusés aux fleurs de lavande culinaire et zestes d'orange.",
+      packagingCost: "0.80", laborCost: "2.50", overheadCost: "0.50", marginPercent: "30",
       ingredients: [{ingId:'ing_2',qty:'0.15'},{ingId:'ing_1',qty:'0.25'},{ingId:'ing_7',qty:'10'},{ingId:'ing_8',qty:'0.09'}],
       steps: ["Mélanger le sucre et la lavande pour en libérer les huiles essentielles.","Incorporer le beurre puis la farine jusqu'à former une boule.","Détailler les sablés et enfourner 12 min à 160°C."],
       notes: "Attention à doser la lavande avec parcimonie pour éviter le goût savonneux."
-    },
-    {
-      id: "rec_3", name: "Tarte Tatin classique", category: "Tarte", time: "75", servings: "6", rating: "5",
-      desc: "Pommes caramélisées au beurre doux sur une pâte feuilletée croustillante.",
-      ingredients: [{ingId:'ing_19',qty:'1.5'},{ingId:'ing_2',qty:'0.1'},{ingId:'ing_8',qty:'0.15'},{ingId:'ing_25',qty:'1'}],
-      steps: ["Faire un caramel à sec avec le sucre et le beurre dans un moule à tatin.","Disposer les pommes pelées coupées en quarters serrés.","Recouvrir de pâte feuilletée et enfourner 40 min à 180°C. Démouler tiède."],
-      notes: "Servir avec une cuillère de crème fraîche épaisse."
-    },
-    {
-      id: "rec_4", name: "Paris-Brest au Praliné", category: "Gâteau", time: "110", servings: "8", rating: "5",
-      desc: "Couronne de pâte à choux garnie d'une crème mousseline généreuse au praliné noisette.",
-      ingredients: [{ingId:'ing_1',qty:'0.15'},{ingId:'ing_2',qty:'0.18'},{ingId:'ing_5',qty:'4'},{ingId:'ing_9',qty:'0.4'},{ingId:'ing_30',qty:'0.15'},{ingId:'ing_8',qty:'0.08'}],
-      steps: ["Dresser une couronne de pâte à choux et parsemer d'amandes effilées. Cuire 35 min à 180°C.","Préparer une crème pâtissière, y incorporer le praliné puis le beurre pommade.","Garnir la couronne coupée en deux à la poche à douille cannelée."],
-      notes: "Saupoudrer de sucre glace avant dégustation."
-    },
-    {
-      id: "rec_5", name: "Éclairs au Chocolat Noir", category: "Gâteau", time: "90", servings: "6", rating: "5",
-      desc: "Éclairs en pâte à choux garnis de crème pâtissière intense au chocolat 70%.",
-      ingredients: [{ingId:'ing_1',qty:'0.12'},{ingId:'ing_2',qty:'0.1'},{ingId:'ing_5',qty:'3'},{ingId:'ing_9',qty:'0.35'},{ingId:'ing_11',qty:'0.15'},{ingId:'ing_8',qty:'0.06'}],
-      steps: ["Pocher les éclairs et les cuire à 180°C sans ouvrir le four pendant 30 min.","Préparer la crème pâtissière au chocolat noir.","Garnir les éclairs par en dessous et les glacer avec une ganache brillante."],
-      notes: "Bien laisser refroidir avant de garnir."
-    },
-    {
-      id: "rec_6", name: "Mille-feuille Vanille Intense", category: "Gâteau", time: "120", servings: "6", rating: "5",
-      desc: "Trois rectangless de pâte feuilletée caramélisée et crème diplomate à la vanille.",
-      ingredients: [{ingId:'ing_25',qty:'2'},{ingId:'ing_9',qty:'0.5'},{ingId:'ing_15',qty:'2'},{ingId:'ing_5',qty:'4'},{ingId:'ing_8',qty:'0.1'},{ingId:'ing_10',qty:'0.2'}],
-      steps: ["Cuire la pâte feuilletée bien à plat entre deux plaques avec du sucre glace.","Infuser les gousses de vanille dans le lait chaud pour la crème pâtissière.","Mélanger avec la crème montée, monter le mille-feuille en 3 couches."],
-      notes: "Découper avec un couteau à dent pour ne pas écraser les feuillets."
-    },
-    {
-      id: "rec_7", name: "Tarte aux Fraises & Fleur d'Oranger", category: "Tarte", time: "60", servings: "6", rating: "5",
-      desc: "Fond de tarte croustillant, crème pâtissière légère et fraises fraîches parfumées.",
-      ingredients: [{ingId:'ing_1',qty:'0.2'},{ingId:'ing_2',qty:'0.1'},{ingId:'ing_22',qty:'0.5'},{ingId:'ing_9',qty:'0.3'},{ingId:'ing_5',qty:'3'},{ingId:'ing_8',qty:'0.08'}],
-      steps: ["Cuire le fond de pâte sablée à blanc 18 min à 180°C.","Préparer la crème pâtissière et laisser refroidir.","Garnir le fond et disposer harmonieusement les fraises coupées en deux."],
-      notes: "Napper d'un peu de gelée de fruits pour faire briller."
-    },
-    {
-      id: "rec_8", name: "Opéra Café & Chocolat", category: "Entremet", time: "150", servings: "10", rating: "5",
-      desc: "Biscuit Joconde imbibé de café, crème au beurre café et ganache chocolat noir.",
-      ingredients: [{ingId:'ing_12',qty:'0.15'},{ingId:'ing_3',qty:'0.12'},{ingId:'ing_5',qty:'5'},{ingId:'ing_2',qty:'0.2'},{ingId:'ing_11',qty:'0.2'},{ingId:'ing_8',qty:'0.15'}],
-      steps: ["Cuire les feuilles de biscuit Joconde à l'amande.","Préparer le sirop de café, la crème au beurre café et la ganache chocolat.","Superposer les couches régulièrement et terminer par un glaçage miroir chocolat."],
-      notes: "Un grand classique du savoir-faire pâtissier."
-    },
-    {
-      id: "rec_9", name: "Saint-Honoré à la Vanille", category: "Entremet", time: "140", servings: "8", rating: "5",
-      desc: "Socle de feuilletage et pâte à choux, petits choux caramélisés et crème Chiboust.",
-      ingredients: [{ingId:'ing_25',qty:'1'},{ingId:'ing_1',qty:'0.1'},{ingId:'ing_2',qty:'0.12'},{ingId:'ing_5',qty:'5'},{ingId:'ing_15',qty:'2'},{ingId:'ing_8',qty:'0.15'}],
-      steps: ["Cuire la base feuilletée avec la couronne de choux.","Caraméliser le dessus des petits choux et les fixer sur la couronne.","Garnir le centre avec une poche Saint-Honoré et une crème Chiboust vanille."],
-      notes: "Servir le jour même pour conserver le croustillant du caramel."
-    },
-    {
-      id: "rec_10", name: "Cannelés Bordelais", category: "Biscuit", time: "75", servings: "16", rating: "5",
-      desc: "Bouchées caramélisées et croustillantes à l'extérieur, cœur moelleux parfumé.",
-      ingredients: [{ingId:'ing_9',qty:'0.5'},{ingId:'ing_2',qty:'0.05'},{ingId:'ing_1',qty:'0.1'},{ingId:'ing_3',qty:'0.2'},{ingId:'ing_5',qty:'2'},{ingId:'ing_14',qty:'1'}],
-      steps: ["Faire bouillir le lait avec le beurre et la vanille.","Mélanger avec les œufs, la farine et le sucre. Laisser reposer 24h au frais.","Cuire dans des moules en cuivre bien beurrés 50 min à 200°C."],
-      notes: "Le repos de la pâte pendant 24h est le secret du moelleux."
-    },
-    {
-      id: "rec_11", name: "Financiers aux Amandes & Miel", category: "Biscuit", time: "35", servings: "12", rating: "4",
-      desc: "Petits gâteaux moelleux au beurre noisette, amandes et douce note de miel.",
-      ingredients: [{ingId:'ing_2',qty:'0.12'},{ingId:'ing_12',qty:'0.1'},{ingId:'ing_3',qty:'0.12'},{ingId:'ing_1',qty:'0.04'},{ingId:'ing_5',qty:'4'},{ingId:'ing_28',qty:'0.03'}],
-      steps: ["Réaliser un beurre noisette jusqu'à coloration dorée et parfum de noisette.","Mélanger la poudre d'amande, le sucre glace, la farine et les blancs d'œufs.","Incorporer le beurre tiède et le miel. Cuire 15 min à 190°C."],
-      notes: "Utiliser idéalement des moules rectangulaires traditionnels."
-    },
-    {
-      id: "rec_12", name: "Madeleines Pur Beurre & Citron", category: "Biscuit", time: "30", servings: "18", rating: "5",
-      desc: "Madeleines alvéolées avec leur belle bosse caractéristique et zeste frais.",
-      ingredients: [{ingId:'ing_1',qty:'0.15'},{ingId:'ing_2',qty:'0.12'},{ingId:'ing_8',qty:'0.12'},{ingId:'ing_5',qty:'3'},{ingId:'ing_4',qty:'1'},{ingId:'ing_16',qty:'5'}],
-      steps: ["Fouetter les œufs et le sucre avec les zestes de citron.","Ajouter la farine, la levure et le beurre fondu refroidi.","Réserver 2h au réfrigérateur. Cuire à 200°C pour provoquer le choc thermique."],
-      notes: "Le choc thermique chaud/froid crée la célèbre bosse."
-    },
-    {
-      id: "rec_13", name: "Macarons Framboise & Rose", category: "Biscuit", time: "90", servings: "20", rating: "5",
-      desc: "Coques croustillantes aux amandes garnies d'une ganache acidulée framboise-rose.",
-      ingredients: [{ingId:'ing_12',qty:'0.15'},{ingId:'ing_3',qty:'0.15'},{ingId:'ing_5',qty:'3'},{ingId:'ing_8',qty:'0.15'},{ingId:'ing_21',qty:'0.2'}],
-      steps: ["Mixer et tamiser le sucre glace et la poudre d'amande.","Monter la meringue italienne et macaronner la préparation.","Pocher sur plaque, croûter 30 min puis cuire 14 min à 150°C. Garnir."],
-      notes: "Conserver 24h au réfrigérateur avant de déguster pour un cœur moelleux."
-    },
-    {
-      id: "rec_14", name: "Tarte Rustique aux Myrtilles", category: "Tarte", time: "55", servings: "6", rating: "4",
-      desc: "Tarte pliée à la main garnie généreusement de myrtilles sauvages et poudre d'amande.",
-      ingredients: [{ingId:'ing_1',qty:'0.2'},{ingId:'ing_2',qty:'0.1'},{ingId:'ing_23',qty:'0.4'},{ingId:'ing_12',qty:'0.04'},{ingId:'ing_8',qty:'0.06'}],
-      steps: ["Étaler la pâte brisée en disque sur une feuille de cuisson.","Saupoudrer de poudre d'amande au centre et déposer les myrtilles.","Rabattre les bords de manière rustique et enfourner 35 min à 190°C."],
-      notes: "Superbe présentation naturelle et sans moule."
-    },
-    {
-      id: "rec_15", name: "Choux Craquelin Vanille", category: "Gâteau", time: "80", servings: "12", rating: "5",
-      desc: "Choux croustillants surmontés d'un craquelin et remplis de crème diplomate.",
-      ingredients: [{ingId:'ing_1',qty:'0.15'},{ingId:'ing_2',qty:'0.15'},{ingId:'ing_5',qty:'4'},{ingId:'ing_9',qty:'0.4'},{ingId:'ing_15',qty:'1'},{ingId:'ing_8',qty:'0.1'}],
-      steps: ["Etaler une fine couche de craquelin (beurre, sucre, farine) et découper des disques.","Pocher la pâte à choux, déposer un disque de craquelin sur chaque choux et cuire.","Remplir abondamment de crème diplomate infusée à la vanille."],
-      notes: "Le craquelin garantit une pousse parfaitement régulière."
-    },
-    {
-      id: "rec_16", name: "Brioche Tressée au Sucre", category: "Viennoiserie", time: "180", servings: "8", rating: "5",
-      desc: "Brioche pur beurre ultra mœlleuse parsemée de grains de sucre dorés.",
-      ingredients: [{ingId:'ing_1',qty:'0.5'},{ingId:'ing_2',qty:'0.25'},{ingId:'ing_5',qty:'4'},{ingId:'ing_8',qty:'0.06'},{ingId:'ing_9',qty:'0.08'},{ingId:'ing_17',qty:'15'}],
-      steps: ["Pétrir la farine, la levure, le sucre et les œufs jusqu'à décollement.","Incorporer le beurre mou petit à petit. Lisser et laisser pousser 2h.","Former 3 branches, tresser, dorer à l'œuf et enfourner 25 min à 170°C."],
-      notes: "Réserver la pâte une nuit au frais pour mieux la façonner."
-    },
-    {
-      id: "rec_17", name: "Croissants Pur Beurre", category: "Viennoiserie", time: "240", servings: "10", rating: "5",
-      desc: "Pâte feuilletée levée croustillante et alvéolée au goût de beurre frais.",
-      ingredients: [{ingId:'ing_1',qty:'0.5'},{ingId:'ing_2',qty:'0.28'},{ingId:'ing_8',qty:'0.06'},{ingId:'ing_17',qty:'12'},{ingId:'ing_9',qty:'0.15'},{ingId:'ing_18',qty:'10'}],
-      steps: ["Préparer la détrempe et encastrer le beurre de tourage.","Effectuer les tours simples et doubles en respectant les temps de repos au frais.","Détailler des triangles, rouler en croissants et faire pousser avant cuisson."],
-      notes: "Conserver une cuisine fraîche lors du tourage du beurre."
-    },
-    {
-      id: "rec_18", name: "Pains au Chocolat", category: "Viennoiserie", time: "240", servings: "10", rating: "5",
-      desc: "Feuilletage pur beurre renfermant deux barres de chocolat noir fondant.",
-      ingredients: [{ingId:'ing_1',qty:'0.5'},{ingId:'ing_2',qty:'0.28'},{ingId:'ing_11',qty:'0.15'},{ingId:'ing_8',qty:'0.06'},{ingId:'ing_17',qty:'12'},{ingId:'ing_9',qty:'0.15'}],
-      steps: ["Utiliser la même pâte feuilletée levée que pour les croissants.","Détailler des rectangles de pâte de la largeur des bâtons de chocolat.","Rouler avec deux barres de chocolat, faire pousser puis cuire à 190°C pendant 15 min."],
-      notes: "Aussi appelés chocolatines selon les régions !"
-    },
-    {
-      id: "rec_19", name: "Flan Pâtissier Traditionnel", category: "Tarte", time: "65", servings: "8", rating: "5",
-      desc: "Appareil crémeux et vanillé sur une fine pâte brisée, belle surface caramélisée.",
-      ingredients: [{ingId:'ing_1',qty:'0.15'},{ingId:'ing_9',qty:'1'},{ingId:'ing_5',qty:'4'},{ingId:'ing_8',qty:'0.18'},{ingId:'ing_27',qty:'0.09'},{ingId:'ing_15',qty:'2'}],
-      steps: ["Faire chauffer le lait avec les gousses de vanille grattées.","Fouetter les œufs, le sucre et la fécule. Verser le lait et faire épaissir.","Verser sur la pâte dans un moule haut et cuire 45 min à 180°C."],
-      notes: "Attendre un refroidissement complet avant de démouler et découper."
-    },
-    {
-      id: "rec_20", name: "Crème Brûlée à la Vanille Bourbon", category: "Entremet", time: "50", servings: "4", rating: "5",
-      desc: "Crème onctueuse aux jaunes d'œufs surmontée d'une fine couche de sucre caramélisé.",
-      ingredients: [{ingId:'ing_10',qty:'0.4'},{ingId:'ing_9',qty:'0.1'},{ingId:'ing_5',qty:'5'},{ingId:'ing_8',qty:'0.08'},{ingId:'ing_15',qty:'1'}],
-      steps: ["Blanchir les jaunes avec le sucre et incorporer la crème infusée à la vanille.","Verser dans des ramequins plats et cuire au bain-marie à 100°C pendant 45 min.","Saupoudrer de sucre cassonade et brûler au chalumeau au moment de servir."],
-      notes: "Le contraste chaud/froid entre le caramel et la crème est magique."
-    },
-    {
-      id: "rec_21", name: "Fondant au Chocolat Cœur Coulant", category: "Chocolat", time: "25", servings: "4", rating: "5",
-      desc: "Biscuit individuel au chocolat noir avec un cœur délicieusement coulant.",
-      ingredients: [{ingId:'ing_11',qty:'0.2'},{ingId:'ing_2',qty:'0.15'},{ingId:'ing_5',qty:'4'},{ingId:'ing_8',qty:'0.08'},{ingId:'ing_1',qty:'0.05'}],
-      steps: ["Faire fondre le chocolat avec le beurre au bain-marie.","Fouetter les œufs avec le sucre, incorporer le chocolat puis la farine.","Verser dans des ramequins beurrés et enfourner exactement 9 min à 200°C."],
-      notes: "Surveiller la cuisson à la minute près selon votre four."
-    },
-    {
-      id: "rec_22", name: "Brownie Américain aux Noisettes", category: "Chocolat", time: "40", servings: "8", rating: "4",
-      desc: "Gâteau au chocolat denso-dense et croustillant garni d'éclats de noisettes torréfiées.",
-      ingredients: [{ingId:'ing_11',qty:'0.18'},{ingId:'ing_2',qty:'0.12'},{ingId:'ing_5',qty:'3'},{ingId:'ing_8',qty:'0.12'},{ingId:'ing_1',qty:'0.08'},{ingId:'ing_13',qty:'0.08'}],
-      steps: ["Faire fondre chocolat et beurre. Mélanger avec sucre et œufs.","Ajouter la farine et les éclats de noisettes torréfiées au four.","Cuire 22 min à 170°C dans un moule carré."],
-      notes: "À déguster tiède avec une boule de glace vanille."
-    },
-    {
-      id: "rec_23", name: "Tarte Bourdaloue aux Poires", category: "Tarte", time: "65", servings: "8", rating: "5",
-      desc: "Demi-poires pochées déposées sur une crème d'amande moelleuse et parfumée.",
-      ingredients: [{ingId:'ing_1',qty:'0.2'},{ingId:'ing_2',qty:'0.15'},{ingId:'ing_20',qty:'0.6'},{ingId:'ing_12',qty:'0.1'},{ingId:'ing_8',qty:'0.1'},{ingId:'ing_5',qty:'2'}],
-      steps: ["Préparer une crème d'amande (beurre, sucre, amande, œuf).","Etaler sur le fond de pâte sablée. Disposer les demi-poires tranchées.","Parsemer d'amandes effilées et cuire 35 min à 180°C."],
-      notes: "Utiliser des poires Williams bien mûres."
-    },
-    {
-      id: "rec_24", name: "Clafoutis Gourmand aux Cerises", category: "Gâteau", time: "50", servings: "6", rating: "4",
-      desc: "Dessert traditionnel du Limousin avec un appareil flanifié et des fruits juteux.",
-      ingredients: [{ingId:'ing_5',qty:'4'},{ingId:'ing_9',qty:'0.25'},{ingId:'ing_1',qty:'0.1'},{ingId:'ing_8',qty:'0.1'},{ingId:'ing_2',qty:'0.04'}],
-      steps: ["Fouetter les œufs avec le sucre, ajouter la farine puis le lait tiédi.","Mettre les fruits dans un plat généreusement beurré.","Verser l'appareil par-dessus et enfourner 35 min à 180°C."],
-      notes: "Conserver les noyaux apporte une légère note d'amande amère lors de la cuisson."
-    },
-    {
-      id: "rec_25", name: "Tarte Tropézienne", category: "Viennoiserie", time: "120", servings: "8", rating: "5",
-      desc: "Brioche dorée fendue en deux et garnie d'un mélange de crème pâtissière et chantilly.",
-      ingredients: [{ingId:'ing_1',qty:'0.3'},{ingId:'ing_2',qty:'0.15'},{ingId:'ing_5',qty:'4'},{ingId:'ing_9',qty:'0.25'},{ingId:'ing_10',qty:'0.15'},{ingId:'ing_8',qty:'0.08'}],
-      steps: ["Réaliser une brioche ronde saupoudrée de gros grain de sucre.","Préparer la crème mousseline diplomate parfumée à la fleur d'oranger.","Ouvrir la brioche refroidie et pocher généreusement la crème."],
-      notes: "Spécialité mythique créative de Saint-Tropez."
-    },
-    {
-      id: "rec_26", name: "Fraisier Diplomate", category: "Entremet", time: "110", servings: "8", rating: "5",
-      desc: "Génoise imbibée, fraises fraîches plaquées contre le rhodoïd et crème diplomate vanille.",
-      ingredients: [{ingId:'ing_5',qty:'6'},{ingId:'ing_8',qty:'0.18'},{ingId:'ing_1',qty:'0.12'},{ingId:'ing_22',qty:'0.6'},{ingId:'ing_9',qty:'0.4'},{ingId:'ing_10',qty:'0.2'}],
-      steps: ["Réaliser une génoise aérienne et la couper en deux disques.","Plaquer les fraises coupées en deux tout autour du cercle de montage.","Garnir de crème, fermer avec le second disque et réserver au frais 4h."],
-      notes: "Décorer le dessus avec de la pâte d'amande rose ou de la gelée."
-    },
-    {
-      id: "rec_27", name: "Forêt-Noire Griottes & Chantilly", category: "Entremet", time: "120", servings: "8", rating: "4",
-      desc: "Biscuit génoise au cacao, chantilly onctueuse et cerises au sirop parfumé.",
-      ingredients: [{ingId:'ing_5',qty:'5'},{ingId:'ing_8',qty:'0.15'},{ingId:'ing_1',qty:'0.1'},{ingId:'ing_24',qty:'0.04'},{ingId:'ing_10',qty:'0.4'},{ingId:'ing_11',qty:'0.1'}],
-      steps: ["Cuire une génoise au cacao et la découper en 3 disques.","Monter la crème liquide très froide en chantilly ferme avec le sucre glace.","Superposer génoise, chantilly, cerises et recouvrir de copeaux de chocolat."],
-      notes: "Imbiber généreusement les biscuits avec le sirop des fruits."
-    },
-    {
-      id: "rec_28", name: "Tartelette Chocolat Noir & Fleur de Sel", category: "Chocolat", time: "50", servings: "6", rating: "5",
-      desc: "Fond de pâte sablée au cacao garni d'une ganache chocolat noir soyeuse et pincée de sel.",
-      ingredients: [{ingId:'ing_1',qty:'0.18'},{ingId:'ing_24',qty:'0.02'},{ingId:'ing_2',qty:'0.1'},{ingId:'ing_11',qty:'0.2'},{ingId:'ing_10',qty:'0.2'},{ingId:'ing_18',qty:'2'}],
-      steps: ["Cuire les fonds de tartelettes au cacao à blanc 15 min.","Verser la crème liquide bouillante sur le chocolat haché pour former la ganache.","Garnir les tartes et parsemer de quelques grains de fleur de sel avant prise."],
-      notes: "La fleur de sel rehausse merveilleusement la puissance du chocolat."
-    },
-    {
-      id: "rec_29", name: "Cake Marbré Chocolat & Vanille", category: "Gâteau", time: "55", servings: "8", rating: "5",
-      desc: "Cake mœlleux au dessin zébré associant la vanille intense et le cacao.",
-      ingredients: [{ingId:'ing_1',qty:'0.2'},{ingId:'ing_2',qty:'0.15'},{ingId:'ing_8',qty:'0.15'},{ingId:'ing_5',qty:'3'},{ingId:'ing_24',qty:'0.03'},{ingId:'ing_14',qty:'1'}],
-      steps: ["Préparer la pâte de base et la séparer en deux fractions.","Parfumer une moitié à la vanille et l'autre au cacao en poudre.","Alterner les couches dans le moule à cake et marbrer avec une pointe de couteau."],
-      notes: "Napper d'un rocher chocolat pour encore plus de gourmandise."
-    },
-    {
-      id: "rec_30", name: "Kouign-Amann Breton", category: "Viennoiserie", time: "150", servings: "6", rating: "5",
-      desc: "Spécialité bretonne pur beurre caramélisée à la cuisson, croustillante et fondante.",
-      ingredients: [{ingId:'ing_1',qty:'0.25'},{ingId:'ing_2',qty:'0.2'},{ingId:'ing_8',qty:'0.18'},{ingId:'ing_17',qty:'10'},{ingId:'ing_18',qty:'5'}],
-      steps: ["Faire une pâte à pain souple et laisser reposer.","Feuilleter en incorporant le beurre demi-sel et le sucre en plusieurs tours.","Mettre en moule, laisser lever et cuire 35 min à 180°C jusqu'à caramel doré."],
-      notes: "À déguster impérativement encore tiède !"
-    },
-    {
-      id: "rec_31", name: "Far Breton aux Pruneaux", category: "Gâteau", time: "60", servings: "8", rating: "4",
-      desc: "Gâteau dense et rassasiant mi-flan mi-clafoutis garni de pruneaux moelleux.",
-      ingredients: [{ingId:'ing_1',qty:'0.2'},{ingId:'ing_8',qty:'0.15'},{ingId:'ing_5',qty:'4'},{ingId:'ing_9',qty:'0.75'},{ingId:'ing_2',qty:'0.05'}],
-      steps: ["Fouetter les œufs avec le sucre, ajouter la farine en pluie.","Incorporer progressivement le lait tiédi et une noix de beurre fondu.","Mettre les pruneaux au fond du moule et cuire 50 min à 180°C."],
-      notes: "Traditionnellement réalisé nature ou aux pruneaux."
-    },
-    {
-      id: "rec_32", name: "Tuiles Croquantes aux Amandes", category: "Biscuit", time: "25", servings: "15", rating: "4",
-      desc: "Biscuits ultra fins et croustillants moulés en forme de tuile à la sortie du four.",
-      ingredients: [{ingId:'ing_8',qty:'0.1'},{ingId:'ing_12',qty:'0.1'},{ingId:'ing_5',qty:'2'},{ingId:'ing_2',qty:'0.03'},{ingId:'ing_1',qty:'0.02'}],
-      steps: ["Mélanger le sucre, la poudre et effilés d'amandes avec les blancs d'œufs.","Déposer des petites cuillères sur plaque et étaler très finement.","Cuire 8 min à 180°C. Mouler immédiatement sur un rouleau à pâtisserie."],
-      notes: "Agir très vite à la sortie du four avant le durcissement."
-    },
-    {
-      id: "rec_33", name: "Langues de Chat Pâtissières", category: "Biscuit", time: "20", servings: "25", rating: "4",
-      desc: "Petits biscuits allongés aux bords dorés croustillants et cœur tendre.",
-      ingredients: [{ingId:'ing_2',qty:'0.1'},{ingId:'ing_3',qty:'0.1'},{ingId:'ing_1',qty:'0.1'},{ingId:'ing_5',qty:'3'},{ingId:'ing_14',qty:'1'}],
-      steps: ["Mélanger le beurre pommade avec le sucre glace et la vanille.","Incorporer les blancs d'œufs puis la farine à la spatule.","Pocher de petits bâtonnets espacés et enfourner 10 min à 200°C."],
-      notes: "Parfait pour accompagner une coupe de glace ou une mousse."
-    },
-    {
-      id: "rec_34", name: "Pain d'Épices au Miel & Cannelle", category: "Gâteau", time: "60", servings: "10", rating: "5",
-      desc: "Gâteau mœlleux et réconfortant riche en miel et épices douces.",
-      ingredients: [{ingId:'ing_28',qty:'0.25'},{ingId:'ing_1',qty:'0.2'},{ingId:'ing_8',qty:'0.05'},{ingId:'ing_9',qty:'0.1'},{ingId:'ing_16',qty:'8'},{ingId:'ing_2',qty:'0.05'}],
-      steps: ["Chauffer le miel avec le lait et le beurre.","Verser sur la farine mélangée aux épices (cannelle, anis, gingembre) et levure.","Cuire doucement à 150°C pendant 50 min dans un moule à cake."],
-      notes: "Encore meilleur après 24 à 48h de repos enveloppé dans du film."
-    },
-    {
-      id: "rec_35", name: "Meringues Françaises Aériennes", category: "Biscuit", time: "120", servings: "10", rating: "4",
-      desc: "Bouchées légères et croustillantes au cœur très légèrement mœlleux.",
-      ingredients: [{ingId:'ing_5',qty:'4'},{ingId:'ing_8',qty:'0.12'},{ingId:'ing_3',qty:'0.12'}],
-      steps: ["Monter les blancs en neige ferme en incorporant le sucre en poudre.","Terminer en ajoutant délicatement le sucre glace à la spatule.","Pocher sur plaque et sécher au four à 90°C pendant 2 heures."],
-      notes: "Laisser la porte du four entrebâillée pour évacuer l'humidité."
-    },
-    {
-      id: "rec_36", name: "Mousse au Chocolat Noir Intense", category: "Chocolat", time: "20", servings: "6", rating: "5",
-      desc: "Mousse traditionnelle pur chocolat, ferme et alvéolée sans crème ajoutée.",
-      ingredients: [{ingId:'ing_11',qty:'0.2'},{ingId:'ing_5',qty:'6'},{ingId:'ing_8',qty:'0.03'},{ingId:'ing_2',qty:'0.03'}],
-      steps: ["Fondre le chocolat au bain-marie avec une noisette de beurre.","Incorporer les jaunes d'œufs hors du feu.","Monter les blancs en neige ferme avec le sucre et les incorporer délicatement."],
-      notes: "Réserver au moins 4 heures au réfrigérateur."
-    },
-    {
-      id: "rec_37", name: "Charlotte aux Fraises & Biscuits Cuillère", category: "Entremet", time: "45", servings: "8", rating: "5",
-      desc: "Entremet frais entouré de biscuits cuillère garnis d'une bavaroise légère aux fraises.",
-      ingredients: [{ingId:'ing_22',qty:'0.5'},{ingId:'ing_10',qty:'0.3'},{ingId:'ing_8',qty:'0.1'},{ingId:'ing_5',qty:'3'},{ingId:'ing_1',qty:'0.08'}],
-      steps: ["Tapisser le contour et le fond du moule à charlotte avec les biscuits.","Préparer la mousse bavaroise en incorporant la purée de fraises et la chantilly.","Verser en alternant avec des morceaux de fraises et réserver 6h au frais."],
-      notes: "Démouler sur un plat de service et décorer de menthe fraîche."
-    },
-    {
-      id: "rec_38", name: "Galette des Rois à la Frangipane", category: "Tarte", time: "60", servings: "8", rating: "5",
-      desc: "Deux disques de pâte feuilletée croustillante renfermant une crème d'amande onctueuse.",
-      ingredients: [{ingId:'ing_25',qty:'2'},{ingId:'ing_12',qty:'0.12'},{ingId:'ing_2',qty:'0.1'},{ingId:'ing_8',qty:'0.1'},{ingId:'ing_5',qty:'3'}],
-      steps: ["Préparer la frangipane en mélangeant crème d'amande et crème pâtissière.","Garnir le premier disque de pâte en laissant 2cm de bord. Insérer la fève !","Recouvrir du second disque, souder les bords, dorer à l'œuf et cuire 35 min à 190°C."],
-      notes: "Chiqueter le tour avec la lame d'un couteau pour un plus bel effet."
-    },
-    {
-      id: "rec_39", name: "Tarte Alsacienne aux Pommes", category: "Tarte", time: "55", servings: "6", rating: "4",
-      desc: "Pommes disposées en rosace et recouvertes d'une liaison crémeuse aux œufs.",
-      ingredients: [{ingId:'ing_1',qty:'0.2'},{ingId:'ing_19',qty:'0.8'},{ingId:'ing_5',qty:'2'},{ingId:'ing_10',qty:'0.15'},{ingId:'ing_8',qty:'0.08'}],
-      steps: ["Disposer les quartiers de pommes sur la pâte brisée foncée dans le moule.","Mélanger les œufs, la crème, le sucre et la vanille pour former le flan.","Verser sur les fruits et cuire 40 min à 180°C."],
-      notes: "Saupoudrer d'un voile de cannelle avant de servir."
-    },
-    {
-      id: "rec_40", name: "Bugnes Moelleuses de Carnaval", category: "Viennoiserie", time: "45", servings: "20", rating: "4",
-      desc: "Beignets dorés légers et mœlleux saupoudrés d'un nuage de sucre glace.",
-      ingredients: [{ingId:'ing_1',qty:'0.25'},{ingId:'ing_2',qty:'0.05'},{ingId:'ing_8',qty:'0.04'},{ingId:'ing_5',qty:'2'},{ingId:'ing_16',qty:'7'}],
-      steps: ["Former une pâte souple avec les ingrédients et étaler sur 3mm d'épaisseur.","Détailler des losanges et inciser le centre pour y passer une pointe.","Frire dans l'huile chaude quelques secondes de chaque côté puis sucrer."],
-      notes: "Incontournable douceur des fêtes de Mardi Gras."
-    },
-    {
-      id: "rec_41", name: "Nonnettes Pâtissières à l'Orange", category: "Biscuit", time: "40", servings: "12", rating: "4",
-      desc: "Petits gâteaux de pain d'épices de Dijon fourrés au cœur de marmelade d'orange.",
-      ingredients: [{ingId:'ing_28',qty:'0.2'},{ingId:'ing_1',qty:'0.2'},{ingId:'ing_2',qty:'0.06'},{ingId:'ing_8',qty:'0.06'},{ingId:'ing_4',qty:'2'}],
-      steps: ["Préparer la pâte à pain d'épices et remplir des moules à muffins.","Déposer une cuillère de marmelade d'orange au centre de chaque gâteau.","Cuire 20 min à 170°C et glacer d'un fin sirop au sucre glace."],
-      notes: "Un classique du patrimoine gourmand bourguignon."
-    },
-    {
-      id: "rec_42", name: "Gâteau Marqué au Citron & Pavot", category: "Gâteau", time: "50", servings: "8", rating: "5",
-      desc: "Cake très mœlleux et acidulé infusé avec un sirop au jus de citron frais.",
-      ingredients: [{ingId:'ing_1',qty:'0.18'},{ingId:'ing_2',qty:'0.12'},{ingId:'ing_8',qty:'0.15'},{ingId:'ing_5',qty:'3'},{ingId:'ing_4',qty:'3'},{ingId:'ing_16',qty:'6'}],
-      steps: ["Fouetter beurre et sucre, ajouter les œufs, le zeste et le jus de citron.","Incorporer la farine et la levure. Cuire 40 min à 170°C.","Aroser le cake chaud dès la sortie du four avec le sirop de citron."],
-      notes: "L'imbibage au sirop garantit un moelleux incomparable pendant plusieurs jours."
-    },
-    {
-      id: "rec_43", name: "Speculoos Artisanaux aux Épices", category: "Biscuit", time: "30", servings: "25", rating: "4",
-      desc: "Biscuits croquants bruns parfumés à la vergeoise et à la cannelle.",
-      ingredients: [{ingId:'ing_1',qty:'0.25'},{ingId:'ing_2',qty:'0.1'},{ingId:'ing_8',qty:'0.15'},{ingId:'ing_5',qty:'1'},{ingId:'ing_16',qty:'4'}],
-      steps: ["Mélanger le beurre pommade avec la cassonade brune et les épices.","Ajouter l'œuf puis la farine. Étaler la pâte et découper des rectangles.","Cuire 12 min à 170°C et laisser refroidir sur grille."],
-      notes: "Merveilleux à tremper dans un café ou un thé chaud."
-    },
-    {
-      id: "rec_44", name: "Mousse Légère aux Framboises", category: "Entremet", time: "25", servings: "4", rating: "4",
-      desc: "Dessert fruité en verrine associant la pureté de la framboise et une chantilly aérienne.",
-      ingredients: [{ingId:'ing_21',qty:'0.3'},{ingId:'ing_10',qty:'0.25'},{ingId:'ing_3',qty:'0.06'},{ingId:'ing_4',qty:'1'}],
-      steps: ["Mixer les framboises avec un trait de jus de citron et tamiser pour ôter les pépins.","Monter la crème liquide très froide en chantilly avec le sucre glace.","Incorporer délicatement la purée de fruits à la chantilly et dresser."],
-      notes: "Servir avec une framboise fraîche et une feuille de menthe."
-    },
-    {
-      id: "rec_45", name: "Tartelette Pistache & Fleur d'Oranger", category: "Tarte", time: "60", servings: "6", rating: "5",
-      desc: "Crème d'amande-pistache sur fond croustillant, surmontée d'éclats de pistaches torréfiées.",
-      ingredients: [{ingId:'ing_1',qty:'0.18'},{ingId:'ing_2',qty:'0.12'},{ingId:'ing_29',qty:'0.12'},{ingId:'ing_8',qty:'0.08'},{ingId:'ing_5',qty:'2'}],
-      steps: ["Réaliser une pâte sablée, foncer les moules à tartelette et cuire à blanc.","Garnir d'une crème frangipane à la pistache et cuire 20 min à 170°C.","Décorer avec des pistaches concassées."],
-      notes: "Un parfum délicat et oriental très raffiné."
-    },
-    {
-      id: "rec_46", name: "Succès aux Noisettes Prallinées", category: "Gâteau", time: "80", servings: "8", rating: "5",
-      desc: "Deux biscuits meringués aux noisettes enserrant une crème mousseline pralinée.",
-      ingredients: [{ingId:'ing_13',qty:'0.15'},{ingId:'ing_3',qty:'0.15'},{ingId:'ing_5',qty:'4'},{ingId:'ing_30',qty:'0.12'},{ingId:'ing_2',qty:'0.15'}],
-      steps: ["Montez les blancs en neige avec le sucre glace et la poudre de noisette.","Pocher deux disques de biscuit dacquoise et cuire 30 min à 150°C.","Montage avec la crème pralinée et masquer les bords de noisettes hachées."],
-      notes: "Conserver au frais 2 heures avant dégustation."
-    },
-    {
-      id: "rec_47", name: "Gâteau Mœlleux aux Poires & Amandes", category: "Gâteau", time: "45", servings: "6", rating: "4",
-      desc: "Gâteau familial fondant riche en lamelles de poires juteuses et poudre d'amande.",
-      ingredients: [{ingId:'ing_20',qty:'0.5'},{ingId:'ing_12',qty:'0.1'},{ingId:'ing_1',qty:'0.08'},{ingId:'ing_2',qty:'0.08'},{ingId:'ing_8',qty:'0.08'},{ingId:'ing_5',qty:'3'}],
-      steps: ["Fouetter œufs et sucre jusqu'à ce que le mélange blanchisse.","Ajouter le beurre fondu, l'amande, la farine puis les morceaux de poires.","Cuire 35 min à 180°C dans un moule manqué."],
-      notes: "Saupoudrer de sucre glace dès la sortie du four."
-    },
-    {
-      id: "rec_48", name: "Diplomate aux Fruits Confits", category: "Entremet", time: "40", servings: "6", rating: "4",
-      desc: "Dessert anti-gaspillage traditionnel à base de brioche rassie et crème vanillée.",
-      ingredients: [{ingId:'ing_9',qty:'0.5'},{ingId:'ing_5',qty:'4'},{ingId:'ing_8',qty:'0.08'},{ingId:'ing_15',qty:'1'},{ingId:'ing_2',qty:'0.03'}],
-      steps: ["Couper la brioche en morceaux et la faire tremper dans le lait chaud vanillé.","Mélanger avec les œufs battus et le sucre.","Verser dans un moule à charlotte beurré et cuire 40 min au bain-marie à 170°C."],
-      notes: "Servir froid accompagné d'un custard ou coulis de fruits."
-    },
-    {
-      id: "rec_49", name: "Crêpes Dentelles Croustillantes au Chocolat", category: "Biscuit", time: "30", servings: "15", rating: "4",
-      desc: "Biscuits roulés d'une finesse extrême enrobés de chocolat noir fondant.",
-      ingredients: [{ingId:'ing_2',qty:'0.06'},{ingId:'ing_3',qty:'0.08'},{ingId:'ing_1',qty:'0.06'},{ingId:'ing_5',qty:'2'},{ingId:'ing_11',qty:'0.1'}],
-      steps: ["Étaler de fins rubans de pâte sur une plaque silpat.","Cuire 5 min à 180°C. Enrouler immédiatement autour d'une tige en bois.","Napper d'un côté avec le chocolat noir fondu."],
-      notes: "Aussi connues sous le nom de Gavottes."
-    },
-    {
-      id: "rec_50", name: "Tarte Meringuée Pamplemousse & Rose", category: "Tarte", time: "85", servings: "8", rating: "5",
-      desc: "Une variante florale de la tarte au citron associant l'amertume du pamplemousse rose.",
-      ingredients: [{ingId:'ing_1',qty:'0.2'},{ingId:'ing_2',qty:'0.12'},{ingId:'ing_8',qty:'0.15'},{ingId:'ing_5',qty:'4'},{ingId:'ing_27',qty:'0.02'}],
-      steps: ["Préparer un curd avec le jus de pamplemousse rose et le zeste.","Verser dans le fond de tarte sablée cuit à blanc.","Recouvrir de meringue italienne et dorer légèrement au chalumeau."],
-      notes: "Décorer de quelques pétales de rose comestibles."
     }
   ];
 }
@@ -806,17 +511,40 @@ function switchMainTab(tab){
   if(tab === 'catalog') renderCatalog();
 }
 
-function calculateCosts(ingredientsList, servings){
-  let total = 0;
+function calculateCosts(r, servingsOverride){
+  let ingredientsCost = 0;
+  const ingredientsList = Array.isArray(r) ? r : (r.ingredients || []);
+  const numServings = parseFloat(servingsOverride || r.servings) || 1;
+  const packaging = parseFloat(r.packagingCost) || 0;
+  const labor = parseFloat(r.laborCost) || 0;
+  const overhead = parseFloat(r.overheadCost) || 0;
+  const margin = parseFloat(r.marginPercent) || 0;
+
   (ingredientsList || []).forEach(item => {
     const ing = catalog.find(c => c.id === item.ingId);
     if(ing){
       const qtyNum = parseFloat(item.qty) || 0;
-      total += qtyNum * (parseFloat(ing.price) || 0);
+      ingredientsCost += qtyNum * (parseFloat(ing.price) || 0);
     }
   });
-  const numServings = parseFloat(servings) || 1;
-  return { total, perServing: total / numServings };
+
+  const extraCosts = packaging + labor + overhead;
+  const totalCost = ingredientsCost + extraCosts;
+  const perServingCost = totalCost / numServings;
+
+  const marginDec = margin > 0 && margin < 100 ? (margin / 100) : 0;
+  const sellingPriceTotal = marginDec > 0 ? (totalCost / (1 - marginDec)) : totalCost;
+  const sellingPricePerServing = sellingPriceTotal / numServings;
+
+  return {
+    ingredientsCost,
+    extraCosts,
+    totalCost,
+    perServingCost,
+    margin,
+    sellingPriceTotal,
+    sellingPricePerServing
+  };
 }
 
 function renderCatalog(){
@@ -905,7 +633,7 @@ function render(){
     card.className = 'card';
     const color = CATEGORY_COLORS[r.category] || '#8E5EA5';
     const stars = "★".repeat(parseInt(r.rating) || 0) + "☆".repeat(5 - (parseInt(r.rating) || 0));
-    const costs = calculateCosts(r.ingredients, r.servings);
+    const costs = calculateCosts(r);
 
     card.innerHTML = `
       <div class="tab" style="background:${color}">${r.category}</div>
@@ -917,8 +645,8 @@ function render(){
         </div>
         <div class="desc">${escapeHtml(r.desc || '')}</div>
         <div class="cost-badge">
-          <span>Coût total : <strong>${costs.total.toFixed(2)} €</strong></span>
-          <span style="font-size:11px; opacity:0.85;">(${costs.perServing.toFixed(2)} €/part)</span>
+          <div>Coût total : <strong>${costs.totalCost.toFixed(2)} €</strong> <span style="font-size:11px; opacity:0.85;">(${costs.perServingCost.toFixed(2)} €/part)</span></div>
+          ${costs.margin > 0 ? `<div style="font-size:11.5px; font-weight:600; color:var(--violet-main);">Prix conseillé : ${costs.sellingPricePerServing.toFixed(2)} € / part</div>` : ''}
         </div>
         <div class="foot">
           <span class="rating">${stars}</span>
@@ -939,22 +667,46 @@ function escapeHtml(str){
 const formOverlay = document.getElementById('formOverlay');
 const detailOverlay = document.getElementById('detailOverlay');
 const ingList = document.getElementById('ingList');
-const liveTotalCostEl = document.getElementById('liveTotalCost');
 
 function updateLiveCost(){
-  let total = 0;
+  const ingData = [];
   ingList.querySelectorAll('.ing-row').forEach(row => {
     const ingId = row.querySelector('.ing-select').value;
-    const qty = parseFloat(row.querySelector('.ing-qty').value) || 0;
+    const qty = row.querySelector('.ing-qty').value;
     const ing = catalog.find(c => c.id === ingId);
     if(ing){
-      const subtotal = qty * ing.price;
+      const subtotal = (parseFloat(qty) || 0) * ing.price;
       row.querySelector('.ing-subtotal').textContent = subtotal.toFixed(2) + " €";
-      total += subtotal;
     }
+    ingData.push({ ingId, qty });
   });
-  liveTotalCostEl.textContent = total.toFixed(2) + " €";
+
+  const servings = parseFloat(document.getElementById('f-servings').value) || 1;
+  const packagingCost = parseFloat(document.getElementById('f-packaging').value) || 0;
+  const laborCost = parseFloat(document.getElementById('f-labor').value) || 0;
+  const overheadCost = parseFloat(document.getElementById('f-overhead').value) || 0;
+  const marginPercent = parseFloat(document.getElementById('f-margin').value) || 0;
+
+  const recipeTemp = {
+    ingredients: ingData,
+    servings,
+    packagingCost,
+    laborCost,
+    overheadCost,
+    marginPercent
+  };
+
+  const costs = calculateCosts(recipeTemp);
+
+  document.getElementById('liveTotalCost').textContent = costs.ingredientsCost.toFixed(2) + " €";
+  document.getElementById('liveExtraCost').textContent = costs.extraCosts.toFixed(2) + " €";
+  document.getElementById('liveCostTotal').textContent = costs.totalCost.toFixed(2) + " €";
+  document.getElementById('livePriceAdvice').textContent = costs.sellingPriceTotal.toFixed(2) + " € (" + costs.sellingPricePerServing.toFixed(2) + " €/part)";
 }
+
+['f-servings', 'f-packaging', 'f-labor', 'f-overhead', 'f-margin'].forEach(id => {
+  document.getElementById(id).addEventListener('input', updateLiveCost);
+});
 
 function ingredientRow(selectedIngId="", qty=""){
   const row = document.createElement('div');
@@ -998,6 +750,10 @@ function openForm(recipe = null){
   document.getElementById('f-servings').value = recipe?.servings || '';
   document.getElementById('f-rating').value = recipe?.rating || '';
   document.getElementById('f-desc').value = recipe?.desc || '';
+  document.getElementById('f-packaging').value = recipe?.packagingCost || '';
+  document.getElementById('f-labor').value = recipe?.laborCost || '';
+  document.getElementById('f-overhead').value = recipe?.overheadCost || '';
+  document.getElementById('f-margin').value = recipe?.marginPercent || '';
   document.getElementById('f-steps').value = (recipe?.steps || []).join("\n");
   document.getElementById('f-notes').value = recipe?.notes || '';
   
@@ -1030,6 +786,10 @@ document.getElementById('recipeForm').addEventListener('submit', (e) => {
     servings: document.getElementById('f-servings').value.trim(),
     rating: document.getElementById('f-rating').value.trim(),
     desc: document.getElementById('f-desc').value.trim(),
+    packagingCost: document.getElementById('f-packaging').value.trim(),
+    laborCost: document.getElementById('f-labor').value.trim(),
+    overheadCost: document.getElementById('f-overhead').value.trim(),
+    marginPercent: document.getElementById('f-margin').value.trim(),
     ingredients,
     steps: document.getElementById('f-steps').value.split("\n").map(s => s.trim()).filter(Boolean),
     notes: document.getElementById('f-notes').value.trim()
@@ -1059,7 +819,7 @@ function openDetail(id){
   if(!r) return;
   const color = CATEGORY_COLORS[r.category] || '#8E5EA5';
   const stars = "★".repeat(parseInt(r.rating) || 0) + "☆".repeat(5 - (parseInt(r.rating) || 0));
-  const costs = calculateCosts(r.ingredients, r.servings);
+  const costs = calculateCosts(r);
 
   document.getElementById('detailContent').innerHTML = `
     <div class="tab" style="background:${color}; display:inline-block; margin-bottom:12px;">${r.category}</div>
@@ -1074,12 +834,21 @@ function openDetail(id){
 
     <div class="cost-banner">
       <div class="item">
-        <div class="label">Coût Total</div>
-        <div class="val">${costs.total.toFixed(2)} €</div>
+        <div class="label">Ingrédients</div>
+        <div class="val">${costs.ingredientsCost.toFixed(2)} €</div>
       </div>
       <div class="item">
-        <div class="label">Coût par Part</div>
-        <div class="val">${costs.perServing.toFixed(2)} €</div>
+        <div class="label">Frais Annexes</div>
+        <div class="val">${costs.extraCosts.toFixed(2)} €</div>
+      </div>
+      <div class="item">
+        <div class="label">Coût de Revient</div>
+        <div class="val">${costs.totalCost.toFixed(2)} €</div>
+      </div>
+      <div class="item" style="border-left:1px dashed var(--violet-soft); padding-left:14px;">
+        <div class="label">Prix de Vente Conseillé (${costs.margin}%)</div>
+        <div class="val" style="color:#7B4E92;">${costs.sellingPriceTotal.toFixed(2)} €</div>
+        <div style="font-size:11px; color:#695175;">${costs.sellingPricePerServing.toFixed(2)} € / part</div>
       </div>
     </div>
 
@@ -1108,6 +877,18 @@ function openDetail(id){
             }).join('')}
           </tbody>
         </table>
+
+        ${(costs.extraCosts > 0) ? `
+          <div style="margin-top:14px; font-size:12.5px; background:var(--paper); padding:10px 12px; border-radius:8px;">
+            <strong>Détail des frais annexes :</strong>
+            <ul style="margin:4px 0 0; padding-left:18px; color:#53415D;">
+              ${parseFloat(r.packagingCost) ? `<li>Emballages & Boîtes : ${parseFloat(r.packagingCost).toFixed(2)} €</li>` : ''}
+              ${parseFloat(r.laborCost) ? `<li>Main-d'œuvre : ${parseFloat(r.laborCost).toFixed(2)} €</li>` : ''}
+              ${parseFloat(r.overheadCost) ? `<li>Matériel & Énergie : ${parseFloat(r.overheadCost).toFixed(2)} €</li>` : ''}
+            </ul>
+          </div>
+        ` : ''}
+
         ${r.notes ? `<h4 style="margin-top:20px;">Notes & Astuces</h4><p style="font-size:13.5px; color:#53415D; line-height:1.4;">${escapeHtml(r.notes)}</p>` : ''}
       </div>
       <div>
