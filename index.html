@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Mon Cahier de Pâtisserie — Édition Florale</title>
+<title>Mon Cahier de Pâtisserie — Édition Florale (50 Recettes)</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;0,9..144,700;1,9..144,500&family=Work+Sans:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
@@ -61,7 +61,7 @@
     letter-spacing: -0.01em;
   }
   header p {
-    font-size: 15px; color: #695175; margin: 10px auto 0; max-width: 500px;
+    font-size: 15px; color: #695175; margin: 10px auto 0; max-width: 550px;
   }
 
   .main-nav {
@@ -109,6 +109,10 @@
     transition: transform .12s ease, background-color .15s ease;
   }
   .btn-primary:hover { transform: translateY(-1px); background: #7B4E92; }
+  .btn-reset {
+    background: none; border: 1px solid var(--violet-soft); color: var(--violet-main);
+    padding: 8px 14px; border-radius: 10px; font-size: 12px; font-weight: 600;
+  }
 
   main { position: relative; z-index: 1; max-width: 1080px; margin: 0 auto; padding: 28px 24px 80px; }
 
@@ -231,7 +235,7 @@
 <header>
   <div class="eyebrow">🌸 Carnet Gourmand & Floral</div>
   <h1>Mon Cahier de Pâtisserie</h1>
-  <p>Mes recettes, mes dosages et le calcul précis du coût de mes créations gourmandes.</p>
+  <p>Mes 50 recettes incontournables, mes dosages et le calcul automatisé des coûts de revient et marges.</p>
 
   <div class="main-nav">
     <button class="nav-tab active" id="tabRecipesBtn" onclick="switchMainTab('recipes')">📖 Cahier de Recettes</button>
@@ -245,6 +249,7 @@
     <div class="search-add">
       <input type="search" id="search" placeholder="Rechercher une recette…">
       <button class="btn-primary" id="btnNew">+ Nouvelle recette</button>
+      <button class="btn-reset" onclick="resetToDefault50()">↺ Recharger les 50 recettes</button>
     </div>
   </div>
 
@@ -422,8 +427,8 @@ const CATEGORY_COLORS = {
   "Tarte": "#B593CA", "Gâteau": "#8E5EA5", "Viennoiserie": "#EBB6CE",
   "Entremet": "#7B68EE", "Biscuit": "#88A98C", "Chocolat": "#5C3D61", "Autre": "#8499B5"
 };
-const STORAGE_KEY = "cahier-patisserie-floral-recettes-v2";
-const CATALOG_KEY = "cahier-patisserie-floral-catalog-v2";
+const STORAGE_KEY = "cahier-patisserie-floral-recettes-50v1";
+const CATALOG_KEY = "cahier-patisserie-floral-catalog-50v1";
 
 function seedCatalog(){
   return [
@@ -460,14 +465,6 @@ function seedCatalog(){
   ];
 }
 
-function loadCatalog(){
-  try {
-    const raw = localStorage.getItem(CATALOG_KEY);
-    return raw ? JSON.parse(raw) : seedCatalog();
-  } catch(e) { return seedCatalog(); }
-}
-function saveCatalog(){ localStorage.setItem(CATALOG_KEY, JSON.stringify(catalog)); }
-
 function seedData(){
   return [
     {
@@ -476,18 +473,410 @@ function seedData(){
       packagingCost: "1.20", laborCost: "4.00", overheadCost: "0.80", marginPercent: "35",
       ingredients: [{ingId:'ing_1',qty:'0.2'},{ingId:'ing_2',qty:'0.12'},{ingId:'ing_3',qty:'0.08'},{ingId:'ing_4',qty:'4'},{ingId:'ing_5',qty:'4'},{ingId:'ing_6',qty:'1'}],
       steps: ["Préparer la pâte sablée, foncer le moule et cuire à blanc 20 min à 180°C.","Cuire le crémeux citron à feu doux jusqu'à épaississement puis ajouter le beurre.","Monter la meringue avec une goutte d'arôme naturel de violette.","Dresser et pocher joliment avant de servir frais."],
-      notes: "Ajouter quelques fleurs d'enseigne fraîches ou de violettes cristallisées pour la déco."
+      notes: "Ajouter quelques fleurs fraîches ou violettes cristallisées pour la décoration."
     },
     {
       id: "rec_2", name: "Sablés floraux à la lavande", category: "Biscuit", time: "45", servings: "12", rating: "4",
       desc: "Petits sablés fondants infusés aux fleurs de lavande culinaire et zestes d'orange.",
       packagingCost: "0.80", laborCost: "2.50", overheadCost: "0.50", marginPercent: "30",
       ingredients: [{ingId:'ing_2',qty:'0.15'},{ingId:'ing_1',qty:'0.25'},{ingId:'ing_7',qty:'10'},{ingId:'ing_8',qty:'0.09'}],
-      steps: ["Mélanger le sucre et la lavande pour en libérer les huiles essentielles.","Incorporer le beurre puis la farine jusqu'à former une boule.","Détailler les sablés et enfourner 12 min à 160°C."],
-      notes: "Attention à doser la lavande avec parcimonie pour éviter le goût savonneux."
+      steps: ["Mélanger le sucre et la lavande pour en libérer les arômes.","Incorporer le beurre puis la farine jusqu'à former une boule.","Détailler les sablés et enfourner 12 min à 160°C."],
+      notes: "Attention à doser la lavande avec parcimonie pour éviter une note trop puissante."
+    },
+    {
+      id: "rec_3", name: "Éclairs au chocolat", category: "Chocolat", time: "75", servings: "6", rating: "5",
+      desc: "Choux allongés garnis d'une crème pâtissière généreuse au chocolat noir 70% et glacés au fondant.",
+      packagingCost: "1.00", laborCost: "3.50", overheadCost: "0.60", marginPercent: "35",
+      ingredients: [{ingId:'ing_1',qty:'0.15'},{ingId:'ing_2',qty:'0.1'},{ingId:'ing_5',qty:'4'},{ingId:'ing_9',qty:'0.5'},{ingId:'ing_11',qty:'0.15'},{ingId:'ing_8',qty:'0.1'}],
+      steps: ["Réaliser la pâte à choux et pocher les éclairs.","Cuire 30 min à 180°C sans ouvrir le four.","Préparer la crème pâtissière au chocolat noir.","Garnir et glacer le dessus."],
+      notes: "Utiliser un chocolat de couverture 70% pour une saveur intense."
+    },
+    {
+      id: "rec_4", name: "Madeleines à la vanille", category: "Biscuit", time: "30", servings: "16", rating: "5",
+      desc: "Madeleines moelleuses avec leur bosse caractéristique et un léger goût de vanille.",
+      packagingCost: "0.50", laborCost: "2.00", overheadCost: "0.40", marginPercent: "30",
+      ingredients: [{ingId:'ing_1',qty:'0.2'},{ingId:'ing_2',qty:'0.15'},{ingId:'ing_8',qty:'0.12'},{ingId:'ing_5',qty:'3'},{ingId:'ing_15',qty:'1'},{ingId:'ing_16',qty:'6'}],
+      steps: ["Fouetter les œufs et le sucre avec les grains de gousse de vanille.","Ajouter la farine, la levure et le beurre fondu refroidi.","Laisser reposer au frais au moins 2h (indispensable pour la bosse).","Enfourner à 200°C pendant 10 min."],
+      notes: "Le choc thermique entre la pâte très froide et le four chaud crée la bosse."
+    },
+    {
+      id: "rec_5", name: "Croissants pur beurre", category: "Viennoiserie", time: "180", servings: "10", rating: "5",
+      desc: "Croissants artisanaux feuilletés, croustillants à l'extérieur et aérés à l'intérieur.",
+      packagingCost: "0.90", laborCost: "5.00", overheadCost: "1.00", marginPercent: "40",
+      ingredients: [{ingId:'ing_1',qty:'0.5'},{ingId:'ing_2',qty:'0.25'},{ingId:'ing_8',qty:'0.06'},{ingId:'ing_17',qty:'10'},{ingId:'ing_9',qty:'0.15'},{ingId:'ing_18',qty:'10'}],
+      steps: ["Pétrir la détrempe et laisser reposer au frais.","Réaliser le tourage avec le beurre (3 tours simples).","Détailler les triangles, rouler les croissants et faire pousser 2h.","Dorer et cuire à 190°C pendant 15 min."],
+      notes: "Garder la pâte bien froide à chaque étape du feuilletage."
+    },
+    {
+      id: "rec_6", name: "Tarte Tatin aux pommes", category: "Tarte", time: "60", servings: "8", rating: "5",
+      desc: "Pommes caramélisées fondantes cuites sous une pâte feuilletée croustillante.",
+      packagingCost: "1.00", laborCost: "3.00", overheadCost: "0.70", marginPercent: "35",
+      ingredients: [{ingId:'ing_19',qty:'1.5'},{ingId:'ing_2',qty:'0.1'},{ingId:'ing_8',qty:'0.15'},{ingId:'ing_25',qty:'1'}],
+      steps: ["Réaliser un caramel ambré dans le moule Tatin.","Disposer les quartiers de pommes bien serrés et ajouter le beurre.","Recouvrir de pâte feuilletée en bordant à l'intérieur.","Cuire 40 min à 180°C et démouler tiède."],
+      notes: "Privilégier des pommes Reine des Reinettes ou Chantecler qui se tiennent à la cuisson."
+    },
+    {
+      id: "rec_7", name: "Paris-Brest au praliné", category: "Entremet", time: "105", servings: "8", rating: "5",
+      desc: "Couronne de pâte à choux garnie d'une crème mousseline onctueuse au praliné intense.",
+      packagingCost: "1.50", laborCost: "4.50", overheadCost: "1.00", marginPercent: "35",
+      ingredients: [{ingId:'ing_1',qty:'0.15'},{ingId:'ing_2',qty:'0.2'},{ingId:'ing_5',qty:'5'},{ingId:'ing_9',qty:'0.4'},{ingId:'ing_30',qty:'0.15'},{ingId:'ing_12',qty:'0.05'}],
+      steps: ["Pocher une couronne de pâte à choux et parsemer d'amandes effilées.","Cuire 35 min à 180°C.","Préparer la crème mousseline pralinée en incorporant le beurre pommade.","Couper la couronne en deux et pocher la crème à la douille cannelée."],
+      notes: "Le praliné maison apporte encore plus de profondeur aromatique."
+    },
+    {
+      id: "rec_8", name: "Mille-feuille vanille", category: "Entremet", time: "90", servings: "6", rating: "4",
+      desc: "Trois couches de pâte feuilletée inversée caramélisée et crème diplomate vanille intense.",
+      packagingCost: "1.20", laborCost: "4.00", overheadCost: "0.80", marginPercent: "35",
+      ingredients: [{ingId:'ing_25',qty:'2'},{ingId:'ing_9',qty:'0.5'},{ingId:'ing_15',qty:'2'},{ingId:'ing_5',qty:'4'},{ingId:'ing_10',qty:'0.2'},{ingId:'ing_3',qty:'0.1'}],
+      steps: ["Cuire la pâte feuilletée entre deux plaques avec du sucre pour la caraméliser.","Préparer la crème diplomate en détendant la pâtissière avec la crème chantilly.","Détailler trois rectangles réguliers et monter avec la crème pâtissière."],
+      notes: "Montage à la minute pour garder le croustillant absolu du feuilletage."
+    },
+    {
+      id: "rec_9", name: "Macarons à la framboise", category: "Biscuit", time: "80", servings: "20", rating: "5",
+      desc: "Coques lisses au meringue italienne garnies d'une confit acidulé de framboises fraîches.",
+      packagingCost: "1.50", laborCost: "4.00", overheadCost: "0.90", marginPercent: "40",
+      ingredients: [{ingId:'ing_12',qty:'0.2'},{ingId:'ing_3',qty:'0.2'},{ingId:'ing_8',qty:'0.2'},{ingId:'ing_5',qty:'4'},{ingId:'ing_21',qty:'0.25'}],
+      steps: ["Tasser la poudre d'amande et le sucre glace.","Réaliser une meringue italienne et macaronner.","Pocher les coques et laisser croûter 20 min.","Cuire 14 min à 150°C et garnir du confit framboise."],
+      notes: "Déguster le lendemain : l'humidité de la garniture ramollit le cœur de la coque."
+    },
+    {
+      id: "rec_10", name: "Canelés bordelais", category: "Biscuit", time: "50", servings: "16", rating: "5",
+      desc: "Cœur moelleux et alvéolé infusé au rhum et à la vanille sous une croûte caramélisée.",
+      packagingCost: "0.60", laborCost: "2.50", overheadCost: "0.80", marginPercent: "30",
+      ingredients: [{ingId:'ing_9',qty:'0.5'},{ingId:'ing_2',qty:'0.05'},{ingId:'ing_1',qty:'0.1'},{ingId:'ing_8',qty:'0.2'},{ingId:'ing_5',qty:'3'},{ingId:'ing_15',qty:'1'}],
+      steps: ["Faire bouillir le lait avec le beurre et la gousse de vanille fendue.","Mélanger la farine et le sucre, ajouter les œufs puis verser le lait chaud.","Reposer au frais pendant 24h au minimum.","Cuire en moules en cuivre étamé 45 min à 210°C."],
+      notes: "Les moules en cuivre garantissent la caramélisation extérieure incomparable."
+    },
+    {
+      id: "rec_11", name: "Financiers amande & beurre noisette", category: "Biscuit", time: "35", servings: "12", rating: "4",
+      desc: "Petits gâteaux dorés au goût caractéristiques de beurre noisette et d'amandes douces.",
+      packagingCost: "0.60", laborCost: "2.00", overheadCost: "0.40", marginPercent: "30",
+      ingredients: [{ingId:'ing_2',qty:'0.12'},{ingId:'ing_3',qty:'0.12'},{ingId:'ing_12',qty:'0.08'},{ingId:'ing_1',qty:'0.04'},{ingId:'ing_5',qty:'4'}],
+      steps: ["Chauffer le beurre jusqu'à obtenir une couleur et une odeur de noisette.","Fouetter légèrement les blancs d'œufs avec le sucre glace et l'amande.","Incorporer le beurre noisette tiédi et la farine.","Cuire 15 min à 190°C."],
+      notes: "Filtrer le beurre noisette pour enlever les résidus brulés avant incorporation."
+    },
+    {
+      id: "rec_12", name: "Opéra café & chocolat", category: "Entremet", time: "120", servings: "10", rating: "5",
+      desc: "Succession harmonieuse de biscuit Joconde imbibé au café, ganache chocolat et crème au beurre café.",
+      packagingCost: "2.00", laborCost: "6.00", overheadCost: "1.20", marginPercent: "40",
+      ingredients: [{ingId:'ing_12',qty:'0.15'},{ingId:'ing_3',qty:'0.15'},{ingId:'ing_5',qty:'6'},{ingId:'ing_11',qty:'0.2'},{ingId:'ing_2',qty:'0.2'},{ingId:'ing_10',qty:'0.15'}],
+      steps: ["Cuire 3 biscuits Joconde très fins.","Préparer le sirop de café fort et la ganache au chocolat noir.","Réaliser une crème au beurre légère parfumée à l'extrait de café.","Monter en couches successives et terminer par un glaçage opéra brillant."],
+      notes: "Utiliser une règle pour un parement net sur les quatre côtés."
+    },
+    {
+      id: "rec_13", name: "Tarte aux fraises & Crème diplomate", category: "Tarte", time: "70", servings: "8", rating: "5",
+      desc: "Pâte sablée croustillante, crème diplomate vanille et fraises fraîches de saison.",
+      packagingCost: "1.20", laborCost: "3.50", overheadCost: "0.70", marginPercent: "35",
+      ingredients: [{ingId:'ing_1',qty:'0.2'},{ingId:'ing_2',qty:'0.1'},{ingId:'ing_22',qty:'0.5'},{ingId:'ing_9',qty:'0.3'},{ingId:'ing_10',qty:'0.15'},{ingId:'ing_15',qty:'1'}],
+      steps: ["Cuire le fond de tarte à blanc jusqu'à dorure complète.","Réaliser la crème pâtissière et y intégrer la crème fouettée.","Dresser la diplomate sur le fond de tarte froid.","Ranger harmonieusement les fraises coupées en deux."],
+      notes: "Napper d'un léger gel pour protéger les fruits du dessèchement."
+    },
+    {
+      id: "rec_14", name: "Chouquettes au sucre grain", category: "Viennoiserie", time: "40", servings: "25", rating: "4",
+      desc: "Petits choux légers et alvéolés saupoudrés généreusement de gros grains de sucre.",
+      packagingCost: "0.40", laborCost: "1.80", overheadCost: "0.40", marginPercent: "30",
+      ingredients: [{ingId:'ing_9',qty:'0.12'},{ingId:'ing_2',qty:'0.08'},{ingId:'ing_1',qty:'0.1'},{ingId:'ing_5',qty:'3'},{ingId:'ing_8',qty:'0.08'}],
+      steps: ["Faire dessécher la panade sur le feu avant d'incorporer les œufs un à un.","Pocher de petites boules sur une plaque cuisson.","Parsemer généreusement de sucre grain en appuyant légèrement.","Enfourner 22 min à 180°C sans ouvrir le four."],
+      notes: "Déguster tiède pour conserver tout le moelleux intérieur."
+    },
+    {
+      id: "rec_15", name: "Flan pâtissier traditionnel", category: "Gâteau", time: "60", servings: "8", rating: "5",
+      desc: "Flan parisien ultra crémeux sur pâte brisée, vanillé et légèrement caramélisé en surface.",
+      packagingCost: "1.00", laborCost: "2.50", overheadCost: "0.80", marginPercent: "35",
+      ingredients: [{ingId:'ing_9',qty:'1'},{ingId:'ing_10',qty:'0.2'},{ingId:'ing_5',qty:'4'},{ingId:'ing_8',qty:'0.18'},{ingId:'ing_27',qty:'0.09'},{ingId:'ing_15',qty:'2'}],
+      steps: ["Porter le lait et la crème à ébullition avec les gousses de vanille grattées.","Fouetter les jaunes d'œufs, le sucre et la maïzena puis verser le lait chaud.","Épaissir sur le feu 2 min. Verser sur la pâte et cuire 40 min à 180°C."],
+      notes: "Laisser refroidir complètement au réfrigérateur pendant au moins 6h avant de découper."
+    },
+    {
+      id: "rec_16", name: "Choux à la crème vanille", category: "Chocolat", time: "65", servings: "12", rating: "4",
+      desc: "Bouchées de pâte à choux surmontées d'un craquelin croustillant et garnies de crème vanille.",
+      packagingCost: "0.80", laborCost: "3.00", overheadCost: "0.60", marginPercent: "35",
+      ingredients: [{ingId:'ing_1',qty:'0.12'},{ingId:'ing_2',qty:'0.1'},{ingId:'ing_5',qty:'4'},{ingId:'ing_9',qty:'0.3'},{ingId:'ing_15',qty:'1'},{ingId:'ing_8',qty:'0.08'}],
+      steps: ["Préparer le craquelin (beurre, cassonade, farine) et l'étaler très fin.","Pocher les choux et déposer un disque de craquelin sur chacun.","Cuire 25 min à 180°C. Garnir de crème pâtissière vanille par le dessous."],
+      notes: "Le craquelin permet une pousse parfaitement régulière et esthétique."
+    },
+    {
+      id: "rec_17", name: "Tarte aux pommes feuilletée", category: "Tarte", time: "50", servings: "6", rating: "4",
+      desc: "Fine compotée de pommes sous une rosace de pommes tranchées finement sur feuilletage pur beurre.",
+      packagingCost: "0.80", laborCost: "2.20", overheadCost: "0.50", marginPercent: "30",
+      ingredients: [{ingId:'ing_25',qty:'1'},{ingId:'ing_19',qty:'0.8'},{ingId:'ing_2',qty:'0.03'},{ingId:'ing_8',qty:'0.04'}],
+      steps: ["Réaliser une compote rapide avec la moitié des pommes.","Étaler la compote sur la pâte feuilletée.","Disposer les tranches de pommes restantes en rosace serrée.","Badigeonner de beurre fondu et cuire 35 min à 190°C."],
+      notes: "Saupoudrer de sucre vanillé 5 min avant la fin de la cuisson pour caraméliser."
+    },
+    {
+      id: "rec_18", name: "Brioche tressée pur beurre", category: "Viennoiserie", time: "150", servings: "8", rating: "5",
+      desc: "Brioche dorée à la mie filante et moelleuse, parfumée à la fleur d'oranger.",
+      packagingCost: "0.60", laborCost: "3.50", overheadCost: "0.80", marginPercent: "35",
+      ingredients: [{ingId:'ing_1',qty:'0.35'},{ingId:'ing_2',qty:'0.15'},{ingId:'ing_5',qty:'3'},{ingId:'ing_17',qty:'12'},{ingId:'ing_8',qty:'0.05'},{ingId:'ing_9',qty:'0.05'}],
+      steps: ["Pétrir la farine, les œufs, le sucre et la levure puis incorporer le beurre peu à peu.","Laisser pousser 1h, dégazer puis placer au frais toute la nuit.","Façonner 3 brin et tresser. Faire pousser 1h30 puis cuire 25 min à 160°C."],
+      notes: "Le repos au frais est la clé d'une mie très filante et facile à façonner."
+    },
+    {
+      id: "rec_19", name: "Fondant au chocolat intense", category: "Gâteau", time: "30", servings: "8", rating: "5",
+      desc: "Gâteau au chocolat noir pur beurre à la texture dense et fondante en bouche.",
+      packagingCost: "0.80", laborCost: "2.00", overheadCost: "0.50", marginPercent: "30",
+      ingredients: [{ingId:'ing_11',qty:'0.2'},{ingId:'ing_2',qty:'0.15'},{ingId:'ing_5',qty:'4'},{ingId:'ing_8',qty:'0.12'},{ingId:'ing_1',qty:'0.05'}],
+      steps: ["Fondre le chocolat avec le beurre au bain-marie.","Fouetter les œufs avec le sucre jusqu'à ce que le mélange blanchisse.","Incorporer le chocolat fondu puis la farine.","Cuire 20 min seulement à 180°C."],
+      notes: "Servir tiède avec une boule de glace vanille ou une crème anglaise."
+    },
+    {
+      id: "rec_20", name: "Profiteroles au chocolat chaud", category: "Entremet", time: "60", servings: "4", rating: "5",
+      desc: "Choux croustillants garnis de glace vanille et arrosés d'une sauce chocolat chaud intense.",
+      packagingCost: "1.00", laborCost: "3.00", overheadCost: "0.60", marginPercent: "35",
+      ingredients: [{ingId:'ing_1',qty:'0.1'},{ingId:'ing_2',qty:'0.08'},{ingId:'ing_5',qty:'3'},{ingId:'ing_11',qty:'0.15'},{ingId:'ing_10',qty:'0.1'}],
+      steps: ["Pocher et cuire les choux à 180°C pendant 25 min.","Préparer la sauce chocolat en fondant le chocolat avec la crème chaude.","Ouvrir les choux froids, garnir de glace vanille.","Napper généreusement de sauce chocolat chaude au moment de servir."],
+      notes: "Servir immédiatement pour conserver le contraste chaud-froid."
+    },
+    {
+      id: "rec_21", name: "Tarte aux myrtilles sauvages", category: "Tarte", time: "60", servings: "8", rating: "4",
+      desc: "Tarte rustique aux myrtilles juteuses sur fond de pâte sablée à la poudre d'amande.",
+      packagingCost: "1.10", laborCost: "3.00", overheadCost: "0.60", marginPercent: "35",
+      ingredients: [{ingId:'ing_1',qty:'0.2'},{ingId:'ing_2',qty:'0.1'},{ingId:'ing_23',qty:'0.45'},{ingId:'ing_12',qty:'0.06'},{ingId:'ing_8',qty:'0.08'}],
+      steps: ["Foncer le moule avec la pâte sablée et saupoudrer de poudre d'amande.","Disposer les myrtilles fraîches sur toute la surface.","Saupoudrer d'un peu de sucre et cuire 35 min à 180°C."],
+      notes: "La poudre d’amande absorbe le jus des myrtilles et protège la pâte."
+    },
+    {
+      id: "rec_22", name: "Pains au chocolat / Chocolatines", category: "Viennoiserie", time: "180", servings: "10", rating: "5",
+      desc: "Viennoiseries croustillantes renfermant deux bâtons de chocolat noir de couverture.",
+      packagingCost: "0.90", laborCost: "5.00", overheadCost: "1.00", marginPercent: "40",
+      ingredients: [{ingId:'ing_1',qty:'0.5'},{ingId:'ing_2',qty:'0.25'},{ingId:'ing_11',qty:'0.15'},{ingId:'ing_17',qty:'10'},{ingId:'ing_8',qty:'0.06'}],
+      steps: ["Réaliser la pâte feuilletée levée identique à celle des croissants.","Détailler des rectangles de pâte de 8x12 cm.","Placer 2 bâtons de chocolat et rouler la pâte.","Pousse de 2h, dorure et cuisson 15 min à 190°C."],
+      notes: "Veiller à bien espacer sur la plaque de cuisson car ils vont doubler de volume."
+    },
+    {
+      id: "rec_23", name: "Crème brûlée à la vanille bourbon", category: "Gâteau", time: "45", servings: "6", rating: "5",
+      desc: "Crème onctueuse aux jaunes d'œufs sous une fine couche de sucre caramélisé au chalumeau.",
+      packagingCost: "0.70", laborCost: "2.20", overheadCost: "0.50", marginPercent: "35",
+      ingredients: [{ingId:'ing_10',qty:'0.4'},{ingId:'ing_9',qty:'0.1'},{ingId:'ing_5',qty:'5'},{ingId:'ing_8',qty:'0.08'},{ingId:'ing_15',qty:'1'}],
+      steps: ["Infuser la gousse de vanille dans la crème et le lait chauds.","Fouetter les jaunes avec le sucre sans faire mousser puis verser la crème.","Verser dans des ramequins plats et cuire 45 min au bain-marie à 130°C.","Refroidir au moins 4h puis caraméliser au cassonade au chalumeau."],
+      notes: "La crème doit être encore légèrement tremblotante au centre en fin de cuisson."
+    },
+    {
+      id: "rec_24", name: "Tarte Bourdaloue poires & amandes", category: "Tarte", time: "70", servings: "8", rating: "5",
+      desc: "Pâte sablée, crème d'amande moelleuse et demi-poires pochées délicatement fondantes.",
+      packagingCost: "1.10", laborCost: "3.20", overheadCost: "0.70", marginPercent: "35",
+      ingredients: [{ingId:'ing_1',qty:'0.2'},{ingId:'ing_2',qty:'0.15'},{ingId:'ing_12',qty:'0.1'},{ingId:'ing_20',qty:'0.5'},{ingId:'ing_5',qty:'2'},{ingId:'ing_8',qty:'0.1'}],
+      steps: ["Préparer la crème d'amande (beurre, sucre, amande, œuf).","Garnir le fond de tarte cru avec la crème d'amande.","Disposer les demi-poires émincées en conservant leur forme.","Cuire 40 min à 180°C et parsemer d'amandes effilées."],
+      notes: "Possibilité de pocher les poires soi-même dans un sirop léger infusé à la vanille."
+    },
+    {
+      id: "rec_25", name: "Kugelhopf alsacien", category: "Viennoiserie", time: "160", servings: "8", rating: "4",
+      desc: "Brioche alsacienne cuite dans un moule en terre cuite cannelé, garnie de raisins imbibés.",
+      packagingCost: "0.80", laborCost: "4.00", overheadCost: "0.80", marginPercent: "35",
+      ingredients: [{ingId:'ing_1',qty:'0.4'},{ingId:'ing_2',qty:'0.15'},{ingId:'ing_9',qty:'0.15'},{ingId:'ing_17',qty:'15'},{ingId:'ing_5',qty:'2'},{ingId:'ing_12',qty:'0.04'}],
+      steps: ["Préparer un levain-levure et laisser doubler de volume.","Pétrir la pâte avec le reste des ingrédients jusqu'à ce qu'elle se décolle.","Placer des amandes entières dans le fond des rainures du moule beurré.","Placer la pâte dans le moule, faire pousser jusqu'au bord et cuire 35 min à 180°C."],
+      notes: "Saupoudrer généreusement de sucre glace dès la sortie du moule."
+    },
+    {
+      id: "rec_26", name: "Religieuses au café", category: "Chocolat", time: "90", servings: "6", rating: "4",
+      desc: "Deux choux superposés garnis de crème pâtissière au café et décorés de buttercream.",
+      packagingCost: "1.20", laborCost: "4.50", overheadCost: "0.80", marginPercent: "35",
+      ingredients: [{ingId:'ing_1',qty:'0.15'},{ingId:'ing_2',qty:'0.12'},{ingId:'ing_5',qty:'5'},{ingId:'ing_9',qty:'0.5'},{ingId:'ing_8',qty:'0.12'}],
+      steps: ["Cuire de grands choux et de petits choux séparément.","Garnir de crème pâtissière parfumée à l'extrait de café pur.","Glacer le dessus des choux au fondant café.","Superposer le petit chou sur le grand et dresser la collerette de beurre."],
+      notes: "Le fondant doit être dressé à 35°C pour un brillant parfait."
+    },
+    {
+      id: "rec_27", name: "Baba au rhum & Chantilly", category: "Entremet", time: "110", servings: "6", rating: "4",
+      desc: "Savarin aéré imbibé généreusement de sirop au rhum ambré, servi avec chantilly vanille.",
+      packagingCost: "1.20", laborCost: "4.00", overheadCost: "0.80", marginPercent: "35",
+      ingredients: [{ingId:'ing_1',qty:'0.2'},{ingId:'ing_2',qty:'0.07'},{ingId:'ing_5',qty:'3'},{ingId:'ing_17',qty:'10'},{ingId:'ing_8',qty:'0.2'},{ingId:'ing_10',qty:'0.2'}],
+      steps: ["Pétrir la pâte à baba très souple et répartir dans des moules à savarin.","Faire pousser puis cuire 20 min à 180°C jusqu'à séchage complet.","Plonger les babas tièdes dans le sirop chaud au rhum.","Pocher la crème chantilly au centre au moment de servir."],
+      notes: "L'imbibition est réussie quand le baba a doublé de poids en absorbant le sirop."
+    },
+    {
+      id: "rec_28", name: "Saint-Honoré classique", category: "Entremet", time: "150", servings: "8", rating: "5",
+      desc: "Fond de pâte feuilletée, couronne de choux caramélisés et crème chiboust vanille.",
+      packagingCost: "2.00", laborCost: "7.00", overheadCost: "1.20", marginPercent: "40",
+      ingredients: [{ingId:'ing_25',qty:'1'},{ingId:'ing_1',qty:'0.1'},{ingId:'ing_2',qty:'0.1'},{ingId:'ing_5',qty:'6'},{ingId:'ing_9',qty:'0.4'},{ingId:'ing_8',qty:'0.25'}],
+      steps: ["Cuire un disque de feuilletage bordé d'une couronne de pâte à choux.","Cuire des petits choux et les tremper dans un caramel blond.","Fixer les choux sur la couronne avec le caramel.","Garnir le centre avec la crème Chiboust à l'aide d'une douille Saint-Honoré."],
+      notes: "C'est le roi des gâteaux classiques français, nécessitant une grande précision."
+    },
+    {
+      id: "rec_29", name: "Tarte aux framboises pépites", category: "Tarte", time: "60", servings: "8", rating: "5",
+      desc: "Sablé breton pur beurre, crème pâtissière légère et framboises fraîches garnies.",
+      packagingCost: "1.30", laborCost: "3.50", overheadCost: "0.70", marginPercent: "35",
+      ingredients: [{ingId:'ing_1',qty:'0.15'},{ingId:'ing_2',qty:'0.12'},{ingId:'ing_8',qty:'0.1'},{ingId:'ing_5',qty:'3'},{ingId:'ing_21',qty:'0.4'},{ingId:'ing_9',qty:'0.25'}],
+      steps: ["Cuire le sablé breton dans un cercle inox pour obtenir de l'épaisseur.","Préparer la crème pâtissière vanille et laisser refroidir.","Pocher la crème sur le sablé froid.","Disposer les framboises la tête en bas sur toute la surface."],
+      notes: "Remplir chaque framboise d'une goutte de coulis pour encore plus de gourmandise."
+    },
+    {
+      id: "rec_30", name: "Succès au praliné", category: "Entremet", time: "90", servings: "8", rating: "4",
+      desc: "Deux disques de meringue noisette croustillants enserrant une crème mousseline pralinée.",
+      packagingCost: "1.20", laborCost: "4.00", overheadCost: "0.80", marginPercent: "35",
+      ingredients: [{ingId:'ing_13',qty:'0.15'},{ingId:'ing_3',qty:'0.15'},{ingId:'ing_5',qty:'4'},{ingId:'ing_30',qty:'0.12'},{ingId:'ing_2',qty:'0.15'}],
+      steps: ["Monter les blancs en neige avec le sucre, ajouter la poudre de noisette et le sucre glace.","Pocher 2 disques et cuire 1h15 à 120°C.","Monter la crème mousseline au praliné.","Assembler les disques et masquer les bords de pralin sec."],
+      notes: "Conserver au frais au moins 4h avant dégustation."
+    },
+    {
+      id: "rec_31", name: "Bugnes moelleuses lyonnaises", category: "Biscuit", time: "40", servings: "20", rating: "4",
+      desc: "Beignets de Carnaval dorés et très moelleux, parfumés à la fleur d'oranger et sucre glace.",
+      packagingCost: "0.50", laborCost: "2.00", overheadCost: "0.50", marginPercent: "30",
+      ingredients: [{ingId:'ing_1',qty:'0.3'},{ingId:'ing_2',qty:'0.06'},{ingId:'ing_5',qty:'2'},{ingId:'ing_8',qty:'0.05'},{ingId:'ing_16',qty:'10'},{ingId:'ing_3',qty:'0.05'}],
+      steps: ["Mélanger la farine, le sucre, le beurre, les œufs et la levure.","Étaler la pâte finement et découper des losanges avec une fente au centre.","Passer un coin de losange dans la fente pour former le nœud.","Frire dans l'huile chaude 1 min de chaque côté et poudrer de sucre glace."],
+      notes: "À déguster idéalement le jour même."
+    },
+    {
+      id: "rec_32", name: "Tuiles croustillantes aux amandes", category: "Biscuit", time: "30", servings: "18", rating: "4",
+      desc: "Biscuits ultra fins et incurvés, très croustillants et garnis d'amandes effilées.",
+      packagingCost: "0.60", laborCost: "2.00", overheadCost: "0.40", marginPercent: "30",
+      ingredients: [{ingId:'ing_12',qty:'0.12'},{ingId:'ing_8',qty:'0.1'},{ingId:'ing_1',qty:'0.03'},{ingId:'ing_2',qty:'0.03'},{ingId:'ing_5',qty:'3'}],
+      steps: ["Mélanger les blancs d'œufs non montés avec le sucre, la farine et le beurre fondu.","Incorporer les amandes effilées délicatement.","Déposer des petits tas sur plaque et les étaler avec le dos d'une cuillère.","Cuire 8 min à 180°C et moulant immédiatement sur un rouleau à pâtisserie."],
+      notes: "Mouler extrêmement vite dès la sortie du four avant que les tuiles ne durcissent."
+    },
+    {
+      id: "rec_33", name: "Quatre-quarts breton", category: "Gâteau", time: "50", servings: "8", rating: "5",
+      desc: "Gâteau traditionnel breton moelleux au goût riche de beurre demi-sel.",
+      packagingCost: "0.60", laborCost: "1.80", overheadCost: "0.50", marginPercent: "30",
+      ingredients: [{ingId:'ing_1',qty:'0.2'},{ingId:'ing_2',qty:'0.2'},{ingId:'ing_8',qty:'0.2'},{ingId:'ing_5',qty:'4'},{ingId:'ing_16',qty:'5'}],
+      steps: ["Peser les œufs et utiliser le même poids exact pour la farine, le beurre et le sucre.","Fouetter le beurre pommade avec le sucre.","Ajouter les œufs un à un puis la farine tamisée avec la levure.","Enfourner 45 min à 160°C dans un moule à cake beurré."],
+      notes: "Incruster un trait de beurre fondu sur la longueur avant cuisson pour une belle fente."
+    },
+    {
+      id: "rec_34", name: "Moelleux chocolat cœur coulant", category: "Chocolat", time: "25", servings: "4", rating: "5",
+      desc: "Gâteau individuel au chocolat intense avec un cœur chaud totalement liquide à la découpe.",
+      packagingCost: "0.80", laborCost: "2.00", overheadCost: "0.40", marginPercent: "35",
+      ingredients: [{ingId:'ing_11',qty:'0.12'},{ingId:'ing_2',qty:'0.1'},{ingId:'ing_5',qty:'2'},{ingId:'ing_8',qty:'0.05'},{ingId:'ing_1',qty:'0.03'}],
+      steps: ["Fondre le chocolat et le beurre ensemble.","Fouetter les œufs avec le sucre puis ajouter la farine et le chocolat fondu.","Répartir dans 4 ramequins généreusement beurrés et farinés.","Cuire exactement 9 min à 200°C."],
+      notes: "La cuisson se joue à la minute près selon le comportement de votre four."
+    },
+    {
+      id: "rec_35", name: "Merveilleux au chocolat noir", category: "Entremet", time: "70", servings: "6", rating: "4",
+      desc: "Meringues françaises croquantes enrobées de crème chantilly chocolat et copeaux sombres.",
+      packagingCost: "1.20", laborCost: "3.50", overheadCost: "0.60", marginPercent: "35",
+      ingredients: [{ingId:'ing_5',qty:'4'},{ingId:'ing_8',qty:'0.12'},{ingId:'ing_3',qty:'0.1'},{ingId:'ing_10',qty:'0.3'},{ingId:'ing_11',qty:'0.15'}],
+      steps: ["Pocher des boules de meringue et sécher 2h à 100°C.","Préparer une chantilly ferme au chocolat noir.","Souder 2 meringues avec la chantilly et enrober complètement la boule.","Rouler généreusement dans les copeaux de chocolat noir."],
+      notes: "Spécialité du Nord irrésistiblement légère en bouche."
+    },
+    {
+      id: "rec_36", name: "Tarte alsacienne au fromage blanc", category: "Tarte", time: "70", servings: "8", rating: "4",
+      desc: "Käskuchen alsacien aérien et soufflé sur pâte brisée, légèrement citronné.",
+      packagingCost: "1.00", laborCost: "3.00", overheadCost: "0.70", marginPercent: "35",
+      ingredients: [{ingId:'ing_1',qty:'0.2'},{ingId:'ing_2',qty:'0.1'},{ingId:'ing_5',qty:'4'},{ingId:'ing_8',qty:'0.12'},{ingId:'ing_27',qty:'0.04'},{ingId:'ing_4',qty:'1'}],
+      steps: ["Mélanger le fromage blanc, les jaunes d'œufs, le sucre, la maïzena et le zeste de citron.","Monter les blancs en neige ferme et les incorporer délicatement.","Verser sur la pâte dans un moule haut. Cuire 50 min à 170°C.","Démouler la tarte à l'envers sur une grille pour éviter qu'elle ne s'affaisse."],
+      notes: "Laisser reposer au moins 12h pour une texture parfaite."
+    },
+    {
+      id: "rec_37", name: "Clafoutis traditionnel aux cerises", category: "Gâteau", time: "45", servings: "6", rating: "4",
+      desc: "Flan gourmand garni de cerises entières qui libèrent leur jus parfum au terme de la cuisson.",
+      packagingCost: "0.70", laborCost: "1.80", overheadCost: "0.50", marginPercent: "30",
+      ingredients: [{ingId:'ing_1',qty:'0.1'},{ingId:'ing_8',qty:'0.1'},{ingId:'ing_5',qty:'4'},{ingId:'ing_9',qty:'0.25'},{ingId:'ing_2',qty:'0.04'}],
+      steps: ["Fouetter les œufs avec le sucre, ajouter la farine puis délayer avec le lait.","Beurrer généreusement un plat à gratin en céramique.","Disposer les cerises entières non dénoyautées au fond.","Verser l'appareil et cuire 35 min à 180°C."],
+      notes: "Conserver les noyaux apporte un subtil parfum d'amande amère à la cuisson."
+    },
+    {
+      id: "rec_38", name: "Far breton aux pruneaux", category: "Gâteau", time: "60", servings: "8", rating: "5",
+      desc: "Flan dense et moelleux garni de pruneaux moelleux réhydratés dans un sirop.",
+      packagingCost: "0.80", laborCost: "2.00", overheadCost: "0.60", marginPercent: "30",
+      ingredients: [{ingId:'ing_1',qty:'0.2'},{ingId:'ing_8',qty:'0.12'},{ingId:'ing_5',qty:'4'},{ingId:'ing_9',qty:'0.75'},{ingId:'ing_2',qty:'0.05'}],
+      steps: ["Fouetter les œufs et le sucre, ajouter la farine puis le lait tiédi progressivement.","Disposer les pruneaux au fond d'un moule beurré.","Verser l'appareil fluide par-dessus.","Cuire 45 min à 180°C jusqu'à belle dorure brunie."],
+      notes: "Un classique indémodable encore meilleur le lendemain."
+    },
+    {
+      id: "rec_39", name: "Charlotte aux fraises", category: "Entremet", time: "60", servings: "8", rating: "5",
+      desc: "Biscuit cuillère imbibé au sirop de fraise, bavaroise vanille légère et fraises fraîches.",
+      packagingCost: "1.50", laborCost: "4.00", overheadCost: "0.80", marginPercent: "35",
+      ingredients: [{ingId:'ing_22',qty:'0.4'},{ingId:'ing_5',qty:'4'},{ingId:'ing_8',qty:'0.12'},{ingId:'ing_10',qty:'0.25'},{ingId:'ing_9',qty:'0.2'}],
+      steps: ["Chemiser les bords d'un moule à charlotte avec des biscuits cuillère.","Préparer la bavaroise en montant la crème et en l'incorporant à la crème anglaise collée.","Alterner couches de bavaroise, fraises coupées et biscuits imbibés.","Réserver au frais 6h minimum avant de démouler."],
+      notes: "Entourer d'un ruban élégant au moment du service."
+    },
+    {
+      id: "rec_40", name: "Tarte Tropézienne", category: "Viennoiserie", time: "120", servings: "8", rating: "5",
+      desc: "Brioche moelleuse saupoudrée de grains de sucre et garnie d'un mélange de crèmes diplomate.",
+      packagingCost: "1.20", laborCost: "4.50", overheadCost: "0.90", marginPercent: "35",
+      ingredients: [{ingId:'ing_1',qty:'0.25'},{ingId:'ing_2',qty:'0.1'},{ingId:'ing_5',qty:'4'},{ingId:'ing_9',qty:'0.3'},{ingId:'ing_8',qty:'0.1'},{ingId:'ing_10',qty:'0.15'}],
+      steps: ["Réaliser un disque de brioche, saupoudrer de sucre grain et cuire 20 min à 170°C.","Préparer une crème diplomate bien vanillée.","Couper la brioche refroidie en deux dans l'épaisseur.","Pocher la crème en grosses boules et refermer le chapeau brioché."],
+      notes: "Conserver impérativement au frais jusqu'au moment de servir."
+    },
+    {
+      id: "rec_41", name: "Kouign-amann de Douarnenez", category: "Viennoiserie", time: "120", servings: "6", rating: "5",
+      desc: "Feuilleté breton caramélisé croustillant à souhait, saturé de beurre demi-sel et de sucre.",
+      packagingCost: "0.80", laborCost: "4.00", overheadCost: "0.80", marginPercent: "40",
+      ingredients: [{ingId:'ing_1',qty:'0.25'},{ingId:'ing_2',qty:'0.2'},{ingId:'ing_8',qty:'0.2'},{ingId:'ing_17',qty:'8'},{ingId:'ing_18',qty:'4'}],
+      steps: ["Réaliser une détrempe à pain légère et laisser reposer.","Réaliser le tourage en incorporant le beurre demi-sel et le sucre en abondance à chaque tour.","Détailler dans un moule et laisser caraméliser à la cuisson à 190°C pendant 35 min."],
+      notes: "Démouler immédiatement à la sortie du four avant que le caramel ne fige au fond."
+    },
+    {
+      id: "rec_42", name: "Tarte poires-chocolat", category: "Tarte", time: "65", servings: "8", rating: "4",
+      desc: "Association parfaite entre ganache au chocolat noir onctueuse et tranches de poires fondantes.",
+      packagingCost: "1.10", laborCost: "3.20", overheadCost: "0.60", marginPercent: "35",
+      ingredients: [{ingId:'ing_1',qty:'0.2'},{ingId:'ing_2',qty:'0.1'},{ingId:'ing_11',qty:'0.18'},{ingId:'ing_10',qty:'0.15'},{ingId:'ing_20',qty:'0.4'}],
+      steps: ["Cuire le fond de tarte sablée à blanc.","Préparer une ganache lisse en versant la crème chaude sur le chocolat.","Verser la ganache sur le fond de tarte tiède.","Enfoncer légèrement les quartiers de poires pochées dans le chocolat."],
+      notes: "Saupoudrer de quelques éclats de pistaches grillées pour le contraste."
+    },
+    {
+      id: "rec_43", name: "Galette des rois frangipane", category: "Viennoiserie", time: "90", servings: "8", rating: "5",
+      desc: "Deux disques de pâte feuilletée inversée garnies d'une frangipane onctueuse amande et pâtissière.",
+      packagingCost: "1.50", laborCost: "4.50", overheadCost: "1.00", marginPercent: "40",
+      ingredients: [{ingId:'ing_25',qty:'2'},{ingId:'ing_12',qty:'0.12'},{ingId:'ing_2',qty:'0.1'},{ingId:'ing_8',qty:'0.1'},{ingId:'ing_5',qty:'3'},{ingId:'ing_9',qty:'0.1'}],
+      steps: ["Mélanger crème d'amande et crème pâtissière pour obtenir la frangipane.","Garnir le premier disque de feuilletage en laissant 2 cm de bordure et placer la fève.","Souder le second disque, dorer à l'œuf et chiqueter les bords.","Rayer joliment le dessus et cuire 40 min à 180°C."],
+      notes: "Napper d'un sirop de sucre à la sortie du four pour une brillance miroir."
+    },
+    {
+      id: "rec_44", name: "Palets bretons au beurre demi-sel", category: "Biscuit", time: "35", servings: "14", rating: "5",
+      desc: "Sablés très épais, friables et fondants, délicieusement salés.",
+      packagingCost: "0.60", laborCost: "2.00", overheadCost: "0.40", marginPercent: "30",
+      ingredients: [{ingId:'ing_5',qty:'2'},{ingId:'ing_2',qty:'0.12'},{ingId:'ing_8',qty:'0.1'},{ingId:'ing_1',qty:'0.14'},{ingId:'ing_16',qty:'6'},{ingId:'ing_18',qty:'3'}],
+      steps: ["Blanchir les jaunes d'œufs avec le sucre.","Incorporer le beurre pommade demi-sel puis la farine et la levure.","Former un boudin, réserver au frais 2h puis couper des rondelles de 1.5 cm.","Cuire dans des cercles individuels à 170°C pendant 20 min pour garder l'épaisseur."],
+      notes: "Les cercles inox sont obligatoires pour éviter que le palet ne s'étale à la cuisson."
+    },
+    {
+      id: "rec_45", name: "Éclairs au café corsé", category: "Chocolat", time: "75", servings: "6", rating: "4",
+      desc: "Choux allongés garnis d'une crème pâtissière généreuse au café arabica et glacés.",
+      packagingCost: "1.00", laborCost: "3.50", overheadCost: "0.60", marginPercent: "35",
+      ingredients: [{ingId:'ing_1',qty:'0.15'},{ingId:'ing_2',qty:'0.1'},{ingId:'ing_5',qty:'4'},{ingId:'ing_9',qty:'0.5'},{ingId:'ing_8',qty:'0.12'}],
+      steps: ["Pocher et cuire les éclairs à la douille cannelée.","Réaliser la crème pâtissière parfumée à l'extrait concentré de café.","Garnir les choux par trois perforations en dessous.","Tremper le dessus dans un fondant au café tiédi."],
+      notes: "La douille cannelée donne une pousse plus uniforme sans crevasses."
+    },
+    {
+      id: "rec_46", name: "Tarte meringue rhubarbe", category: "Tarte", time: "75", servings: "8", rating: "4",
+      desc: "Acidité de la rhubarbe compotée équilibrée par une meringue italienne douce et caramélisée.",
+      packagingCost: "1.10", laborCost: "3.50", overheadCost: "0.70", marginPercent: "35",
+      ingredients: [{ingId:'ing_1',qty:'0.2'},{ingId:'ing_2',qty:'0.1'},{ingId:'ing_8',qty:'0.2'},{ingId:'ing_5',qty:'3'}],
+      steps: ["Faire macérer les tronçons de rhubarbe dans le sucre pour les faire dégourdir.","Cuire la rhubarbe en compote épaisse et garnir le fond de tarte cuit à blanc.","Recouvrir d'une meringue italienne pochée à la douille St-Honoré.","Dorer légèrement au chalumeau."],
+      notes: "Égoutter soigneusement la rhubarbe pour ne pas détremper la pâte."
+    },
+    {
+      id: "rec_47", name: "Truffes au chocolat noir pur cacao", category: "Chocolat", time: "40", servings: "30", rating: "5",
+      desc: "Bouchées fondantes de ganache chocolat noir roulées dans du cacao amer intense.",
+      packagingCost: "1.00", laborCost: "2.50", overheadCost: "0.40", marginPercent: "35",
+      ingredients: [{ingId:'ing_11',qty:'0.25'},{ingId:'ing_10',qty:'0.2'},{ingId:'ing_2',qty:'0.04'},{ingId:'ing_24',qty:'0.05'}],
+      steps: ["Réaliser une ganache dense en versant la crème chaude sur le chocolat râpé.","Incorporer le beurre et laisser figer au frais au moins 4h.","Former des petites boules irrégulières à la cuillère ou à la poche.","Rouler généreusement dans le cacao en poudre sans sucre."],
+      notes: "Conserver au frais et sortir 15 minutes avant de déguster."
+    },
+    {
+      id: "rec_48", name: "Chou craquelin caramel beurre salé", category: "Chocolat", time: "70", servings: "10", rating: "5",
+      desc: "Choux croustillants garnis de crémeux caramel au beurre salé et d'un cœur coulant.",
+      packagingCost: "1.00", laborCost: "3.50", overheadCost: "0.60", marginPercent: "35",
+      ingredients: [{ingId:'ing_1',qty:'0.12'},{ingId:'ing_2',qty:'0.12'},{ingId:'ing_5',qty:'4'},{ingId:'ing_8',qty:'0.15'},{ingId:'ing_10',qty:'0.2'},{ingId:'ing_18',qty:'3'}],
+      steps: ["Cuire un caramel à sec, décuire à la crème chaude et ajouter le beurre salé.","Garnir les choux craquelins de crème caramel légère.","Inserer un cœur de caramel liquide au centre.","Décorer d'une pointe de fleur de sel sur le dessus."],
+      notes: "Un équilibre parfait entre le croustillant, le doux et le salé."
+    },
+    {
+      id: "rec_49", name: "Macarons à la pistache", category: "Biscuit", time: "80", servings: "20", rating: "5",
+      desc: "Coques de macarons garnies d'une ganache montée à la pâte de pistache pure.",
+      packagingCost: "1.50", laborCost: "4.00", overheadCost: "0.90", marginPercent: "40",
+      ingredients: [{ingId:'ing_12',qty:'0.2'},{ingId:'ing_3',qty:'0.2'},{ingId:'ing_8',qty:'0.2'},{ingId:'ing_5',qty:'4'},{ingId:'ing_29',qty:'0.08'},{ingId:'ing_10',qty:'0.15'}],
+      steps: ["Mixer les pistaches pour obtenir une pâte lisse.","Réaliser la meringue italienne verte et macaronner.","Pocher et cuire les coques 14 min à 150°C.","Emulsionner la ganache chocolat blanc-pistache et garnir les macarons."],
+      notes: "Placer au réfrigérateur 24h pour obtenir le moelleux caractéristique du macaron."
+    },
+    {
+      id: "rec_50", name: "Brioche des rois aux fruits confits", category: "Viennoiserie", time: "150", servings: "8", rating: "4",
+      desc: "Couronne briochée provençale dorée, parfumée à la fleur d'oranger et décorée de fruits confits.",
+      packagingCost: "1.00", laborCost: "4.00", overheadCost: "0.80", marginPercent: "35",
+      ingredients: [{ingId:'ing_1',qty:'0.35'},{ingId:'ing_2',qty:'0.12'},{ingId:'ing_5',qty:'3'},{ingId:'ing_17',qty:'12'},{ingId:'ing_8',qty:'0.06'}],
+      steps: ["Pétrir la brioche avec l'arôme de fleur d'oranger et laisser pousser.","Façonner une couronne régulière et insérer la fève.","Badigeonner de dorure, parsemer de gros sucre grain et cuire 25 min à 170°C.","Disposer les morceaux de fruits confits à la sortie du four avec un peu de gelée."],
+      notes: "La tradition du Sud de la France pour l'Épiphanie !"
     }
   ];
 }
+
+function loadCatalog(){
+  try {
+    const raw = localStorage.getItem(CATALOG_KEY);
+    return raw ? JSON.parse(raw) : seedCatalog();
+  } catch(e) { return seedCatalog(); }
+}
+function saveCatalog(){ localStorage.setItem(CATALOG_KEY, JSON.stringify(catalog)); }
 
 function loadRecipes(){
   try {
@@ -502,6 +891,17 @@ let recipes = loadRecipes();
 let activeCategory = "Toutes";
 let searchTerm = "";
 let editingId = null;
+
+function resetToDefault50(){
+  if(confirm("Voulez-vous réinitialiser votre carnet avec les 50 recettes d'origine ? (Toutes vos modifications personnelles seront remplacées)")){
+    recipes = seedData();
+    catalog = seedCatalog();
+    saveRecipes();
+    saveCatalog();
+    render();
+    if(document.getElementById('catalogView').style.display !== 'none') renderCatalog();
+  }
+}
 
 function switchMainTab(tab){
   document.getElementById('recipesView').style.display = tab === 'recipes' ? 'block' : 'none';
