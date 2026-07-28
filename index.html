@@ -1,695 +1,468 @@
-<!DOCTYPE html>
-<html lang="fr">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Mon Cahier de Pâtisserie — Édition Florale & Calcul de Coûts</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;0,9..144,700;1,9..144,500&family=Work+Sans:wght@400;500;600&display=swap" rel="stylesheet">
-<style>
-  :root {
-    --bg-violet: #FAF6FC;
-    --paper: #F3EAF8;
-    --paper-card: #FFFFFF;
-    --ink: #2E1C38;
-    --cacao: #4A3258;
-    --violet-main: #8E5EA5;
-    --violet-soft: #B593CA;
-    --violet-light: #EFE4F7;
-    --rose-pastel: #EBB6CE;
-    --sage: #88A98C;
-    --gold: #D4A359;
-    --ligne: rgba(74, 50, 88, 0.12);
-    --shadow: 0 10px 24px rgba(46, 28, 56, 0.07), 0 2px 6px rgba(46, 28, 56, 0.04);
+import React, { useState, useEffect } from 'react';
+
+// --- Données initiales par défaut (utilisées uniquement si le stockage est vide) ---
+const INGREDIENTS_INITIALS = [
+  { id: 'ing_1', nom: 'Farine T55', unite: 'kg', prixUnitaire: 1.20 },
+  { id: 'ing_2', nom: 'Beurre doux', unite: 'kg', prixUnitaire: 8.50 },
+  { id: 'ing_3', nom: 'Œufs', unite: 'unité', prixUnitaire: 0.25 },
+  { id: 'ing_4', nom: 'Sucre', unite: 'kg', prixUnitaire: 1.50 },
+  { id: 'ing_5', nom: 'Lait demi-écrémé', unite: 'L', prixUnitaire: 1.10 },
+];
+
+const RECETTES_INITIALES = [
+  {
+    id: 'rec_1',
+    nom: 'Pâte Sablée (Base)',
+    portions: 4,
+    composition: [
+      { ingredientId: 'ing_1', quantite: 0.25 },  // 250g
+      { ingredientId: 'ing_2', quantite: 0.125 }, // 125g
+      { ingredientId: 'ing_3', quantite: 1 },     // 1 œuf
+      { ingredientId: 'ing_4', quantite: 0.05 },  // 50g
+    ],
+  },
+  {
+    id: 'rec_2',
+    nom: 'Pâte à Crêpes',
+    portions: 6,
+    composition: [
+      { ingredientId: 'ing_1', quantite: 0.25 },  // 250g
+      { ingredientId: 'ing_3', quantite: 3 },     // 3 œufs
+      { ingredientId: 'ing_5', quantite: 0.5 },   // 0.5 L
+      { ingredientId: 'ing_2', quantite: 0.05 },  // 50g
+    ],
   }
-  * { box-sizing: border-box; }
-  body {
-    margin: 0;
-    background: var(--bg-violet);
-    color: var(--ink);
-    font-family: 'Work Sans', sans-serif;
-    -webkit-font-smoothing: antialiased;
-  }
+];
 
-  /* Arrière-plan botanique */
-  .bg-texture {
-    position: fixed; inset: 0; pointer-events: none; opacity: 0.35; z-index: 0;
-    background-image: 
-      radial-gradient(circle at 50% 50%, rgba(142, 94, 165, 0.08) 2px, transparent 0),
-      radial-gradient(circle at 0% 0%, rgba(235, 182, 206, 0.15) 150px, transparent 300px),
-      radial-gradient(circle at 100% 100%, rgba(136, 169, 140, 0.15) 150px, transparent 300px);
-    background-size: 32px 32px, 100% 100%, 100% 100%;
-  }
+export default function ApplicationCuisine() {
+  // --- 1. GESTION DE LA NAVIGATION (ONGLETS) ---
+  const [activeTab, setActiveTab] = useState('ingredients'); // 'ingredients' | 'recettes' | 'creer'
 
-  header {
-    position: relative; z-index: 1;
-    padding: 52px 24px 32px;
-    text-align: center;
-    border-bottom: 1px solid var(--ligne);
-    background: linear-gradient(180deg, rgba(255,255,255,0.7) 0%, rgba(250,246,252,0) 100%);
-  }
-  header .eyebrow {
-    font-size: 13px; letter-spacing: 0.22em; text-transform: uppercase;
-    color: var(--violet-main); font-weight: 600; margin-bottom: 10px;
-    display: flex; align-items: center; justify-content: center; gap: 8px;
-  }
-  header h1 {
-    font-family: 'Fraunces', serif;
-    font-weight: 600;
-    font-size: clamp(32px, 5vw, 52px);
-    margin: 0;
-    color: var(--ink);
-    letter-spacing: -0.01em;
-  }
-  header p {
-    font-size: 15px; color: #695175; margin: 10px auto 0; max-width: 520px;
-  }
-
-  .toolbar {
-    position: relative; z-index: 1;
-    max-width: 1080px; margin: 0 auto;
-    padding: 26px 24px 0;
-    display: flex; gap: 14px; flex-wrap: wrap; align-items: center; justify-content: space-between;
-  }
-  .filters { display: flex; gap: 8px; flex-wrap: wrap; }
-  .chip {
-    border: 1px solid var(--ligne); background: var(--paper);
-    padding: 8px 16px; border-radius: 999px; font-size: 13px; font-weight: 500;
-    cursor: pointer; transition: all .15s ease; color: var(--cacao);
-  }
-  .chip:hover { border-color: var(--violet-main); background: #FAF0FE; }
-  .chip.active { background: var(--ink); color: #fff; border-color: var(--ink); }
-
-  .search-add { display: flex; gap: 10px; align-items: center; }
-  input[type="text"], input[type="number"], input[type="search"] {
-    font-family: 'Work Sans', sans-serif;
-    padding: 9px 12px; border-radius: 10px; border: 1px solid var(--ligne);
-    background: #fff; font-size: 14px; color: var(--ink);
-  }
-  input[type="text"]:focus, input[type="number"]:focus, input[type="search"]:focus, textarea:focus, select:focus {
-    outline: 2px solid var(--violet-soft); outline-offset: 1px;
-  }
-  button { font-family: 'Work Sans', sans-serif; cursor: pointer; }
-  .btn-primary {
-    background: var(--violet-main); color: #fff; border: none;
-    padding: 10px 20px; border-radius: 10px; font-size: 14px; font-weight: 600;
-    box-shadow: var(--shadow);
-    transition: transform .12s ease, background-color .15s ease;
-  }
-  .btn-primary:hover { transform: translateY(-1px); background: #7B4E92; }
-
-  main { position: relative; z-index: 1; max-width: 1080px; margin: 0 auto; padding: 28px 24px 80px; }
-
-  .grid {
-    display: grid; grid-template-columns: repeat(auto-fill, minmax(270px, 1fr)); gap: 22px;
-    margin-top: 20px;
-  }
-
-  .card {
-    background: var(--paper-card); border-radius: 16px; box-shadow: var(--shadow);
-    position: relative; overflow: hidden; cursor: pointer;
-    border: 1px solid var(--ligne);
-    transition: transform .15s ease, box-shadow .15s ease;
-    display: flex; flex-direction: column;
-  }
-  .card:hover { transform: translateY(-3px); box-shadow: 0 16px 30px rgba(46, 28, 56, 0.12); }
-  .tab {
-    align-self: flex-start;
-    font-family: 'Fraunces', serif; font-weight: 600; font-size: 11px; letter-spacing: 0.06em;
-    text-transform: uppercase; color: #fff; padding: 6px 14px 7px;
-    border-radius: 0 0 10px 0;
-  }
-  .card-body { padding: 18px 20px 20px; flex: 1; display: flex; flex-direction: column; }
-  .card h3 { font-family: 'Fraunces', serif; font-size: 20px; margin: 2px 0 6px; font-weight: 600; color: var(--ink); }
-  .card .meta { font-size: 12.5px; color: #7B6388; display: flex; gap: 12px; margin-bottom: 8px; flex-wrap: wrap; }
-  .card .desc { font-size: 13.5px; color: #53415D; line-height: 1.5; flex: 1; }
-  .card .cost-badge {
-    margin-top: 10px; background: var(--violet-light); padding: 6px 10px; border-radius: 8px;
-    font-size: 12.5px; font-weight: 600; color: var(--violet-main); display: inline-flex; justify-content: space-between; align-items: center;
-  }
-  .card .foot { margin-top: 12px; display: flex; justify-content: space-between; align-items: center; }
-  .rating { color: var(--gold); font-size: 13px; letter-spacing: 1px; }
-
-  .empty {
-    text-align: center; padding: 60px 20px; color: #7B6388;
-  }
-  .empty .signature { font-family: 'Fraunces', serif; font-style: italic; font-size: 22px; color: var(--violet-main); }
-
-  /* Modal */
-  .overlay {
-    position: fixed; inset: 0; background: rgba(35, 18, 44, 0.45); backdrop-filter: blur(3px);
-    display: none; align-items: flex-start; justify-content: center; z-index: 10; padding: 40px 16px; overflow-y: auto;
-  }
-  .overlay.open { display: flex; }
-  .modal {
-    background: var(--bg-violet); max-width: 720px; width: 100%; border-radius: 18px;
-    box-shadow: 0 30px 60px rgba(0,0,0,0.25); padding: 32px 30px 30px; position: relative;
-    border: 1px solid rgba(255,255,255,0.6);
-  }
-  .modal h2 { font-family: 'Fraunces', serif; font-size: 26px; margin: 0 0 18px; color: var(--ink); }
-  .modal .close {
-    position: absolute; top: 18px; right: 20px; background: none; border: none; font-size: 24px; color: #7B6388;
-  }
-  .field { margin-bottom: 16px; }
-  .field label { display: block; font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: var(--cacao); margin-bottom: 6px; }
-  .field input, .field textarea, .field select { width: 100%; }
-  .row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
-  textarea { font-family: 'Work Sans', sans-serif; padding: 10px 14px; border-radius: 10px; border: 1px solid var(--ligne); font-size: 14px; resize: vertical; }
-  select { padding: 9px 12px; border-radius: 10px; border: 1px solid var(--ligne); background: #fff; font-size: 14px; }
-
-  /* Cartes Ingrédients dans le formulaire */
-  .ing-card {
-    background: #fff; border: 1px solid var(--ligne); border-radius: 12px;
-    padding: 12px 14px; margin-bottom: 10px; box-shadow: 0 2px 6px rgba(0,0,0,0.02);
-  }
-  .ing-card-top { display: flex; gap: 8px; margin-bottom: 8px; align-items: center; }
-  .ing-card-top input.ing-name { flex: 1; font-weight: 600; }
-  
-  .ing-card-bottom {
-    display: flex; gap: 8px; align-items: center; flex-wrap: wrap; font-size: 13px; color: #695175;
-    background: var(--violet-light); padding: 8px 12px; border-radius: 8px;
-  }
-  .ing-card-bottom input { width: 70px !important; text-align: center; }
-  .ing-card-bottom select { width: auto !important; padding: 6px 8px; }
-  .ing-card-bottom .unit-txt { font-weight: 600; color: var(--violet-main); }
-  .ing-card-bottom .calc-res { margin-left: auto; font-weight: 700; color: var(--violet-main); font-size: 14px; }
-
-  .small-btn {
-    border: 1px solid var(--ligne); background: #fff; border-radius: 8px; height: 34px; width: 34px;
-    display: flex; align-items: center; justify-content: center; font-size: 16px; color: #b5495b; flex-shrink: 0;
-  }
-  .add-line { background: #fff; border: 1px dashed var(--violet-soft); border-radius: 8px; padding: 10px 14px; font-size: 13px; color: var(--violet-main); width: 100%; text-align: center; font-weight: 600; }
-  .add-line:hover { background: var(--violet-light); }
-
-  .cost-summary-box {
-    background: #fff; border: 1px solid var(--violet-soft); border-radius: 12px; padding: 12px 16px;
-    margin-top: 12px; display: flex; justify-content: space-between; align-items: center; font-size: 14px;
-  }
-  .cost-summary-box .total { font-weight: 700; color: var(--violet-main); font-size: 17px; }
-
-  .modal-actions { display: flex; justify-content: space-between; margin-top: 24px; align-items: center; }
-  .btn-danger { background: none; border: none; color: #b5495b; font-size: 13px; font-weight: 600; padding: 0; }
-
-  /* Detail view */
-  .detail-grid { display: grid; grid-template-columns: 1fr 1.1fr; gap: 26px; }
-  @media (max-width:600px){ .detail-grid { grid-template-columns: 1fr; } .row2 { grid-template-columns: 1fr; } }
-  .detail-grid h4 { font-family: 'Fraunces', serif; font-size: 16px; margin: 0 0 10px; color: var(--violet-main); border-bottom: 1px solid var(--ligne); padding-bottom: 4px; }
-  
-  .ing-table { width: 100%; border-collapse: collapse; font-size: 13.5px; }
-  .ing-table th { text-align: left; font-size: 11px; text-transform: uppercase; color: #7B6388; padding-bottom: 6px; }
-  .ing-table td { padding: 6px 0; border-bottom: 1px dashed var(--ligne); vertical-align: middle; }
-  .ing-table td.price-col { text-align: right; font-weight: 600; color: var(--violet-main); }
-  .ing-table .unit-detail { font-size: 11px; color: #8C7599; display: block; }
-
-  .cost-banner {
-    background: linear-gradient(135deg, var(--violet-light) 0%, #F8EBF2 100%);
-    border-radius: 12px; padding: 14px 18px; margin: 16px 0 20px;
-    display: flex; gap: 20px; justify-content: space-around; text-align: center;
-  }
-  .cost-banner .item .label { font-size: 11px; text-transform: uppercase; letter-spacing: 0.05em; color: #695175; }
-  .cost-banner .item .val { font-family: 'Fraunces', serif; font-size: 22px; font-weight: 700; color: var(--violet-main); margin-top: 2px; }
-
-  .steps { padding-left: 20px; margin: 0; }
-  .steps li { margin-bottom: 10px; font-size: 14px; line-height: 1.5; color: #3D2D45; }
-
-  footer { text-align: center; padding: 30px; font-size: 12px; color: #8C7599; position: relative; z-index: 1; }
-</style>
-</head>
-<body>
-<div class="bg-texture"></div>
-
-<header>
-  <div class="eyebrow">🌸 Carnet Gourmand & Floral</div>
-  <h1>Mon Cahier de Pâtisserie</h1>
-  <p>Mes recettes, mes dosages et le calcul automatique du coût de mes ingrédients.</p>
-</header>
-
-<div class="toolbar">
-  <div class="filters" id="filters"></div>
-  <div class="search-add">
-    <input type="search" id="search" placeholder="Rechercher une recette…">
-    <button class="btn-primary" id="btnNew">+ Nouvelle recette</button>
-  </div>
-</div>
-
-<main>
-  <div class="grid" id="grid"></div>
-  <div class="empty" id="emptyState" style="display:none;">
-    <div class="signature">Les pétales n'ont pas encore fleuri…</div>
-    <p>Ajoute ta première recette pour remplir le cahier.</p>
-  </div>
-</main>
-
-<footer>Cahier de pâtisserie floral — vos données sont sauvegardées localement dans ce navigateur.</footer>
-
-<!-- Modal formulaire -->
-<div class="overlay" id="formOverlay">
-  <div class="modal">
-    <button class="close" id="closeForm">×</button>
-    <h2 id="formTitle">Nouvelle recette</h2>
-    <form id="recipeForm">
-      <div class="field">
-        <label>Nom de la recette</label>
-        <input type="text" id="f-name" required placeholder="Ex : Tarte au citron & lavande">
-      </div>
-      <div class="row2">
-        <div class="field">
-          <label>Catégorie</label>
-          <select id="f-category">
-            <option>Tarte</option>
-            <option>Gâteau</option>
-            <option>Viennoiserie</option>
-            <option>Entremet</option>
-            <option>Biscuit</option>
-            <option>Chocolat</option>
-            <option>Autre</option>
-          </select>
-        </div>
-        <div class="field">
-          <label>Temps total (min)</label>
-          <input type="number" id="f-time" placeholder="Ex : 90">
-        </div>
-      </div>
-      <div class="row2">
-        <div class="field">
-          <label>Nombre de parts</label>
-          <input type="number" id="f-servings" placeholder="Ex : 8">
-        </div>
-        <div class="field">
-          <label>Note (0 à 5)</label>
-          <input type="number" id="f-rating" min="0" max="5" placeholder="Ex : 5">
-        </div>
-      </div>
-      <div class="field">
-        <label>Description courte</label>
-        <textarea id="f-desc" rows="2" placeholder="Une touche florale, croustillante et fruitée."></textarea>
-      </div>
-
-      <!-- Ingrédients & Calcul de coûts par prorata d'achat -->
-      <div class="field">
-        <label>Ingrédients & Calcul du Coût d'Achat</label>
-        <div id="ingList"></div>
-        <button type="button" class="add-line" id="addIng">+ Ajouter un ingrédient</button>
-        
-        <div class="cost-summary-box">
-          <span>Coût total estimé de la recette :</span>
-          <span class="total" id="liveTotalCost">0.00 €</span>
-        </div>
-      </div>
-
-      <div class="field">
-        <label>Étapes (une par ligne)</label>
-        <textarea id="f-steps" rows="4" placeholder="Préparer la pâte sablée…&#10;Cuire à blanc 20 min…"></textarea>
-      </div>
-      <div class="field">
-        <label>Notes / astuces</label>
-        <textarea id="f-notes" rows="2" placeholder="Astuce : infuser quelques fleurs de lavande dans la crème."></textarea>
-      </div>
-      <div class="modal-actions">
-        <button type="button" class="btn-danger" id="deleteBtn" style="display:none;">Supprimer la recette</button>
-        <button type="submit" class="btn-primary">Enregistrer</button>
-      </div>
-    </form>
-  </div>
-</div>
-
-<!-- Modal détail -->
-<div class="overlay" id="detailOverlay">
-  <div class="modal" style="max-width:720px;">
-    <button class="close" id="closeDetail">×</button>
-    <div id="detailContent"></div>
-  </div>
-</div>
-
-<script>
-const CATEGORY_COLORS = {
-  "Tarte": "#B593CA", "Gâteau": "#8E5EA5", "Viennoiserie": "#EBB6CE",
-  "Entremet": "#7B68EE", "Biscuit": "#88A98C", "Chocolat": "#5C3D61", "Autre": "#8499B5"
-};
-const STORAGE_KEY = "cahier-patisserie-floral-recettes-v2";
-
-function loadRecipes(){
-  try {
-    const raw = localStorage.getItem(STORAGE_KEY);
-    return raw ? JSON.parse(raw) : seedData();
-  } catch(e) { return seedData(); }
-}
-function saveRecipes(){ localStorage.setItem(STORAGE_KEY, JSON.stringify(recipes)); }
-
-function seedData(){
-  return [
-    {
-      id: crypto.randomUUID(),
-      name: "Tarte au citron & Violette",
-      category: "Tarte",
-      time: "90",
-      servings: "8",
-      rating: "5",
-      desc: "Pâte sablée aux amandes, crémeux citron acidulé et meringue délicatement parfumée à la violette.",
-      ingredients: [
-        { name: "Beurre doux", recipeQty: 100, unit: "g", buyPrice: 1.00, buyQty: 1000 }, // Exemple: 1kg = 1€ => 100g = 0.10€
-        { name: "Farine T55", recipeQty: 200, unit: "g", buyPrice: 0.90, buyQty: 1000 },
-        { name: "Sucre glace", recipeQty: 80, unit: "g", buyPrice: 1.50, buyQty: 1000 },
-        { name: "Citrons bio", recipeQty: 4, unit: "pce", buyPrice: 2.00, buyQty: 4 },
-        { name: "Œufs frais", recipeQty: 3, unit: "pce", buyPrice: 2.40, buyQty: 6 } // 6 œufs = 2.40€ => 3 = 1.20€
-      ],
-      steps: [
-        "Préparer la pâte sablée, foncer le moule et cuire à blanc 20 min à 180°C.",
-        "Cuire le crémeux citron à feu doux jusqu'à épaississement puis ajouter le beurre.",
-        "Monter la meringue avec une touche d'arôme de violette.",
-        "Garnir la tarte et déguster frais."
-      ],
-      notes: "Décorer avec quelques pétales de fleurs fraîches comestibles."
-    }
-  ];
-}
-
-let recipes = loadRecipes();
-let activeCategory = "Toutes";
-let searchTerm = "";
-let editingId = null;
-
-const grid = document.getElementById('grid');
-const filtersEl = document.getElementById('filters');
-const emptyState = document.getElementById('emptyState');
-
-function getCategories(){
-  return ["Toutes", ...Array.from(new Set(recipes.map(r=>r.category)))];
-}
-
-// Calculateur du coût individuel d'un ingrédient
-function getIngCost(ing){
-  const rQty = parseFloat(ing.recipeQty) || 0;
-  const bPrice = parseFloat(ing.buyPrice) || 0;
-  const bQty = parseFloat(ing.buyQty) || 0;
-  if (bQty <= 0) return bPrice;
-  return (rQty / bQty) * bPrice;
-}
-
-function calculateCosts(ingredients, servings){
-  const total = (ingredients || []).reduce((sum, ing) => sum + getIngCost(ing), 0);
-  const numServings = parseFloat(servings) || 1;
-  const perServing = total / numServings;
-  return { total, perServing };
-}
-
-function renderFilters(){
-  filtersEl.innerHTML = "";
-  getCategories().forEach(cat => {
-    const chip = document.createElement('button');
-    chip.className = 'chip' + (cat === activeCategory ? ' active' : '');
-    chip.textContent = cat;
-    chip.onclick = () => { activeCategory = cat; render(); };
-    filtersEl.appendChild(chip);
-  });
-}
-
-function render(){
-  renderFilters();
-  const filtered = recipes.filter(r => {
-    const matchCat = activeCategory === "Toutes" || r.category === activeCategory;
-    const matchSearch = r.name.toLowerCase().includes(searchTerm.toLowerCase());
-    return matchCat && matchSearch;
+  // --- 2. ÉTATS PERSISTANTS (LOCALSTORAGE) ---
+  const [ingredients, setIngredients] = useState(() => {
+    const saved = localStorage.getItem('cuisine_ingredients');
+    return saved ? JSON.parse(saved) : INGREDIENTS_INITIALS;
   });
 
-  grid.innerHTML = "";
-  emptyState.style.display = filtered.length === 0 ? 'block' : 'none';
-
-  filtered.forEach(r => {
-    const card = document.createElement('div');
-    card.className = 'card';
-    const color = CATEGORY_COLORS[r.category] || '#8E5EA5';
-    const stars = "★".repeat(parseInt(r.rating) || 0) + "☆".repeat(5 - (parseInt(r.rating) || 0));
-    const costs = calculateCosts(r.ingredients, r.servings);
-
-    card.innerHTML = `
-      <div class="tab" style="background:${color}">${r.category}</div>
-      <div class="card-body">
-        <h3>${escapeHtml(r.name)}</h3>
-        <div class="meta">
-          ${r.time ? `<span>⏱ ${escapeHtml(r.time)} min</span>` : ''}
-          ${r.servings ? `<span>🍽 ${escapeHtml(r.servings)} parts</span>` : ''}
-        </div>
-        <div class="desc">${escapeHtml(r.desc || '')}</div>
-        <div class="cost-badge">
-          <span>Coût total : <strong>${costs.total.toFixed(2)} €</strong></span>
-          <span style="font-size:11px; opacity:0.85;">(${costs.perServing.toFixed(2)} €/part)</span>
-        </div>
-        <div class="foot">
-          <span class="rating">${stars}</span>
-        </div>
-      </div>
-    `;
-    card.onclick = () => openDetail(r.id);
-    grid.appendChild(card);
-  });
-}
-
-function escapeHtml(str){
-  const d = document.createElement('div');
-  d.textContent = str || '';
-  return d.innerHTML;
-}
-
-// --- Formulaire & Calculs par Ingrédient ---
-const formOverlay = document.getElementById('formOverlay');
-const detailOverlay = document.getElementById('detailOverlay');
-const ingList = document.getElementById('ingList');
-const liveTotalCostEl = document.getElementById('liveTotalCost');
-
-function updateLiveCost(){
-  let total = 0;
-  ingList.querySelectorAll('.ing-card').forEach(card => {
-    const rQty = parseFloat(card.querySelector('.ing-rqty').value) || 0;
-    const bPrice = parseFloat(card.querySelector('.ing-bprice').value) || 0;
-    const bQty = parseFloat(card.querySelector('.ing-bqty').value) || 0;
-    
-    let cost = 0;
-    if(bQty > 0){
-      cost = (rQty / bQty) * bPrice;
-    } else {
-      cost = bPrice;
-    }
-    
-    card.querySelector('.calc-res').textContent = cost.toFixed(2) + " €";
-    total += cost;
-  });
-  liveTotalCostEl.textContent = total.toFixed(2) + " €";
-}
-
-function defaultBuyQtyForUnit(unit){
-  if(unit === 'g' || unit === 'ml') return 1000;
-  return 1;
-}
-
-function ingredientCard(name="", rQty="", unit="g", bPrice="", bQty=""){
-  const card = document.createElement('div');
-  card.className = 'ing-card';
-
-  const initialBQty = bQty !== "" ? bQty : defaultBuyQtyForUnit(unit);
-
-  card.innerHTML = `
-    <div class="ing-card-top">
-      <input type="text" placeholder="Nom d'ingrédient (ex: Beurre)" class="ing-name" value="${escapeHtml(name)}">
-      <button type="button" class="small-btn" title="Retirer">×</button>
-    </div>
-    <div class="ing-card-bottom">
-      <span>Besoin :</span>
-      <input type="number" step="any" min="0" placeholder="Qté" class="ing-rqty" value="${rQty}">
-      <select class="ing-unit">
-        <option value="g" ${unit==='g'?'selected':''}>g</option>
-        <option value="kg" ${unit==='kg'?'selected':''}>kg</option>
-        <option value="ml" ${unit==='ml'?'selected':''}>ml</option>
-        <option value="L" ${unit==='L'?'selected':''}>L</option>
-        <option value="pce" ${unit==='pce'?'selected':''}>pièce(s)</option>
-      </select>
-
-      <span style="margin-left:6px;">| Prix :</span>
-      <input type="number" step="0.01" min="0" placeholder="Prix €" class="ing-bprice" value="${bPrice}">
-      <span>€ pour</span>
-      <input type="number" step="any" min="0" placeholder="Qté paquet" class="ing-bqty" value="${initialBQty}">
-      <span class="unit-txt">${unit}</span>
-
-      <span class="calc-res">0.00 €</span>
-    </div>
-  `;
-
-  const unitSelect = card.querySelector('.ing-unit');
-  const unitTxt = card.querySelector('.unit-txt');
-  const bQtyInput = card.querySelector('.ing-bqty');
-
-  unitSelect.addEventListener('change', () => {
-    unitTxt.textContent = unitSelect.value;
-    if(!bQtyInput.value || bQtyInput.value == 1000 || bQtyInput.value == 1){
-      bQtyInput.value = defaultBuyQtyForUnit(unitSelect.value);
-    }
-    updateLiveCost();
+  const [recettes, setRecettes] = useState(() => {
+    const saved = localStorage.getItem('cuisine_recettes');
+    return saved ? JSON.parse(saved) : RECETTES_INITIALES;
   });
 
-  card.querySelectorAll('input').forEach(inp => inp.addEventListener('input', updateLiveCost));
-  card.querySelector('.small-btn').onclick = () => { card.remove(); updateLiveCost(); };
+  // Enregistrement automatique dans localStorage dès qu'une donnée change
+  useEffect(() => {
+    localStorage.setItem('cuisine_ingredients', JSON.stringify(ingredients));
+  }, [ingredients]);
 
-  return card;
-}
+  useEffect(() => {
+    localStorage.setItem('cuisine_recettes', JSON.stringify(recettes));
+  }, [recettes]);
 
-document.getElementById('addIng').onclick = () => {
-  ingList.appendChild(ingredientCard());
-  updateLiveCost();
-};
+  // --- 3. ÉTATS DES FORMULAIRES ---
+  // Ajout ingrédient
+  const [nouvelIngred, setNouvelIngred] = useState({ nom: '', unite: 'kg', prixUnitaire: '' });
 
-function openForm(recipe = null){
-  editingId = recipe ? recipe.id : null;
-  document.getElementById('formTitle').textContent = recipe ? "Modifier la recette" : "Nouvelle recette";
-  document.getElementById('deleteBtn').style.display = recipe ? 'block' : 'none';
-  document.getElementById('f-name').value = recipe?.name || '';
-  document.getElementById('f-category').value = recipe?.category || 'Tarte';
-  document.getElementById('f-time').value = recipe?.time || '';
-  document.getElementById('f-servings').value = recipe?.servings || '';
-  document.getElementById('f-rating').value = recipe?.rating || '';
-  document.getElementById('f-desc').value = recipe?.desc || '';
-  document.getElementById('f-steps').value = (recipe?.steps || []).join("\n");
-  document.getElementById('f-notes').value = recipe?.notes || '';
-  
-  ingList.innerHTML = '';
-  const ings = recipe?.ingredients?.length ? recipe.ingredients : [{name:'', recipeQty:'', unit:'g', buyPrice:'', buyQty:1000}];
-  ings.forEach(i => ingList.appendChild(ingredientCard(i.name, i.recipeQty, i.unit, i.buyPrice, i.buyQty)));
-  
-  updateLiveCost();
-  formOverlay.classList.add('open');
-}
+  // Création recette
+  const [nomRecetteForm, setNomRecetteForm] = useState('');
+  const [portionsForm, setPortionsForm] = useState(4);
+  const [lignesRecetteForm, setLignesRecetteForm] = useState([
+    { ingredientId: ingredients[0]?.id || '', quantite: '' }
+  ]);
 
-document.getElementById('btnNew').onclick = () => openForm(null);
-document.getElementById('closeForm').onclick = () => formOverlay.classList.remove('open');
-document.getElementById('closeDetail').onclick = () => detailOverlay.classList.remove('open');
-formOverlay.onclick = (e) => { if(e.target === formOverlay) formOverlay.classList.remove('open'); };
-detailOverlay.onclick = (e) => { if(e.target === detailOverlay) detailOverlay.classList.remove('open'); };
+  // --- 4. LOGIQUE DES INGRÉDIENTS ---
+  const handleAddIngredient = (e) => {
+    e.preventDefault();
+    if (!nouvelIngred.nom.trim() || nouvelIngred.prixUnitaire === '') return;
 
-document.getElementById('recipeForm').addEventListener('submit', (e) => {
-  e.preventDefault();
-  const ingredients = Array.from(ingList.querySelectorAll('.ing-card')).map(card => ({
-    name: card.querySelector('.ing-name').value.trim(),
-    recipeQty: card.querySelector('.ing-rqty').value,
-    unit: card.querySelector('.ing-unit').value,
-    buyPrice: card.querySelector('.ing-bprice').value,
-    buyQty: card.querySelector('.ing-bqty').value
-  })).filter(i => i.name);
+    const item = {
+      id: `ing_${Date.now()}`,
+      nom: nouvelIngred.nom.trim(),
+      unite: nouvelIngred.unite,
+      prixUnitaire: parseFloat(nouvelIngred.prixUnitaire) || 0,
+    };
 
-  const data = {
-    id: editingId || crypto.randomUUID(),
-    name: document.getElementById('f-name').value.trim(),
-    category: document.getElementById('f-category').value,
-    time: document.getElementById('f-time').value.trim(),
-    servings: document.getElementById('f-servings').value.trim(),
-    rating: document.getElementById('f-rating').value.trim(),
-    desc: document.getElementById('f-desc').value.trim(),
-    ingredients,
-    steps: document.getElementById('f-steps').value.split("\n").map(s => s.trim()).filter(Boolean),
-    notes: document.getElementById('f-notes').value.trim()
+    setIngredients([...ingredients, item]);
+    setNouvelIngred({ nom: '', unite: 'kg', prixUnitaire: '' });
   };
 
-  if(editingId){
-    recipes = recipes.map(r => r.id === editingId ? data : r);
-  } else {
-    recipes.push(data);
-  }
-  saveRecipes();
-  formOverlay.classList.remove('open');
-  render();
-});
+  const handleUpdatePrix = (id, nouveauPrix) => {
+    setIngredients(prev =>
+      prev.map(ing => (ing.id === id ? { ...ing, prixUnitaire: parseFloat(nouveauPrix) || 0 } : ing))
+    );
+  };
 
-document.getElementById('deleteBtn').onclick = () => {
-  if(confirm("Supprimer définitivement cette recette ?")){
-    recipes = recipes.filter(r => r.id !== editingId);
-    saveRecipes();
-    formOverlay.classList.remove('open');
-    render();
-  }
-};
+  const handleDeleteIngredient = (id) => {
+    if (window.confirm("Supprimer cet ingrédient ? Cela aura un impact sur les recettes qui l'utilisent.")) {
+      setIngredients(ingredients.filter(ing => ing.id !== id));
+    }
+  };
 
-function openDetail(id){
-  const r = recipes.find(x => x.id === id);
-  if(!r) return;
-  const color = CATEGORY_COLORS[r.category] || '#8E5EA5';
-  const stars = "★".repeat(parseInt(r.rating) || 0) + "☆".repeat(5 - (parseInt(r.rating) || 0));
-  const costs = calculateCosts(r.ingredients, r.servings);
+  // --- 5. LOGIQUE DES RECETTES & CALCULS ---
+  const calculerCoutRecette = (composition) => {
+    return composition.reduce((total, item) => {
+      const ing = ingredients.find((i) => i.id === item.ingredientId);
+      if (!ing) return total;
+      return total + ing.prixUnitaire * (parseFloat(item.quantite) || 0);
+    }, 0);
+  };
 
-  document.getElementById('detailContent').innerHTML = `
-    <div class="tab" style="background:${color}; display:inline-block; margin-bottom:12px;">${r.category}</div>
-    <h2 style="margin-top:0;">${escapeHtml(r.name)}</h2>
-    <div class="meta" style="margin-bottom:14px; color:#7B6388; font-size:13px; display:flex; gap:16px;">
-      ${r.time ? `<span>⏱ ${escapeHtml(r.time)} min</span>` : ''}
-      ${r.servings ? `<span>🍽 ${escapeHtml(r.servings)} parts</span>` : ''}
-      <span class="rating">${stars}</span>
-    </div>
-    
-    <p style="color:#53415D;">${escapeHtml(r.desc || '')}</p>
+  const handleAddLigneForm = () => {
+    setLignesRecetteForm([
+      ...lignesRecetteForm,
+      { ingredientId: ingredients[0]?.id || '', quantite: '' }
+    ]);
+  };
 
-    <!-- Synthèse financier -->
-    <div class="cost-banner">
-      <div class="item">
-        <div class="label">Coût Total Recette</div>
-        <div class="val">${costs.total.toFixed(2)} €</div>
-      </div>
-      <div class="item">
-        <div class="label">Coût par Part</div>
-        <div class="val">${costs.perServing.toFixed(2)} €</div>
-      </div>
-    </div>
+  const handleRemoveLigneForm = (index) => {
+    setLignesRecetteForm(lignesRecetteForm.filter((_, i) => i !== index));
+  };
 
-    <div class="detail-grid">
-      <div>
-        <h4>Ingrédients & Ratios</h4>
-        <table class="ing-table">
-          <thead>
-            <tr>
-              <th>Ingrédient</th>
-              <th>Besoin</th>
-              <th style="text-align:right;">Coût exact</th>
-            </tr>
-          </thead>
-          <tbody>
-            ${r.ingredients.map(i => {
-              const cost = getIngCost(i);
-              return `
-                <tr>
-                  <td>
-                    <strong>${escapeHtml(i.name)}</strong>
-                    <span class="unit-detail">d'après ${i.buyPrice||0}€ / ${i.buyQty||1} ${i.unit}</span>
+  const handleLigneChange = (index, field, value) => {
+    const updated = [...lignesRecetteForm];
+    updated[index][field] = value;
+    setLignesRecetteForm(updated);
+  };
+
+  const handleSaveRecette = (e) => {
+    e.preventDefault();
+    if (!nomRecetteForm.trim()) return;
+
+    const compositionValide = lignesRecetteForm
+      .filter(l => l.ingredientId && parseFloat(l.quantite) > 0)
+      .map(l => ({ ingredientId: l.ingredientId, quantite: parseFloat(l.quantite) }));
+
+    if (compositionValide.length === 0) {
+      alert("Sélectionnez au moins un ingrédient avec une quantité valide.");
+      return;
+    }
+
+    const nouvelleRecette = {
+      id: `rec_${Date.now()}`,
+      nom: nomRecetteForm.trim(),
+      portions: parseInt(portionsForm) || 1,
+      composition: compositionValide,
+    };
+
+    setRecettes([...recettes, nouvelleRecette]);
+
+    // Réinitialisation du formulaire
+    setNomRecetteForm('');
+    setPortionsForm(4);
+    setLignesRecetteForm([{ ingredientId: ingredients[0]?.id || '', quantite: '' }]);
+    setActiveTab('recettes');
+  };
+
+  const handleDeleteRecette = (id) => {
+    if (window.confirm("Voulez-vous supprimer cette recette ?")) {
+      setRecettes(recettes.filter(r => r.id !== id));
+    }
+  };
+
+  // --- 6. RENDU GRAPHIQUE (UI) ---
+  return (
+    <div style={{ maxWidth: '900px', margin: '0 auto', fontFamily: 'system-ui, -apple-system, sans-serif', padding: '20px', color: '#333' }}>
+      
+      <header style={{ marginBottom: '25px', textAlign: 'center' }}>
+        <h1 style={{ margin: 0, fontSize: '28px' }}>Gestionnaire de Fiches Techniques & Coûts</h1>
+        <p style={{ color: '#666', marginTop: '5px' }}>Source de vérité unique pour les prix de vos ingrédients</p>
+      </header>
+
+      {/* --- BARRE DE NAVIGATION --- */}
+      <nav style={{ display: 'flex', gap: '10px', marginBottom: '25px', borderBottom: '2px solid #e2e8f0' }}>
+        <button
+          onClick={() => setActiveTab('ingredients')}
+          style={{
+            padding: '12px 20px',
+            border: 'none',
+            background: 'none',
+            cursor: 'pointer',
+            fontSize: '15px',
+            fontWeight: activeTab === 'ingredients' ? 'bold' : 'normal',
+            color: activeTab === 'ingredients' ? '#2563eb' : '#64748b',
+            borderBottom: activeTab === 'ingredients' ? '3px solid #2563eb' : 'none',
+          }}
+        >
+          Catalogue Ingrédients ({ingredients.length})
+        </button>
+
+        <button
+          onClick={() => setActiveTab('recettes')}
+          style={{
+            padding: '12px 20px',
+            border: 'none',
+            background: 'none',
+            cursor: 'pointer',
+            fontSize: '15px',
+            fontWeight: activeTab === 'recettes' ? 'bold' : 'normal',
+            color: activeTab === 'recettes' ? '#2563eb' : '#64748b',
+            borderBottom: activeTab === 'recettes' ? '3px solid #2563eb' : 'none',
+          }}
+        >
+          Mes Recettes ({recettes.length})
+        </button>
+
+        <button
+          onClick={() => setActiveTab('creer')}
+          style={{
+            padding: '12px 20px',
+            border: 'none',
+            background: 'none',
+            cursor: 'pointer',
+            fontSize: '15px',
+            fontWeight: activeTab === 'creer' ? 'bold' : 'normal',
+            color: activeTab === 'creer' ? '#2563eb' : '#64748b',
+            borderBottom: activeTab === 'creer' ? '3px solid #2563eb' : 'none',
+          }}
+        >
+          + Créer une Recette
+        </button>
+      </nav>
+
+      {/* ========================================================================= */}
+      {/* --- ONGLET 1 : CATALOGUE INGRÉDIENTS --- */}
+      {/* ========================================================================= */}
+      {activeTab === 'ingredients' && (
+        <section>
+          <div style={{ background: '#f8fafc', padding: '15px', borderRadius: '8px', border: '1px solid #e2e8f0', marginBottom: '20px' }}>
+            <h3 style={{ marginTop: 0, marginBottom: '10px' }}>Ajouter un nouvel ingrédient</h3>
+            <form onSubmit={handleAddIngredient} style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
+              <input
+                type="text"
+                placeholder="Nom (ex: Beurre doux)"
+                value={nouvelIngred.nom}
+                onChange={(e) => setNouvelIngred({ ...nouvelIngred, nom: e.target.value })}
+                style={{ flex: '2', padding: '8px 12px', border: '1px solid #cbd5e1', borderRadius: '4px' }}
+                required
+              />
+              <select
+                value={nouvelIngred.unite}
+                onChange={(e) => setNouvelIngred({ ...nouvelIngred, unite: e.target.value })}
+                style={{ flex: '1', padding: '8px 12px', border: '1px solid #cbd5e1', borderRadius: '4px' }}
+              >
+                <option value="kg">kg</option>
+                <option value="g">g</option>
+                <option value="L">L</option>
+                <option value="cl">cl</option>
+                <option value="unité">unité</option>
+              </select>
+              <input
+                type="number"
+                step="0.001"
+                placeholder="Prix unitaire (€)"
+                value={nouvelIngred.prixUnitaire}
+                onChange={(e) => setNouvelIngred({ ...nouvelIngred, prixUnitaire: e.target.value })}
+                style={{ flex: '1', padding: '8px 12px', border: '1px solid #cbd5e1', borderRadius: '4px' }}
+                required
+              />
+              <button
+                type="submit"
+                style={{ padding: '8px 16px', background: '#2563eb', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer' }}
+              >
+                Ajouter
+              </button>
+            </form>
+          </div>
+
+          <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left' }}>
+            <thead>
+              <tr style={{ background: '#f1f5f9', borderBottom: '2px solid #cbd5e1' }}>
+                <th style={{ padding: '12px' }}>Ingrédient</th>
+                <th style={{ padding: '12px' }}>Unité</th>
+                <th style={{ padding: '12px' }}>Prix Unitaire (€)</th>
+                <th style={{ padding: '12px', textAlign: 'right' }}>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {ingredients.map((ing) => (
+                <tr key={ing.id} style={{ borderBottom: '1px solid #e2e8f0' }}>
+                  <td style={{ padding: '12px', fontWeight: '500' }}>{ing.nom}</td>
+                  <td style={{ padding: '12px', color: '#64748b' }}>{ing.unite}</td>
+                  <td style={{ padding: '12px' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
+                      <input
+                        type="number"
+                        step="0.01"
+                        value={ing.prixUnitaire}
+                        onChange={(e) => handleUpdatePrix(ing.id, e.target.value)}
+                        style={{ width: '90px', padding: '6px', border: '1px solid #cbd5e1', borderRadius: '4px' }}
+                      />
+                      <span>€ / {ing.unite}</span>
+                    </div>
                   </td>
-                  <td style="color:#7B6388;">${i.recipeQty || 0} ${i.unit}</td>
-                  <td class="price-col">${cost.toFixed(2)} €</td>
+                  <td style={{ padding: '12px', textAlign: 'right' }}>
+                    <button
+                      onClick={() => handleDeleteIngredient(ing.id)}
+                      style={{ color: '#ef4444', background: 'none', border: 'none', cursor: 'pointer' }}
+                    >
+                      Supprimer
+                    </button>
+                  </td>
                 </tr>
-              `;
-            }).join('')}
-          </tbody>
-        </table>
-        ${r.notes ? `<h4 style="margin-top:20px;">Notes & Astuces</h4><p style="font-size:13.5px; color:#53415D; line-height:1.4;">${escapeHtml(r.notes)}</p>` : ''}
-      </div>
-      <div>
-        <h4>Préparation</h4>
-        <ol class="steps">
-          ${r.steps.map(s => `<li>${escapeHtml(s)}</li>`).join('')}
-        </ol>
-      </div>
+              ))}
+            </tbody>
+          </table>
+        </section>
+      )}
+
+      {/* ========================================================================= */}
+      {/* --- ONGLET 2 : LISTE DES RECETTES --- */}
+      {/* ========================================================================= */}
+      {activeTab === 'recettes' && (
+        <section style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+          {recettes.length === 0 ? (
+            <p style={{ textAlign: 'center', color: '#64748b' }}>Aucune recette enregistrée. Cliquez sur "+ Créer une Recette".</p>
+          ) : (
+            recettes.map((recette) => {
+              const coutTotal = calculerCoutRecette(recette.composition);
+              const coutPortion = coutTotal / (recette.portions || 1);
+
+              return (
+                <div
+                  key={recette.id}
+                  style={{ border: '1px solid #e2e8f0', borderRadius: '8px', padding: '20px', background: 'white' }}
+                >
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '15px' }}>
+                    <div>
+                      <h2 style={{ margin: 0, fontSize: '20px' }}>{recette.nom}</h2>
+                      <span style={{ fontSize: '14px', color: '#64748b' }}>Rendement : {recette.portions} portion(s)</span>
+                    </div>
+                    <div style={{ textAlign: 'right' }}>
+                      <div style={{ fontSize: '18px', fontWeight: 'bold' }}>Coût total : {coutTotal.toFixed(2)} €</div>
+                      <div style={{ fontSize: '14px', color: '#16a34a', fontWeight: 'bold' }}>
+                        {coutPortion.toFixed(2)} € / portion
+                      </div>
+                      <button
+                        onClick={() => handleDeleteRecette(recette.id)}
+                        style={{ color: '#ef4444', background: 'none', border: 'none', cursor: 'pointer', marginTop: '5px', fontSize: '12px' }}
+                      >
+                        Supprimer la recette
+                      </button>
+                    </div>
+                  </div>
+
+                  <table style={{ width: '100%', borderCollapse: 'collapse', marginTop: '10px', fontSize: '14px' }}>
+                    <thead>
+                      <tr style={{ borderBottom: '1px solid #e2e8f0', color: '#64748b', textAlign: 'left' }}>
+                        <th style={{ padding: '6px 0' }}>Ingrédient</th>
+                        <th style={{ padding: '6px 0' }}>Quantité</th>
+                        <th style={{ padding: '6px 0' }}>Prix Actuel</th>
+                        <th style={{ padding: '6px 0', textAlign: 'right' }}>Sous-total</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {recette.composition.map((item, idx) => {
+                        const ing = ingredients.find((i) => i.id === item.ingredientId);
+                        const sousTotal = ing ? ing.prixUnitaire * item.quantite : 0;
+
+                        return (
+                          <tr key={idx} style={{ borderBottom: '1px solid #f1f5f9' }}>
+                            <td style={{ padding: '8px 0' }}>{ing ? ing.nom : <em style={{ color: 'red' }}>Supprimé</em>}</td>
+                            <td style={{ padding: '8px 0' }}>{item.quantite} {ing?.unite}</td>
+                            <td style={{ padding: '8px 0', color: '#64748b' }}>{ing?.prixUnitaire.toFixed(2)} € / {ing?.unite}</td>
+                            <td style={{ padding: '8px 0', textAlign: 'right', fontWeight: 'bold' }}>{sousTotal.toFixed(2)} €</td>
+                          </tr>
+                        );
+                      })}
+                    </tbody>
+                  </table>
+                </div>
+              );
+            })
+          )}
+        </section>
+      )}
+
+      {/* ========================================================================= */}
+      {/* --- ONGLET 3 : CRÉER UNE RECETTE --- */}
+      {/* ========================================================================= */}
+      {activeTab === 'creer' && (
+        <section style={{ background: 'white', padding: '20px', border: '1px solid #e2e8f0', borderRadius: '8px' }}>
+          <h2 style={{ marginTop: 0 }}>Créer une nouvelle fiche recette</h2>
+
+          <form onSubmit={handleSaveRecette}>
+            <div style={{ display: 'flex', gap: '15px', marginBottom: '20px' }}>
+              <div style={{ flex: 3 }}>
+                <label style={{ display: 'block', marginBottom: '5px', fontWeight: 'bold' }}>Nom de la recette :</label>
+                <input
+                  type="text"
+                  placeholder="ex: Tarteleuse aux Pommes"
+                  value={nomRecetteForm}
+                  onChange={(e) => setNomRecetteForm(e.target.value)}
+                  style={{ width: '100%', padding: '8px', border: '1px solid #cbd5e1', borderRadius: '4px' }}
+                  required
+                />
+              </div>
+
+              <div style={{ flex: 1 }}>
+                <label style={{ display: 'block', marginBottom: '5px', fontWeight: 'bold' }}>Portions :</label>
+                <input
+                  type="number"
+                  min="1"
+                  value={portionsForm}
+                  onChange={(e) => setPortionsForm(e.target.value)}
+                  style={{ width: '100%', padding: '8px', border: '1px solid #cbd5e1', borderRadius: '4px' }}
+                  required
+                />
+              </div>
+            </div>
+
+            <h3 style={{ marginBottom: '10px' }}>Ingrédients :</h3>
+            {lignesRecetteForm.map((ligne, index) => (
+              <div key={index} style={{ display: 'flex', gap: '10px', marginBottom: '10px', alignItems: 'center' }}>
+                <select
+                  value={ligne.ingredientId}
+                  onChange={(e) => handleLigneChange(index, 'ingredientId', e.target.value)}
+                  style={{ flex: 2, padding: '8px', border: '1px solid #cbd5e1', borderRadius: '4px' }}
+                >
+                  {ingredients.map((ing) => (
+                    <option key={ing.id} value={ing.id}>
+                      {ing.nom} ({ing.prixUnitaire} € / {ing.unite})
+                    </option>
+                  ))}
+                </select>
+
+                <input
+                  type="number"
+                  step="0.001"
+                  placeholder="Quantité"
+                  value={ligne.quantite}
+                  onChange={(e) => handleLigneChange(index, 'quantite', e.target.value)}
+                  style={{ flex: 1, padding: '8px', border: '1px solid #cbd5e1', borderRadius: '4px' }}
+                  required
+                />
+
+                {lignesRecetteForm.length > 1 && (
+                  <button
+                    type="button"
+                    onClick={() => handleRemoveLigneForm(index)}
+                    style={{ background: '#ef4444', color: 'white', border: 'none', borderRadius: '4px', padding: '8px 12px', cursor: 'pointer' }}
+                  >
+                    X
+                  </button>
+                )}
+              </div>
+            ))}
+
+            <button
+              type="button"
+              onClick={handleAddLigneForm}
+              style={{ background: '#f1f5f9', border: '1px solid #cbd5e1', padding: '8px 12px', borderRadius: '4px', cursor: 'pointer', marginBottom: '20px' }}
+            >
+              + Ajouter une ligne
+            </button>
+
+            <div>
+              <button
+                type="submit"
+                style={{ width: '100%', padding: '12px', background: '#16a34a', color: 'white', border: 'none', borderRadius: '6px', fontSize: '16px', fontWeight: 'bold', cursor: 'pointer' }}
+              >
+                Enregistrer la Recette
+              </button>
+            </div>
+          </form>
+        </section>
+      )}
+
     </div>
-    <div class="modal-actions">
-      <button type="button" class="btn-primary" id="editFromDetail">Modifier cette recette</button>
-    </div>
-  `;
-  
-  document.getElementById('editFromDetail').onclick = () => {
-    detailOverlay.classList.remove('open');
-    openForm(r);
-  };
-  detailOverlay.classList.add('open');
+  );
 }
-
-document.getElementById('search').addEventListener('input', (e) => {
-  searchTerm = e.target.value;
-  render();
-});
-
-render();
-</script>
-</body>
-</html>
