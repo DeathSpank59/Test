@@ -3,171 +3,213 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Mon Cahier de Pâtisserie</title>
+<title>Mon Cahier de Pâtisserie — Édition Florale</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;0,9..144,700;1,9..144,500&family=Work+Sans:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
-  :root{
-    --meringue:#FBF7F0;
-    --paper:#F3ECDF;
-    --ink:#2B1B14;
-    --cacao:#4A3327;
-    --or:#C9973A;
-    --fraise:#B5495B;
-    --pistache:#7C9473;
-    --ligne: rgba(43,27,20,0.12);
-    --shadow: 0 10px 24px rgba(43,27,20,0.10), 0 2px 6px rgba(43,27,20,0.06);
+  :root {
+    --bg-violet: #FAF6FC;
+    --paper: #F3EAF8;
+    --paper-card: #FFFFFF;
+    --ink: #2E1C38;
+    --cacao: #4A3258;
+    --violet-main: #8E5EA5;
+    --violet-soft: #B593CA;
+    --violet-light: #EFE4F7;
+    --rose-pastel: #EBB6CE;
+    --sage: #88A98C;
+    --gold: #D4A359;
+    --ligne: rgba(74, 50, 88, 0.12);
+    --shadow: 0 10px 24px rgba(46, 28, 56, 0.07), 0 2px 6px rgba(46, 28, 56, 0.04);
   }
-  *{box-sizing:border-box;}
-  body{
-    margin:0;
-    background:var(--meringue);
-    color:var(--ink);
-    font-family:'Work Sans', sans-serif;
-    -webkit-font-smoothing:antialiased;
-  }
-  .bg-texture{
-    position:fixed; inset:0; pointer-events:none; opacity:0.5; z-index:0;
-    background-image: radial-gradient(circle at 1px 1px, rgba(43,27,20,0.05) 1px, transparent 0);
-    background-size: 22px 22px;
-  }
-  header{
-    position:relative; z-index:1;
-    padding:48px 24px 28px;
-    text-align:center;
-    border-bottom:1px solid var(--ligne);
-  }
-  header .eyebrow{
-    font-size:12px; letter-spacing:0.18em; text-transform:uppercase;
-    color:var(--fraise); font-weight:600; margin-bottom:10px;
-  }
-  header h1{
-    font-family:'Fraunces', serif;
-    font-weight:600;
-    font-size:clamp(32px, 5vw, 52px);
-    margin:0;
-    letter-spacing:-0.01em;
-  }
-  header p{
-    font-size:15px; color:#6b5748; margin:10px auto 0; max-width:480px;
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--bg-violet);
+    color: var(--ink);
+    font-family: 'Work Sans', sans-serif;
+    -webkit-font-smoothing: antialiased;
   }
 
-  .toolbar{
-    position:relative; z-index:1;
-    max-width:1080px; margin:0 auto;
-    padding:26px 24px 0;
-    display:flex; gap:14px; flex-wrap:wrap; align-items:center; justify-content:space-between;
-  }
-  .filters{ display:flex; gap:8px; flex-wrap:wrap; }
-  .chip{
-    border:1px solid var(--ligne); background:var(--paper);
-    padding:8px 16px; border-radius:999px; font-size:13px; font-weight:500;
-    cursor:pointer; transition:all .15s ease; color:var(--cacao);
-  }
-  .chip:hover{ border-color:var(--or); }
-  .chip.active{ background:var(--ink); color:var(--meringue); border-color:var(--ink); }
-
-  .search-add{ display:flex; gap:10px; align-items:center; }
-  input[type="text"], input[type="search"]{
-    font-family:'Work Sans', sans-serif;
-    padding:9px 14px; border-radius:10px; border:1px solid var(--ligne);
-    background:#fff; font-size:14px; color:var(--ink);
-  }
-  input[type="text"]:focus, input[type="search"]:focus, textarea:focus, select:focus{
-    outline:2px solid var(--or); outline-offset:1px;
-  }
-  button{ font-family:'Work Sans', sans-serif; cursor:pointer; }
-  .btn-primary{
-    background:var(--ink); color:var(--meringue); border:none;
-    padding:10px 20px; border-radius:10px; font-size:14px; font-weight:600;
-    box-shadow:var(--shadow);
-    transition:transform .12s ease;
-  }
-  .btn-primary:hover{ transform:translateY(-1px); }
-
-  main{ position:relative; z-index:1; max-width:1080px; margin:0 auto; padding:28px 24px 80px; }
-
-  .grid{
-    display:grid; grid-template-columns:repeat(auto-fill, minmax(260px,1fr)); gap:22px;
-    margin-top:20px;
+  /* Motifs botaniques en arrière-plan */
+  .bg-texture {
+    position: fixed; inset: 0; pointer-events: none; opacity: 0.35; z-index: 0;
+    background-image: 
+      radial-gradient(circle at 50% 50%, rgba(142, 94, 165, 0.08) 2px, transparent 0),
+      radial-gradient(circle at 0% 0%, rgba(235, 182, 206, 0.15) 150px, transparent 300px),
+      radial-gradient(circle at 100% 100%, rgba(136, 169, 140, 0.15) 150px, transparent 300px);
+    background-size: 32px 32px, 100% 100%, 100% 100%;
   }
 
-  .card{
-    background:#fff; border-radius:14px; box-shadow:var(--shadow);
-    position:relative; overflow:hidden; cursor:pointer;
-    border:1px solid var(--ligne);
-    transition:transform .15s ease, box-shadow .15s ease;
-    display:flex; flex-direction:column;
+  header {
+    position: relative; z-index: 1;
+    padding: 52px 24px 32px;
+    text-align: center;
+    border-bottom: 1px solid var(--ligne);
+    background: linear-gradient(180deg, rgba(255,255,255,0.7) 0%, rgba(250,246,252,0) 100%);
   }
-  .card:hover{ transform:translateY(-3px); box-shadow:0 16px 30px rgba(43,27,20,0.14); }
-  .tab{
-    align-self:flex-start;
-    font-family:'Fraunces', serif; font-weight:600; font-size:11px; letter-spacing:0.06em;
-    text-transform:uppercase; color:#fff; padding:6px 14px 7px;
-    border-radius:0 0 10px 0;
+  header .eyebrow {
+    font-size: 13px; letter-spacing: 0.22em; text-transform: uppercase;
+    color: var(--violet-main); font-weight: 600; margin-bottom: 10px;
+    display: flex; align-items: center; justify-content: center; gap: 8px;
   }
-  .card-body{ padding:18px 20px 20px; flex:1; display:flex; flex-direction:column; }
-  .card h3{ font-family:'Fraunces', serif; font-size:20px; margin:2px 0 6px; font-weight:600; }
-  .card .meta{ font-size:12.5px; color:#8a7666; display:flex; gap:12px; margin-bottom:10px; }
-  .card .desc{ font-size:13.5px; color:#584a3d; line-height:1.5; flex:1; }
-  .card .foot{ margin-top:14px; display:flex; justify-content:space-between; align-items:center; }
-  .rating{ color:var(--or); font-size:13px; letter-spacing:1px; }
+  header h1 {
+    font-family: 'Fraunces', serif;
+    font-weight: 600;
+    font-size: clamp(32px, 5vw, 52px);
+    margin: 0;
+    color: var(--ink);
+    letter-spacing: -0.01em;
+  }
+  header p {
+    font-size: 15px; color: #695175; margin: 10px auto 0; max-width: 500px;
+  }
 
-  .empty{
-    text-align:center; padding:60px 20px; color:#8a7666;
+  .toolbar {
+    position: relative; z-index: 1;
+    max-width: 1080px; margin: 0 auto;
+    padding: 26px 24px 0;
+    display: flex; gap: 14px; flex-wrap: wrap; align-items: center; justify-content: space-between;
   }
-  .empty .signature{ font-family:'Fraunces', serif; font-style:italic; font-size:22px; color:var(--cacao); }
+  .filters { display: flex; gap: 8px; flex-wrap: wrap; }
+  .chip {
+    border: 1px solid var(--ligne); background: var(--paper);
+    padding: 8px 16px; border-radius: 999px; font-size: 13px; font-weight: 500;
+    cursor: pointer; transition: all .15s ease; color: var(--cacao);
+  }
+  .chip:hover { border-color: var(--violet-main); background: #FAF0FE; }
+  .chip.active { background: var(--ink); color: #fff; border-color: var(--ink); }
+
+  .search-add { display: flex; gap: 10px; align-items: center; }
+  input[type="text"], input[type="number"], input[type="search"] {
+    font-family: 'Work Sans', sans-serif;
+    padding: 9px 14px; border-radius: 10px; border: 1px solid var(--ligne);
+    background: #fff; font-size: 14px; color: var(--ink);
+  }
+  input[type="text"]:focus, input[type="number"]:focus, input[type="search"]:focus, textarea:focus, select:focus {
+    outline: 2px solid var(--violet-soft); outline-offset: 1px;
+  }
+  button { font-family: 'Work Sans', sans-serif; cursor: pointer; }
+  .btn-primary {
+    background: var(--violet-main); color: #fff; border: none;
+    padding: 10px 20px; border-radius: 10px; font-size: 14px; font-weight: 600;
+    box-shadow: var(--shadow);
+    transition: transform .12s ease, background-color .15s ease;
+  }
+  .btn-primary:hover { transform: translateY(-1px); background: #7B4E92; }
+
+  main { position: relative; z-index: 1; max-width: 1080px; margin: 0 auto; padding: 28px 24px 80px; }
+
+  .grid {
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(270px, 1fr)); gap: 22px;
+    margin-top: 20px;
+  }
+
+  .card {
+    background: var(--paper-card); border-radius: 16px; box-shadow: var(--shadow);
+    position: relative; overflow: hidden; cursor: pointer;
+    border: 1px solid var(--ligne);
+    transition: transform .15s ease, box-shadow .15s ease;
+    display: flex; flex-direction: column;
+  }
+  .card:hover { transform: translateY(-3px); box-shadow: 0 16px 30px rgba(46, 28, 56, 0.12); }
+  .tab {
+    align-self: flex-start;
+    font-family: 'Fraunces', serif; font-weight: 600; font-size: 11px; letter-spacing: 0.06em;
+    text-transform: uppercase; color: #fff; padding: 6px 14px 7px;
+    border-radius: 0 0 10px 0;
+  }
+  .card-body { padding: 18px 20px 20px; flex: 1; display: flex; flex-direction: column; }
+  .card h3 { font-family: 'Fraunces', serif; font-size: 20px; margin: 2px 0 6px; font-weight: 600; color: var(--ink); }
+  .card .meta { font-size: 12.5px; color: #7B6388; display: flex; gap: 12px; margin-bottom: 8px; flex-wrap: wrap; }
+  .card .desc { font-size: 13.5px; color: #53415D; line-height: 1.5; flex: 1; }
+  .card .cost-badge {
+    margin-top: 10px; background: var(--violet-light); padding: 6px 10px; border-radius: 8px;
+    font-size: 12.5px; font-weight: 600; color: var(--violet-main); display: inline-flex; justify-content: space-between; align-items: center;
+  }
+  .card .foot { margin-top: 12px; display: flex; justify-content: space-between; align-items: center; }
+  .rating { color: var(--gold); font-size: 13px; letter-spacing: 1px; }
+
+  .empty {
+    text-align: center; padding: 60px 20px; color: #7B6388;
+  }
+  .empty .signature { font-family: 'Fraunces', serif; font-style: italic; font-size: 22px; color: var(--violet-main); }
 
   /* Modal */
-  .overlay{
-    position:fixed; inset:0; background:rgba(43,27,20,0.45); backdrop-filter:blur(2px);
-    display:none; align-items:flex-start; justify-content:center; z-index:10; padding:40px 16px; overflow-y:auto;
+  .overlay {
+    position: fixed; inset: 0; background: rgba(35, 18, 44, 0.45); backdrop-filter: blur(3px);
+    display: none; align-items: flex-start; justify-content: center; z-index: 10; padding: 40px 16px; overflow-y: auto;
   }
-  .overlay.open{ display:flex; }
-  .modal{
-    background:var(--meringue); max-width:640px; width:100%; border-radius:16px;
-    box-shadow:0 30px 60px rgba(0,0,0,0.3); padding:32px 30px 30px; position:relative;
+  .overlay.open { display: flex; }
+  .modal {
+    background: var(--bg-violet); max-width: 660px; width: 100%; border-radius: 18px;
+    box-shadow: 0 30px 60px rgba(0,0,0,0.25); padding: 32px 30px 30px; position: relative;
+    border: 1px solid rgba(255,255,255,0.6);
   }
-  .modal h2{ font-family:'Fraunces', serif; font-size:26px; margin:0 0 18px; }
-  .modal .close{
-    position:absolute; top:18px; right:20px; background:none; border:none; font-size:22px; color:#8a7666;
+  .modal h2 { font-family: 'Fraunces', serif; font-size: 26px; margin: 0 0 18px; color: var(--ink); }
+  .modal .close {
+    position: absolute; top: 18px; right: 20px; background: none; border: none; font-size: 24px; color: #7B6388;
   }
-  .field{ margin-bottom:16px; }
-  .field label{ display:block; font-size:12.5px; font-weight:600; text-transform:uppercase; letter-spacing:0.05em; color:var(--cacao); margin-bottom:6px; }
-  .field input, .field textarea, .field select{ width:100%; }
-  .row2{ display:grid; grid-template-columns:1fr 1fr; gap:14px; }
-  textarea{ font-family:'Work Sans', sans-serif; padding:10px 14px; border-radius:10px; border:1px solid var(--ligne); font-size:14px; resize:vertical; }
-  select{ padding:9px 14px; border-radius:10px; border:1px solid var(--ligne); background:#fff; font-size:14px; }
+  .field { margin-bottom: 16px; }
+  .field label { display: block; font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: var(--cacao); margin-bottom: 6px; }
+  .field input, .field textarea, .field select { width: 100%; }
+  .row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  textarea { font-family: 'Work Sans', sans-serif; padding: 10px 14px; border-radius: 10px; border: 1px solid var(--ligne); font-size: 14px; resize: vertical; }
+  select { padding: 9px 14px; border-radius: 10px; border: 1px solid var(--ligne); background: #fff; font-size: 14px; }
 
-  .ing-row{ display:flex; gap:8px; margin-bottom:8px; }
-  .ing-row input{ flex:1; }
-  .small-btn{
-    border:1px solid var(--ligne); background:#fff; border-radius:8px; padding:0 12px; font-size:16px; color:var(--fraise);
+  /* Section Ingrédients & Coûts */
+  .ing-header { display: flex; gap: 8px; font-size: 11px; font-weight: 600; text-transform: uppercase; color: var(--violet-main); margin-bottom: 6px; }
+  .ing-row { display: flex; gap: 8px; margin-bottom: 8px; align-items: center; }
+  .ing-row input.ing-name { flex: 2; }
+  .ing-row input.ing-qty { flex: 1.2; }
+  .ing-row input.ing-price { flex: 1; min-width: 80px; }
+  .small-btn {
+    border: 1px solid var(--ligne); background: #fff; border-radius: 8px; height: 36px; width: 36px;
+    display: flex; align-items: center; justify-content: center; font-size: 16px; color: #b5495b; flex-shrink: 0;
   }
-  .add-line{ background:none; border:1px dashed var(--ligne); border-radius:8px; padding:8px 14px; font-size:13px; color:var(--cacao); width:100%; text-align:left; }
+  .add-line { background: #fff; border: 1px dashed var(--violet-soft); border-radius: 8px; padding: 9px 14px; font-size: 13px; color: var(--violet-main); width: 100%; text-align: center; font-weight: 500; }
+  .add-line:hover { background: var(--violet-light); }
 
-  .modal-actions{ display:flex; justify-content:space-between; margin-top:22px; }
-  .btn-danger{ background:none; border:none; color:var(--fraise); font-size:13px; font-weight:600; }
+  .cost-summary-box {
+    background: #fff; border: 1px solid var(--violet-soft); border-radius: 12px; padding: 12px 16px;
+    margin-top: 10px; display: flex; justify-content: space-between; align-items: center; font-size: 14px;
+  }
+  .cost-summary-box .total { font-weight: 700; color: var(--violet-main); font-size: 16px; }
+
+  .modal-actions { display: flex; justify-content: space-between; margin-top: 24px; align-items: center; }
+  .btn-danger { background: none; border: none; color: #b5495b; font-size: 13px; font-weight: 600; padding: 0; }
 
   /* Detail view */
-  .detail-grid{ display:grid; grid-template-columns:1fr 1.2fr; gap:26px; }
-  @media (max-width:560px){ .detail-grid{ grid-template-columns:1fr; } .row2{ grid-template-columns:1fr; } }
-  .detail-grid h4{ font-family:'Fraunces', serif; font-size:15px; margin:0 0 10px; color:var(--fraise); }
-  .ing-list{ list-style:none; padding:0; margin:0; }
-  .ing-list li{ padding:7px 0; border-bottom:1px dashed var(--ligne); font-size:14px; display:flex; justify-content:space-between; }
-  .steps{ padding-left:20px; margin:0; }
-  .steps li{ margin-bottom:10px; font-size:14px; line-height:1.5; }
+  .detail-grid { display: grid; grid-template-columns: 1fr 1.2fr; gap: 26px; }
+  @media (max-width:580px){ .detail-grid { grid-template-columns: 1fr; } .row2 { grid-template-columns: 1fr; } }
+  .detail-grid h4 { font-family: 'Fraunces', serif; font-size: 16px; margin: 0 0 10px; color: var(--violet-main); border-bottom: 1px solid var(--ligne); padding-bottom: 4px; }
+  
+  .ing-table { width: 100%; border-collapse: collapse; font-size: 13.5px; }
+  .ing-table th { text-align: left; font-size: 11px; text-transform: uppercase; color: #7B6388; padding-bottom: 6px; }
+  .ing-table td { padding: 6px 0; border-bottom: 1px dashed var(--ligne); }
+  .ing-table td.price-col { text-align: right; font-weight: 500; color: var(--violet-main); }
+  
+  .cost-banner {
+    background: linear-gradient(135deg, var(--violet-light) 0%, #F8EBF2 100%);
+    border-radius: 12px; padding: 14px 18px; margin: 16px 0 20px;
+    display: flex; gap: 20px; justify-content: space-around; text-align: center;
+  }
+  .cost-banner .item .label { font-size: 11px; text-transform: uppercase; letter-spacing: 0.05em; color: #695175; }
+  .cost-banner .item .val { font-family: 'Fraunces', serif; font-size: 20px; font-weight: 700; color: var(--violet-main); margin-top: 2px; }
 
-  footer{ text-align:center; padding:26px; font-size:12px; color:#a3907e; position:relative; z-index:1; }
+  .steps { padding-left: 20px; margin: 0; }
+  .steps li { margin-bottom: 10px; font-size: 14px; line-height: 1.5; color: #3D2D45; }
+
+  footer { text-align: center; padding: 30px; font-size: 12px; color: #8C7599; position: relative; z-index: 1; }
 </style>
 </head>
 <body>
 <div class="bg-texture"></div>
 
 <header>
-  <div class="eyebrow">Fait maison</div>
+  <div class="eyebrow">🌸 Carnet Gourmand & Floral</div>
   <h1>Mon Cahier de Pâtisserie</h1>
-  <p>Le carnet où je range mes recettes, mes ratios et mes petites astuces de four.</p>
+  <p>Mes recettes, mes dosages et le calcul précis du coût de mes créations gourmandes.</p>
 </header>
 
 <div class="toolbar">
@@ -181,12 +223,12 @@
 <main>
   <div class="grid" id="grid"></div>
   <div class="empty" id="emptyState" style="display:none;">
-    <div class="signature">La pâte n'a pas encore levé…</div>
+    <div class="signature">Les pétales n'ont pas encore fleuri…</div>
     <p>Ajoute ta première recette pour remplir le cahier.</p>
   </div>
 </main>
 
-<footer>Cahier de pâtisserie — vos recettes sont enregistrées uniquement dans ce navigateur.</footer>
+<footer>Cahier de pâtisserie floral — vos données sont sauvegardées localement dans ce navigateur.</footer>
 
 <!-- Modal formulaire -->
 <div class="overlay" id="formOverlay">
@@ -196,7 +238,7 @@
     <form id="recipeForm">
       <div class="field">
         <label>Nom de la recette</label>
-        <input type="text" id="f-name" required placeholder="Ex : Tarte au citron meringuée">
+        <input type="text" id="f-name" required placeholder="Ex : Tarte aux myrtilles & lavande">
       </div>
       <div class="row2">
         <div class="field">
@@ -213,35 +255,49 @@
         </div>
         <div class="field">
           <label>Temps total (min)</label>
-          <input type="text" id="f-time" placeholder="Ex : 90">
+          <input type="number" id="f-time" placeholder="Ex : 90">
         </div>
       </div>
       <div class="row2">
         <div class="field">
           <label>Nombre de parts</label>
-          <input type="text" id="f-servings" placeholder="Ex : 6">
+          <input type="number" id="f-servings" placeholder="Ex : 8">
         </div>
         <div class="field">
           <label>Note (0 à 5)</label>
-          <input type="text" id="f-rating" placeholder="Ex : 4">
+          <input type="number" id="f-rating" min="0" max="5" placeholder="Ex : 5">
         </div>
       </div>
       <div class="field">
         <label>Description courte</label>
-        <textarea id="f-desc" rows="2" placeholder="Une phrase pour se rappeler pourquoi cette recette est top."></textarea>
+        <textarea id="f-desc" rows="2" placeholder="Une touche florale, croustillante et fruitée."></textarea>
       </div>
+
+      <!-- Ingrédients & Prix -->
       <div class="field">
-        <label>Ingrédients</label>
+        <label>Ingrédients & Coûts</label>
+        <div class="ing-header">
+          <span style="flex:2;">Nom</span>
+          <span style="flex:1.2;">Quantité</span>
+          <span style="flex:1;">Prix (€)</span>
+          <span style="width:36px;"></span>
+        </div>
         <div id="ingList"></div>
         <button type="button" class="add-line" id="addIng">+ Ajouter un ingrédient</button>
+        
+        <div class="cost-summary-box">
+          <span>Coût estimé de la recette :</span>
+          <span class="total" id="liveTotalCost">0.00 €</span>
+        </div>
       </div>
+
       <div class="field">
         <label>Étapes (une par ligne)</label>
-        <textarea id="f-steps" rows="5" placeholder="Préchauffer le four à 180°C…&#10;Mélanger le beurre et le sucre…"></textarea>
+        <textarea id="f-steps" rows="4" placeholder="Préparer la pâte sablée…&#10;Cuire à blanc 20 min…"></textarea>
       </div>
       <div class="field">
         <label>Notes / astuces</label>
-        <textarea id="f-notes" rows="2" placeholder="Ex : bien laisser reposer la pâte 1h au frais."></textarea>
+        <textarea id="f-notes" rows="2" placeholder="Astuce : infuser quelques fleurs de lavande dans la crème."></textarea>
       </div>
       <div class="modal-actions">
         <button type="button" class="btn-danger" id="deleteBtn" style="display:none;">Supprimer la recette</button>
@@ -261,16 +317,16 @@
 
 <script>
 const CATEGORY_COLORS = {
-  "Tarte": "#B5495B", "Gâteau": "#C9973A", "Viennoiserie": "#7C9473",
-  "Entremet": "#8B6BA8", "Biscuit": "#4A3327", "Chocolat": "#5C4033", "Autre": "#6b5748"
+  "Tarte": "#B593CA", "Gâteau": "#8E5EA5", "Viennoiserie": "#EBB6CE",
+  "Entremet": "#7B68EE", "Biscuit": "#88A98C", "Chocolat": "#5C3D61", "Autre": "#8499B5"
 };
-const STORAGE_KEY = "cahier-patisserie-recettes";
+const STORAGE_KEY = "cahier-patisserie-floral-recettes";
 
 function loadRecipes(){
-  try{
+  try {
     const raw = localStorage.getItem(STORAGE_KEY);
     return raw ? JSON.parse(raw) : seedData();
-  }catch(e){ return seedData(); }
+  } catch(e) { return seedData(); }
 }
 function saveRecipes(){ localStorage.setItem(STORAGE_KEY, JSON.stringify(recipes)); }
 
@@ -278,34 +334,48 @@ function seedData(){
   return [
     {
       id: crypto.randomUUID(),
-      name: "Tarte au citron meringuée",
+      name: "Tarte au citron & Violette",
       category: "Tarte",
       time: "90",
       servings: "8",
       rating: "5",
-      desc: "Pâte sablée, crème citron bien acidulée et meringue italienne dorée au chalumeau.",
+      desc: "Pâte sablée aux amandes, crémeux citron acidulé et meringue délicatement parfumée à la violette.",
       ingredients: [
-        {name:"Farine", qty:"200 g"}, {name:"Beurre froid", qty:"100 g"},
-        {name:"Sucre", qty:"70 g"}, {name:"Jus de citron", qty:"150 ml"},
-        {name:"Œufs", qty:"3"}, {name:"Blancs d'œufs", qty:"3"}
+        {name: "Farine T55", qty: "200 g", price: "0.30"},
+        {name: "Beurre doux", qty: "120 g", price: "1.30"},
+        {name: "Sucre glace", qty: "80 g", price: "0.25"},
+        {name: "Citrons bio", qty: "4 pièces", price: "1.80"},
+        {name: "Œufs frais", qty: "4 pièces", price: "1.20"},
+        {name: "Arôme violette", qty: "1 c.à.c", price: "0.40"}
       ],
-      steps: ["Préparer la pâte sablée et foncer le moule, cuire à blanc 20 min à 180°C.",
-              "Faire la crème citron sur feu doux jusqu'à épaississement.",
-              "Monter les blancs en meringue italienne avec un sirop de sucre.",
-              "Garnir la tarte et dorer la meringue au chalumeau."],
-      notes: "Bien filtrer la crème citron pour une texture lisse."
+      steps: [
+        "Préparer la pâte sablée, foncer le moule et cuire à blanc 20 min à 180°C.",
+        "Cuire le crémeux citron à feu doux jusqu'à épaississement puis ajouter le beurre.",
+        "Monter la meringue avec une goutte d'arôme naturel de violette.",
+        "Dresser et pocher joliment avant de servir frais."
+      ],
+      notes: "Ajouter quelques fleurs d'enseigne fraîches ou de violettes cristallisées pour la déco."
     },
     {
       id: crypto.randomUUID(),
-      name: "Croissants maison",
-      category: "Viennoiserie",
-      time: "720",
-      servings: "10",
+      name: "Sablés floraux à la lavande",
+      category: "Biscuit",
+      time: "45",
+      servings: "12",
       rating: "4",
-      desc: "Un feuilletage patient mais qui vaut chaque minute d'attente.",
-      ingredients: [{name:"Farine T45", qty:"500 g"}, {name:"Beurre de tourage", qty:"250 g"}, {name:"Levure fraîche", qty:"20 g"}, {name:"Lait", qty:"150 ml"}],
-      steps: ["Préparer la détrempe et laisser reposer une nuit.", "Réaliser le tourage avec 3 tours simples.", "Détailler, façonner et laisser pousser 2h.", "Dorer et cuire 18 min à 200°C."],
-      notes: "Le beurre et la détrempe doivent avoir la même consistance avant le tourage."
+      desc: "Petits sablés fondants infusés aux fleurs de lavande culinaire et zestes d'orange.",
+      ingredients: [
+        {name: "Beurre pommade", qty: "150 g", price: "1.60"},
+        {name: "Farine", qty: "250 g", price: "0.35"},
+        {name: "Fleurs de lavande séchées", qty: "1 c.à.s", price: "0.50"},
+        {name: "Sucre blond", qty: "90 g", price: "0.30"}
+      ],
+      steps: [
+        "Mélanger le sucre et la lavande pour en libérer les huiles essentielles.",
+        "Incorporer le beurre puis la farine jusqu'à former une boule.",
+        "Détailler les sablés et enfourner 12 min à 160°C."
+      ],
+      notes: "Attention à doser la lavande avec parcimonie pour éviter le goût savonneux."
     }
   ];
 }
@@ -323,79 +393,110 @@ function getCategories(){
   return ["Toutes", ...Array.from(new Set(recipes.map(r=>r.category)))];
 }
 
+function calculateCosts(ingredients, servings){
+  const total = (ingredients || []).reduce((sum, ing) => sum + (parseFloat(ing.price) || 0), 0);
+  const numServings = parseFloat(servings) || 1;
+  const perServing = total / numServings;
+  return { total, perServing };
+}
+
 function renderFilters(){
   filtersEl.innerHTML = "";
-  getCategories().forEach(cat=>{
+  getCategories().forEach(cat => {
     const chip = document.createElement('button');
-    chip.className = 'chip' + (cat===activeCategory ? ' active':'');
+    chip.className = 'chip' + (cat === activeCategory ? ' active' : '');
     chip.textContent = cat;
-    chip.onclick = ()=>{ activeCategory = cat; render(); };
+    chip.onclick = () => { activeCategory = cat; render(); };
     filtersEl.appendChild(chip);
   });
 }
 
 function render(){
   renderFilters();
-  const filtered = recipes.filter(r=>{
-    const matchCat = activeCategory==="Toutes" || r.category===activeCategory;
+  const filtered = recipes.filter(r => {
+    const matchCat = activeCategory === "Toutes" || r.category === activeCategory;
     const matchSearch = r.name.toLowerCase().includes(searchTerm.toLowerCase());
     return matchCat && matchSearch;
   });
+
   grid.innerHTML = "";
-  emptyState.style.display = filtered.length===0 ? 'block':'none';
-  filtered.forEach(r=>{
+  emptyState.style.display = filtered.length === 0 ? 'block' : 'none';
+
+  filtered.forEach(r => {
     const card = document.createElement('div');
     card.className = 'card';
-    const color = CATEGORY_COLORS[r.category] || '#6b5748';
-    const stars = "★".repeat(parseInt(r.rating)||0) + "☆".repeat(5-(parseInt(r.rating)||0));
+    const color = CATEGORY_COLORS[r.category] || '#8E5EA5';
+    const stars = "★".repeat(parseInt(r.rating) || 0) + "☆".repeat(5 - (parseInt(r.rating) || 0));
+    const costs = calculateCosts(r.ingredients, r.servings);
+
     card.innerHTML = `
       <div class="tab" style="background:${color}">${r.category}</div>
       <div class="card-body">
         <h3>${escapeHtml(r.name)}</h3>
         <div class="meta">
-          ${r.time ? `<span>⏱ ${escapeHtml(r.time)} min</span>`:''}
-          ${r.servings ? `<span>🍽 ${escapeHtml(r.servings)} parts</span>`:''}
+          ${r.time ? `<span>⏱ ${escapeHtml(r.time)} min</span>` : ''}
+          ${r.servings ? `<span>🍽 ${escapeHtml(r.servings)} parts</span>` : ''}
         </div>
-        <div class="desc">${escapeHtml(r.desc||'')}</div>
+        <div class="desc">${escapeHtml(r.desc || '')}</div>
+        <div class="cost-badge">
+          <span>Coût total : <strong>${costs.total.toFixed(2)} €</strong></span>
+          <span style="font-size:11px; opacity:0.85;">(${costs.perServing.toFixed(2)} €/part)</span>
+        </div>
         <div class="foot">
           <span class="rating">${stars}</span>
         </div>
       </div>
     `;
-    card.onclick = ()=> openDetail(r.id);
+    card.onclick = () => openDetail(r.id);
     grid.appendChild(card);
   });
 }
 
 function escapeHtml(str){
   const d = document.createElement('div');
-  d.textContent = str||'';
+  d.textContent = str || '';
   return d.innerHTML;
 }
 
-// --- Formulaire ---
+// --- Formulaire & Calculs en direct ---
 const formOverlay = document.getElementById('formOverlay');
 const detailOverlay = document.getElementById('detailOverlay');
 const ingList = document.getElementById('ingList');
+const liveTotalCostEl = document.getElementById('liveTotalCost');
 
-function ingredientRow(name="", qty=""){
+function updateLiveCost(){
+  let total = 0;
+  ingList.querySelectorAll('.ing-row').forEach(row => {
+    const price = parseFloat(row.querySelector('.ing-price').value) || 0;
+    total += price;
+  });
+  liveTotalCostEl.textContent = total.toFixed(2) + " €";
+}
+
+function ingredientRow(name="", qty="", price=""){
   const row = document.createElement('div');
   row.className = 'ing-row';
   row.innerHTML = `
     <input type="text" placeholder="Ingrédient" class="ing-name" value="${escapeHtml(name)}">
-    <input type="text" placeholder="Quantité" class="ing-qty" value="${escapeHtml(qty)}" style="max-width:110px;">
+    <input type="text" placeholder="Ex: 200g" class="ing-qty" value="${escapeHtml(qty)}">
+    <input type="number" step="0.01" min="0" placeholder="Prix €" class="ing-price" value="${escapeHtml(price)}">
     <button type="button" class="small-btn" title="Retirer">×</button>
   `;
-  row.querySelector('.small-btn').onclick = ()=> row.remove();
+  
+  row.querySelector('.ing-price').addEventListener('input', updateLiveCost);
+  row.querySelector('.small-btn').onclick = () => { row.remove(); updateLiveCost(); };
   return row;
 }
 
-document.getElementById('addIng').onclick = ()=> ingList.appendChild(ingredientRow());
+document.getElementById('addIng').onclick = () => {
+  ingList.appendChild(ingredientRow());
+  updateLiveCost();
+};
 
-function openForm(recipe=null){
+function openForm(recipe = null){
   editingId = recipe ? recipe.id : null;
   document.getElementById('formTitle').textContent = recipe ? "Modifier la recette" : "Nouvelle recette";
-  document.getElementById('deleteBtn').style.display = recipe ? 'block':'none';
+  document.getElementById('deleteBtn').style.display = recipe ? 'block' : 'none';
   document.getElementById('f-name').value = recipe?.name || '';
   document.getElementById('f-category').value = recipe?.category || 'Tarte';
   document.getElementById('f-time').value = recipe?.time || '';
@@ -404,24 +505,28 @@ function openForm(recipe=null){
   document.getElementById('f-desc').value = recipe?.desc || '';
   document.getElementById('f-steps').value = (recipe?.steps || []).join("\n");
   document.getElementById('f-notes').value = recipe?.notes || '';
+  
   ingList.innerHTML = '';
-  const ings = recipe?.ingredients?.length ? recipe.ingredients : [{name:'',qty:''}];
-  ings.forEach(i=> ingList.appendChild(ingredientRow(i.name, i.qty)));
+  const ings = recipe?.ingredients?.length ? recipe.ingredients : [{name:'', qty:'', price:''}];
+  ings.forEach(i => ingList.appendChild(ingredientRow(i.name, i.qty, i.price)));
+  
+  updateLiveCost();
   formOverlay.classList.add('open');
 }
 
-document.getElementById('btnNew').onclick = ()=> openForm(null);
-document.getElementById('closeForm').onclick = ()=> formOverlay.classList.remove('open');
-document.getElementById('closeDetail').onclick = ()=> detailOverlay.classList.remove('open');
-formOverlay.onclick = (e)=>{ if(e.target===formOverlay) formOverlay.classList.remove('open'); };
-detailOverlay.onclick = (e)=>{ if(e.target===detailOverlay) detailOverlay.classList.remove('open'); };
+document.getElementById('btnNew').onclick = () => openForm(null);
+document.getElementById('closeForm').onclick = () => formOverlay.classList.remove('open');
+document.getElementById('closeDetail').onclick = () => detailOverlay.classList.remove('open');
+formOverlay.onclick = (e) => { if(e.target === formOverlay) formOverlay.classList.remove('open'); };
+detailOverlay.onclick = (e) => { if(e.target === detailOverlay) detailOverlay.classList.remove('open'); };
 
-document.getElementById('recipeForm').addEventListener('submit', (e)=>{
+document.getElementById('recipeForm').addEventListener('submit', (e) => {
   e.preventDefault();
-  const ingredients = Array.from(ingList.querySelectorAll('.ing-row')).map(row=>({
+  const ingredients = Array.from(ingList.querySelectorAll('.ing-row')).map(row => ({
     name: row.querySelector('.ing-name').value.trim(),
-    qty: row.querySelector('.ing-qty').value.trim()
-  })).filter(i=>i.name);
+    qty: row.querySelector('.ing-qty').value.trim(),
+    price: row.querySelector('.ing-price').value.trim()
+  })).filter(i => i.name);
 
   const data = {
     id: editingId || crypto.randomUUID(),
@@ -432,12 +537,12 @@ document.getElementById('recipeForm').addEventListener('submit', (e)=>{
     rating: document.getElementById('f-rating').value.trim(),
     desc: document.getElementById('f-desc').value.trim(),
     ingredients,
-    steps: document.getElementById('f-steps').value.split("\n").map(s=>s.trim()).filter(Boolean),
+    steps: document.getElementById('f-steps').value.split("\n").map(s => s.trim()).filter(Boolean),
     notes: document.getElementById('f-notes').value.trim()
   };
 
   if(editingId){
-    recipes = recipes.map(r=> r.id===editingId ? data : r);
+    recipes = recipes.map(r => r.id === editingId ? data : r);
   } else {
     recipes.push(data);
   }
@@ -446,9 +551,9 @@ document.getElementById('recipeForm').addEventListener('submit', (e)=>{
   render();
 });
 
-document.getElementById('deleteBtn').onclick = ()=>{
+document.getElementById('deleteBtn').onclick = () => {
   if(confirm("Supprimer définitivement cette recette ?")){
-    recipes = recipes.filter(r=>r.id!==editingId);
+    recipes = recipes.filter(r => r.id !== editingId);
     saveRecipes();
     formOverlay.classList.remove('open');
     render();
@@ -456,31 +561,62 @@ document.getElementById('deleteBtn').onclick = ()=>{
 };
 
 function openDetail(id){
-  const r = recipes.find(x=>x.id===id);
+  const r = recipes.find(x => x.id === id);
   if(!r) return;
-  const color = CATEGORY_COLORS[r.category] || '#6b5748';
-  const stars = "★".repeat(parseInt(r.rating)||0) + "☆".repeat(5-(parseInt(r.rating)||0));
+  const color = CATEGORY_COLORS[r.category] || '#8E5EA5';
+  const stars = "★".repeat(parseInt(r.rating) || 0) + "☆".repeat(5 - (parseInt(r.rating) || 0));
+  const costs = calculateCosts(r.ingredients, r.servings);
+
   document.getElementById('detailContent').innerHTML = `
     <div class="tab" style="background:${color}; display:inline-block; margin-bottom:12px;">${r.category}</div>
     <h2 style="margin-top:0;">${escapeHtml(r.name)}</h2>
-    <div class="meta" style="margin-bottom:14px; color:#8a7666; font-size:13px; display:flex; gap:16px;">
-      ${r.time ? `<span>⏱ ${escapeHtml(r.time)} min</span>`:''}
-      ${r.servings ? `<span>🍽 ${escapeHtml(r.servings)} parts</span>`:''}
+    <div class="meta" style="margin-bottom:14px; color:#7B6388; font-size:13px; display:flex; gap:16px;">
+      ${r.time ? `<span>⏱ ${escapeHtml(r.time)} min</span>` : ''}
+      ${r.servings ? `<span>🍽 ${escapeHtml(r.servings)} parts</span>` : ''}
       <span class="rating">${stars}</span>
     </div>
-    <p style="color:#584a3d;">${escapeHtml(r.desc||'')}</p>
+    
+    <p style="color:#53415D;">${escapeHtml(r.desc || '')}</p>
+
+    <!-- Bannière synthétique des Coûts -->
+    <div class="cost-banner">
+      <div class="item">
+        <div class="label">Coût Total</div>
+        <div class="val">${costs.total.toFixed(2)} €</div>
+      </div>
+      <div class="item">
+        <div class="label">Coût par Part</div>
+        <div class="val">${costs.perServing.toFixed(2)} €</div>
+      </div>
+    </div>
+
     <div class="detail-grid">
       <div>
-        <h4>Ingrédients</h4>
-        <ul class="ing-list">
-          ${r.ingredients.map(i=>`<li><span>${escapeHtml(i.name)}</span><span>${escapeHtml(i.qty)}</span></li>`).join('')}
-        </ul>
-        ${r.notes ? `<h4 style="margin-top:18px;">Astuces</h4><p style="font-size:13.5px; color:#584a3d;">${escapeHtml(r.notes)}</p>` : ''}
+        <h4>Ingrédients & Ratios</h4>
+        <table class="ing-table">
+          <thead>
+            <tr>
+              <th>Nom</th>
+              <th>Qté</th>
+              <th style="text-align:right;">Coût</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${r.ingredients.map(i => `
+              <tr>
+                <td>${escapeHtml(i.name)}</td>
+                <td style="color:#7B6388;">${escapeHtml(i.qty)}</td>
+                <td class="price-col">${i.price ? parseFloat(i.price).toFixed(2) + ' €' : '-'}</td>
+              </tr>
+            `).join('')}
+          </tbody>
+        </table>
+        ${r.notes ? `<h4 style="margin-top:20px;">Notes & Astuces</h4><p style="font-size:13.5px; color:#53415D; line-height:1.4;">${escapeHtml(r.notes)}</p>` : ''}
       </div>
       <div>
-        <h4>Étapes</h4>
+        <h4>Préparation</h4>
         <ol class="steps">
-          ${r.steps.map(s=>`<li>${escapeHtml(s)}</li>`).join('')}
+          ${r.steps.map(s => `<li>${escapeHtml(s)}</li>`).join('')}
         </ol>
       </div>
     </div>
@@ -488,14 +624,15 @@ function openDetail(id){
       <button type="button" class="btn-primary" id="editFromDetail">Modifier cette recette</button>
     </div>
   `;
-  document.getElementById('editFromDetail').onclick = ()=>{
+  
+  document.getElementById('editFromDetail').onclick = () => {
     detailOverlay.classList.remove('open');
     openForm(r);
   };
   detailOverlay.classList.add('open');
 }
 
-document.getElementById('search').addEventListener('input', (e)=>{
+document.getElementById('search').addEventListener('input', (e) => {
   searchTerm = e.target.value;
   render();
 });
