@@ -178,6 +178,9 @@
     display: inline-block; font-size: 11px; background: #FBE7E7; color: var(--fraise); border-radius: 6px;
     padding: 2px 8px; margin-left: 8px; font-weight: 600;
   }
+  .warn-tag.price-tag {
+    background: #FBF0DE; color: #A87421;
+  }
 
   .overlay {
     position: fixed; inset: 0; background: rgba(35, 18, 44, 0.45); backdrop-filter: blur(3px);
@@ -306,9 +309,10 @@
 <div id="catalogView" style="display:none;">
   <main>
     <div class="catalog-box">
-      <h2>🧺 Catalogue d'ingrédients & Prix</h2>
+      <h2>🧺 Mes prix d'achat d'ingrédients</h2>
       <p style="color:#695175; font-size:14px; margin-bottom:18px;">
-        Définis le prix unitaire de tes ingrédients ici. Le coût de tes recettes se recalculera automatiquement !
+        Aucun prix n'est présumé : renseigne toi-même le prix d'achat réel de chaque ingrédient ci-dessous.
+        Le coût de tes recettes se recalculera automatiquement dès qu'un prix est saisi !
       </p>
 
       <form class="catalog-form" id="addCatalogForm">
@@ -458,8 +462,8 @@ const CATEGORY_COLORS = {
   "Tarte": "#B593CA", "Gâteau": "#8E5EA5", "Viennoiserie": "#EBB6CE",
   "Entremet": "#7B68EE", "Biscuit": "#88A98C", "Chocolat": "#5C3D61", "Autre": "#8499B5"
 };
-const STORAGE_KEY = "cahier-patisserie-floral-recettes-50v2";
-const CATALOG_KEY = "cahier-patisserie-floral-catalog-50v2";
+const STORAGE_KEY = "cahier-patisserie-floral-recettes-50v3";
+const CATALOG_KEY = "cahier-patisserie-floral-catalog-50v3";
 
 // Accepte "1.20" ou "1,20" (virgule française)
 function parseNum(v){
@@ -471,36 +475,36 @@ function parseNum(v){
 
 function seedCatalog(){
   return [
-    { id: 'ing_1', name: 'Farine T55', unit: 'kg', price: 1.20 },
-    { id: 'ing_2', name: 'Beurre doux', unit: 'kg', price: 8.50 },
-    { id: 'ing_3', name: 'Sucre glace', unit: 'kg', price: 2.50 },
-    { id: 'ing_4', name: 'Citrons bio', unit: 'pièce', price: 0.45 },
-    { id: 'ing_5', name: 'Œufs frais', unit: 'pièce', price: 0.30 },
-    { id: 'ing_6', name: 'Arôme violette', unit: 'cl', price: 0.40 },
-    { id: 'ing_7', name: 'Fleurs de lavande séchées', unit: 'g', price: 0.05 },
-    { id: 'ing_8', name: 'Sucre en poudre', unit: 'kg', price: 1.50 },
-    { id: 'ing_9', name: 'Lait entier', unit: 'L', price: 1.30 },
-    { id: 'ing_10', name: 'Crème liquide 30%', unit: 'L', price: 4.20 },
-    { id: 'ing_11', name: 'Chocolat noir 70%', unit: 'kg', price: 12.00 },
-    { id: 'ing_12', name: 'Poudre d amandes', unit: 'kg', price: 14.00 },
-    { id: 'ing_13', name: 'Poudre de noisettes', unit: 'kg', price: 15.00 },
-    { id: 'ing_14', name: 'Extrait de vanille', unit: 'cl', price: 0.80 },
-    { id: 'ing_15', name: 'Gousse de vanille', unit: 'pièce', price: 2.50 },
-    { id: 'ing_16', name: 'Levure chimique', unit: 'g', price: 0.03 },
-    { id: 'ing_17', name: 'Levure boulangère', unit: 'g', price: 0.05 },
-    { id: 'ing_18', name: 'Fleur de sel', unit: 'g', price: 0.02 },
-    { id: 'ing_19', name: 'Pommes', unit: 'kg', price: 2.50 },
-    { id: 'ing_20', name: 'Poires', unit: 'kg', price: 2.80 },
-    { id: 'ing_21', name: 'Framboises', unit: 'kg', price: 12.00 },
-    { id: 'ing_22', name: 'Fraises', unit: 'kg', price: 8.00 },
-    { id: 'ing_23', name: 'Myrtilles', unit: 'kg', price: 10.00 },
-    { id: 'ing_24', name: 'Cacao en poudre', unit: 'kg', price: 9.00 },
-    { id: 'ing_25', name: 'Pâte feuilletée', unit: 'pièce', price: 1.50 },
-    { id: 'ing_26', name: 'Mascarpone', unit: 'kg', price: 7.50 },
-    { id: 'ing_27', name: 'Maïzena', unit: 'kg', price: 3.20 },
-    { id: 'ing_28', name: 'Miel', unit: 'kg', price: 10.00 },
-    { id: 'ing_29', name: 'Pistaches décortiquées', unit: 'kg', price: 22.00 },
-    { id: 'ing_30', name: 'Praliné noisette', unit: 'kg', price: 18.00 }
+    { id: 'ing_1', name: 'Farine T55', unit: 'kg', price: 0 },
+    { id: 'ing_2', name: 'Beurre doux', unit: 'kg', price: 0 },
+    { id: 'ing_3', name: 'Sucre glace', unit: 'kg', price: 0 },
+    { id: 'ing_4', name: 'Citrons bio', unit: 'pièce', price: 0 },
+    { id: 'ing_5', name: 'Œufs frais', unit: 'pièce', price: 0 },
+    { id: 'ing_6', name: 'Arôme violette', unit: 'cl', price: 0 },
+    { id: 'ing_7', name: 'Fleurs de lavande séchées', unit: 'g', price: 0 },
+    { id: 'ing_8', name: 'Sucre en poudre', unit: 'kg', price: 0 },
+    { id: 'ing_9', name: 'Lait entier', unit: 'L', price: 0 },
+    { id: 'ing_10', name: 'Crème liquide 30%', unit: 'L', price: 0 },
+    { id: 'ing_11', name: 'Chocolat noir 70%', unit: 'kg', price: 0 },
+    { id: 'ing_12', name: 'Poudre d amandes', unit: 'kg', price: 0 },
+    { id: 'ing_13', name: 'Poudre de noisettes', unit: 'kg', price: 0 },
+    { id: 'ing_14', name: 'Extrait de vanille', unit: 'cl', price: 0 },
+    { id: 'ing_15', name: 'Gousse de vanille', unit: 'pièce', price: 0 },
+    { id: 'ing_16', name: 'Levure chimique', unit: 'g', price: 0 },
+    { id: 'ing_17', name: 'Levure boulangère', unit: 'g', price: 0 },
+    { id: 'ing_18', name: 'Fleur de sel', unit: 'g', price: 0 },
+    { id: 'ing_19', name: 'Pommes', unit: 'kg', price: 0 },
+    { id: 'ing_20', name: 'Poires', unit: 'kg', price: 0 },
+    { id: 'ing_21', name: 'Framboises', unit: 'kg', price: 0 },
+    { id: 'ing_22', name: 'Fraises', unit: 'kg', price: 0 },
+    { id: 'ing_23', name: 'Myrtilles', unit: 'kg', price: 0 },
+    { id: 'ing_24', name: 'Cacao en poudre', unit: 'kg', price: 0 },
+    { id: 'ing_25', name: 'Pâte feuilletée', unit: 'pièce', price: 0 },
+    { id: 'ing_26', name: 'Mascarpone', unit: 'kg', price: 0 },
+    { id: 'ing_27', name: 'Maïzena', unit: 'kg', price: 0 },
+    { id: 'ing_28', name: 'Miel', unit: 'kg', price: 0 },
+    { id: 'ing_29', name: 'Pistaches décortiquées', unit: 'kg', price: 0 },
+    { id: 'ing_30', name: 'Praliné noisette', unit: 'kg', price: 0 }
   ];
 }
 
@@ -976,9 +980,11 @@ function switchMainTab(tab){
 
 function calculateCosts(recipe){
   let ingCost = 0;
+  let hasMissingPrices = false;
   (recipe.ingredients || []).forEach(item => {
     const ing = catalog.find(c => c.id === item.ingId);
     if(ing){
+      if(!parseNum(ing.price)) hasMissingPrices = true;
       ingCost += parseNum(item.qty) * parseNum(ing.price);
     }
   });
@@ -993,7 +999,7 @@ function calculateCosts(recipe){
   if(recipe.margin !== undefined && String(recipe.margin).trim() !== '' && marginNum < 100 && marginNum >= 0){
     suggestedPrice = perServing / (1 - marginNum / 100);
   }
-  return { ingCost, accCost, total, perServing, suggestedPrice };
+  return { ingCost, accCost, total, perServing, suggestedPrice, hasMissingPrices };
 }
 
 function recipeUsesCatalogItem(recipe, ingId){
@@ -1006,13 +1012,14 @@ function renderCatalog(){
   tbody.innerHTML = "";
   catalog.filter(item => item.name.toLowerCase().includes(q)).forEach(item => {
     const usedIn = recipes.filter(r => recipeUsesCatalogItem(r, item.id));
+    const noPrice = !parseNum(item.price);
     const tr = document.createElement('tr');
     tr.innerHTML = `
-      <td><strong>${escapeHtml(item.name)}</strong>${usedIn.length ? `<span class="warn-tag">utilisé dans ${usedIn.length} recette${usedIn.length>1?'s':''}</span>` : ''}</td>
+      <td><strong>${escapeHtml(item.name)}</strong>${noPrice ? `<span class="warn-tag price-tag">prix à définir</span>` : ''}${usedIn.length ? `<span class="warn-tag">utilisé dans ${usedIn.length} recette${usedIn.length>1?'s':''}</span>` : ''}</td>
       <td style="color:#7B6388;">${escapeHtml(item.unit)}</td>
       <td>
-        <input type="text" value="${item.price}"
-          style="width:90px; padding:6px 10px;"
+        <input type="text" value="${noPrice ? '' : item.price}" placeholder="ex: 1,20"
+          style="width:90px; padding:6px 10px; ${noPrice ? 'border-color:#D4A359;' : ''}"
           onchange="updateCatalogPrice('${item.id}', this.value)"> € / ${escapeHtml(item.unit)}
       </td>
       <td style="text-align:right;">
@@ -1122,6 +1129,7 @@ function render(){
         <div class="cost-badge">
           <div>Coût total : <strong>${costs.total.toFixed(2)} €</strong> <span style="font-size:11px; opacity:0.85;">(${costs.perServing.toFixed(2)} €/part)</span></div>
           ${costs.suggestedPrice !== null ? `<div style="font-size:11.5px; font-weight:600;">Prix conseillé : ${costs.suggestedPrice.toFixed(2)} € / part</div>` : ''}
+          ${costs.hasMissingPrices ? `<div style="font-size:11px; color:#A87421; font-weight:600;">⚠ prix d'achat manquants</div>` : ''}
         </div>
         <div class="foot">
           <span class="rating">${stars}</span>
@@ -1152,7 +1160,7 @@ function updateLiveCost(){
     const ing = catalog.find(c => c.id === ingId);
     if(ing){
       const subtotal = qty * parseNum(ing.price);
-      row.querySelector('.ing-subtotal').textContent = subtotal.toFixed(2) + " €";
+      row.querySelector('.ing-subtotal').textContent = parseNum(ing.price) ? subtotal.toFixed(2) + " €" : "⚠ prix ?";
       ingTotal += subtotal;
     }
   });
@@ -1189,7 +1197,7 @@ function ingredientRow(selectedIngId="", qty=""){
 
   let options = catalog.map(c => `
     <option value="${c.id}" ${c.id === selectedIngId ? 'selected' : ''}>
-      ${escapeHtml(c.name)} (${parseNum(c.price).toFixed(2)} € / ${escapeHtml(c.unit)})
+      ${escapeHtml(c.name)} (${parseNum(c.price) ? parseNum(c.price).toFixed(2) + ' € / ' + escapeHtml(c.unit) : 'prix non défini'})
     </option>
   `).join('');
 
@@ -1335,6 +1343,8 @@ function openDetail(id){
       </div>
 
       <p style="color:#53415D;">${escapeHtml(r.desc || '')}</p>
+
+      ${costs.hasMissingPrices ? `<p style="background:#FBF0DE; color:#A87421; padding:8px 12px; border-radius:8px; font-size:13px; font-weight:600;">⚠ Certains ingrédients de cette recette n'ont pas encore de prix d'achat renseigné dans le catalogue — le coût affiché est donc sous-évalué.</p>` : ''}
 
       <div class="cost-banner">
         <div class="item">
